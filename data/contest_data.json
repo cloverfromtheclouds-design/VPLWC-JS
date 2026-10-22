@@ -1,0 +1,38 @@
+{
+  "songs": [
+    {
+      "id": "song-seed-1",
+      "songTitle": "Echoes of the Tide",
+      "alias": "Marina Blue",
+      "discordUsername": "marinablue",
+      "storyConcept": "A reflective song about summer memories fading like footsteps on the beach.",
+      "lyrics": "[Verse 1]\nFootsteps washed away by the evening sea\nYou promised you would still remember me\nGolden skies turning into indigo night\nWe were young, chasing every beam of light\n\n[Chorus]\nEchoes of the tide calling out your name\nEven when the seasons never stay the same\nSalt on my skin, warm wind in my hair\nI close my eyes and you are standing there\n\n[Verse 2]\nCarved our names upon the driftwood pier\nBelieved our dreams would outlast any year\nNow the autumn chill is creeping through the door\nAnd the ocean waves keep crashing on the shore\n\n[Outro]\nEchoes of the tide...\nFading out in blue...\nI still remember you.",
+      "formattedEntrantName": "Echoes of the Tide — Marina Blue (@marinablue)",
+      "addedAt": "2026-10-22T04:57:22.152Z",
+      "addedBy": "Contest Producer"
+    },
+    {
+      "id": "song-seed-2",
+      "songTitle": "Starlit Boulevard",
+      "alias": "Kai Vance",
+      "discordUsername": "kaivance",
+      "storyConcept": "Late night cruising under neon signs thinking about second chances.",
+      "lyrics": "[Verse 1]\nHeadlights cutting through the midnight haze\nLost inside a labyrinth of yesterday's days\nRadio playing static and an old slow jam\nWondering if you ever knew the boy I am\n\n[Chorus]\nDown on Starlit Boulevard\nUnderneath the broken sky\nEvery street sign reads your name\nEvery red light asks me why\nWe let the fire burn into spark\nDriving all alone in the dark\n\n[Bridge]\nGas pedal down, nothing left to lose\nJust the city lights and a pair of worn-out shoes\n\n[Chorus]\nDown on Starlit Boulevard\nUnderneath the broken sky\nI'll keep driving till sunrise\nTill the memories run dry.",
+      "formattedEntrantName": "Starlit Boulevard — Kai Vance (@kaivance)",
+      "addedAt": "2026-10-22T04:57:22.152Z",
+      "addedBy": "Contest Producer"
+    },
+    {
+      "id": "song-seed-3",
+      "songTitle": "Paper Cranes in the Wind",
+      "alias": "Sora Tanaka",
+      "discordUsername": "soratanaka",
+      "storyConcept": "A thousand folded hopes sent into the sky for someone far away.",
+      "lyrics": "[Verse 1]\nFold the crease along the paper spine\nA silent prayer for you across the border line\nWings of white taking flight upon the breeze\nRustling softly through the cherry blossom trees\n\n[Chorus]\nOne thousand paper cranes dancing in the wind\nCarrying the words we never got to send\nIf they cross the ocean, if they reach your shore\nKnow that my heart is yours forevermore\n\n[Verse 2]\nInk on parchment blurred by falling rain\nA bittersweet reminder that hope outlives the pain\nEvery crane a memory of the days we shared\nEvery gentle fold proof of how much I cared\n\n[Outro]\nPaper cranes in the wind...\nFly home again.",
+      "formattedEntrantName": "Paper Cranes in the Wind — Sora Tanaka (@soratanaka)",
+      "addedAt": "2026-10-22T04:57:22.152Z",
+      "addedBy": "Contest Producer"
+    }
+  ],
+  "scores": []
+}

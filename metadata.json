@@ -1,0 +1,8 @@
+{
+  "name": "Remix Remix Remix Remix Summertide Lyric Contest Scoring Official 3",
+  "description": "Live judging scorecard, Google Sheets sync, and automated ranking calculator for the Summertide Studio Lyric Contest.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,1156 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import {
+  JudgeScoreSubmission,
+  EntrantRanking,
+  ContestSongEntry,
+  SongFlag,
+  RegisteredJudge,
+  FlagReason,
+} from './types/contest';
+import {
+  calculateRankings,
+  computeSummaryStats,
+} from './utils/ranking';
+import { exportContestToExcel } from './utils/excelExport';
+import { Navbar } from './components/Navbar';
+import { SongEntriesView } from './components/SongEntriesView';
+import { LeaderboardView } from './components/LeaderboardView';
+import { ScorecardView } from './components/ScorecardView';
+import { AllScoresMatrix } from './components/AllScoresMatrix';
+import { AdminDashboard } from './components/AdminDashboard';
+import { ConfirmModal } from './components/ConfirmModal';
+import { DuplicateUploadModal } from './components/DuplicateUploadModal';
+import { JudgeNameModal } from './components/JudgeNameModal';
+import { PortalPinModal } from './components/PortalPinModal';
+import { CheckCircle2, AlertCircle, X, KeyRound } from 'lucide-react';
+
+const bgImageUrl = `${import.meta.env.BASE_URL}assets/aistudio/Snomicom_Halfbody_27Nov25_5d4fd688.png`;
+const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+
+function apiFetch(urlPath: string, init?: RequestInit) {
+  const fullUrl = urlPath.startsWith('http') ? urlPath : `${API_BASE}${urlPath}`;
+  return fetch(fullUrl, init);
+}
+
+export default function App() {
+  const [activeTab, setActiveTab] = useState<'songs' | 'scorecard' | 'rankings' | 'scores' | 'admin'>(
+    'songs'
+  );
+
+  // Producer / Admin State (Blind Judging by default)
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [adminPin, setAdminPin] = useState(() => {
+    return localStorage.getItem('summertide_admin_pin') || '1234';
+  });
+  const [isPinModalOpen, setIsPinModalOpen] = useState(false);
+  const [enteredPin, setEnteredPin] = useState('');
+  const [pinError, setPinError] = useState<string | null>(null);
+
+  // Portal Access PIN (Customizable by admin, initial default 4274)
+  const [portalPin, setPortalPin] = useState(() => {
+    return localStorage.getItem('summertide_portal_pin') || '4274';
+  });
+
+  // Portal Access PIN (PIN is required first before entering the portal)
+  const [isPortalPinUnlocked, setIsPortalPinUnlocked] = useState(() => {
+    return localStorage.getItem('summertide_portal_pin_unlocked') === 'true';
+  });
+
+  // Track portal session version for remote locking by admin
+  const [portalSessionVersion, setPortalSessionVersion] = useState<number>(() => {
+    const saved = localStorage.getItem('summertide_portal_session_version');
+    return saved ? parseInt(saved, 10) : 1;
+  });
+
+  // Judge name state (saved in localStorage for seamless judging sessions)
+  const [currentJudgeName, setCurrentJudgeName] = useState(() => {
+    return localStorage.getItem('summertide_judge_name') || '';
+  });
+  // Require judge name upon entering the site ONLY after portal PIN is verified
+  const [isJudgeNameModalOpen, setIsJudgeNameModalOpen] = useState(() => {
+    const unlocked = localStorage.getItem('summertide_portal_pin_unlocked') === 'true';
+    return unlocked && !localStorage.getItem('summertide_judge_name');
+  });
+
+  // Parallax scroll position (gentle bounded tracking to stay visible throughout the page)
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrollY(window.scrollY);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Contest Songs State (persisted in localStorage)
+  const [songs, setSongs] = useState<ContestSongEntry[]>(() => {
+    try {
+      const saved = localStorage.getItem('summertide_contest_songs');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error('Error reading songs from localStorage:', e);
+    }
+    return [];
+  });
+
+  // Contest Flags State (persisted in localStorage & synced online)
+  const [flags, setFlags] = useState<SongFlag[]>(() => {
+    try {
+      const saved = localStorage.getItem('summertide_contest_flags');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error('Error reading flags from localStorage:', e);
+    }
+    return [];
+  });
+
+  // Registered Judges State (for Monitoring Board)
+  const [registeredJudges, setRegisteredJudges] = useState<RegisteredJudge[]>(() => {
+    try {
+      const saved = localStorage.getItem('summertide_registered_judges');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error('Error reading registered judges from localStorage:', e);
+    }
+    return [];
+  });
+
+  // Contest Scores State (persisted in localStorage)
+  const [scores, setScores] = useState<JudgeScoreSubmission[]>(() => {
+    try {
+      const saved = localStorage.getItem('summertide_contest_scores');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error('Error reading scores from localStorage:', e);
+    }
+    return [];
+  });
+
+  const [scorecardEntrantPreFill, setScorecardEntrantPreFill] = useState('');
+
+  // Duplicate Upload Modal State
+  const [duplicateModal, setDuplicateModal] = useState<{
+    isOpen: boolean;
+    duplicateSong: ContestSongEntry | null;
+    filename?: string;
+  }>({
+    isOpen: false,
+    duplicateSong: null,
+  });
+
+  // Toast Notification
+  const [toast, setToast] = useState<{
+    id: number;
+    type: 'success' | 'error' | 'info';
+    message: string;
+  } | null>(null);
+
+  // Confirmation Modals for Destructive Operations
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    detailItems?: string[];
+    confirmLabel?: string;
+    isDestructive?: boolean;
+    action: () => Promise<void>;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    action: async () => {},
+  });
+
+  const showToast = useCallback((message: string, type: 'success' | 'error' | 'info' = 'success') => {
+    setToast({ id: Date.now(), type, message });
+    setTimeout(() => {
+      setToast((prev) => (prev?.message === message ? null : prev));
+    }, 4500);
+  }, []);
+
+  // Continuous Online Server Sync (Real-time live sharing for all producers and judges)
+  const fetchContestData = useCallback(async (isSilent = true) => {
+    try {
+      const res = await apiFetch('/api/sync');
+      if (!okRes(res)) return;
+      const data = await res.json();
+      if (data.success) {
+        if (Array.isArray(data.songs)) {
+          setSongs(data.songs);
+          localStorage.setItem('summertide_contest_songs', JSON.stringify(data.songs));
+        }
+        if (Array.isArray(data.scores)) {
+          setScores(data.scores);
+          localStorage.setItem('summertide_contest_scores', JSON.stringify(data.scores));
+        }
+        if (Array.isArray(data.flags)) {
+          setFlags(data.flags);
+          localStorage.setItem('summertide_contest_flags', JSON.stringify(data.flags));
+        }
+        if (Array.isArray(data.judges)) {
+          setRegisteredJudges(data.judges);
+          localStorage.setItem('summertide_registered_judges', JSON.stringify(data.judges));
+        }
+        if (data.settings) {
+          if (data.settings.portalPin) {
+            setPortalPin(data.settings.portalPin);
+            localStorage.setItem('summertide_portal_pin', data.settings.portalPin);
+          }
+          if (data.settings.adminPin) {
+            setAdminPin(data.settings.adminPin);
+            localStorage.setItem('summertide_admin_pin', data.settings.adminPin);
+          }
+          if (typeof data.settings.portalSessionVersion === 'number') {
+            const serverVersion = data.settings.portalSessionVersion;
+            const currentLocalVersion = parseInt(localStorage.getItem('summertide_portal_session_version') || '1', 10);
+            if (serverVersion > currentLocalVersion) {
+              // Remote lock triggered by Admin!
+              setIsPortalPinUnlocked(false);
+              localStorage.removeItem('summertide_portal_pin_unlocked');
+              localStorage.setItem('summertide_portal_session_version', serverVersion.toString());
+              setPortalSessionVersion(serverVersion);
+              showToast('The contest administrator has locked the portal. Please re-enter the access PIN.', 'info');
+            } else {
+              setPortalSessionVersion(serverVersion);
+            }
+          }
+        }
+      }
+    } catch (err) {
+      if (!isSilent) console.error('Failed to sync contest data from server:', err);
+    }
+  }, []);
+
+  // Helper for fetch response
+  function okRes(res: Response) {
+    return res.ok;
+  }
+
+  useEffect(() => {
+    // Initial fetch from online server on boot
+    fetchContestData(false);
+
+    // Live continuous sync every 3.5 seconds
+    const interval = setInterval(() => {
+      fetchContestData(true);
+    }, 3500);
+
+    return () => clearInterval(interval);
+  }, [fetchContestData]);
+
+  // Save songs to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('summertide_contest_songs', JSON.stringify(songs));
+    } catch (e) {
+      console.error('Failed to save songs to localStorage:', e);
+    }
+  }, [songs]);
+
+  // Save scores to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('summertide_contest_scores', JSON.stringify(scores));
+    } catch (e) {
+      console.error('Failed to save scores to localStorage:', e);
+    }
+  }, [scores]);
+
+  // Save flags to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('summertide_contest_flags', JSON.stringify(flags));
+    } catch (e) {
+      console.error('Failed to save flags to localStorage:', e);
+    }
+  }, [flags]);
+
+  // Save registered judges to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('summertide_registered_judges', JSON.stringify(registeredJudges));
+    } catch (e) {
+      console.error('Failed to save registered judges to localStorage:', e);
+    }
+  }, [registeredJudges]);
+
+  // Save portal pin to localStorage
+  useEffect(() => {
+    if (portalPin) {
+      localStorage.setItem('summertide_portal_pin', portalPin);
+    }
+  }, [portalPin]);
+
+  // Save current judge name to localStorage
+  useEffect(() => {
+    if (currentJudgeName) {
+      localStorage.setItem('summertide_judge_name', currentJudgeName);
+    }
+  }, [currentJudgeName]);
+
+  // Handle Portal PIN verification
+  const handlePortalPinSuccess = () => {
+    setIsPortalPinUnlocked(true);
+    localStorage.setItem('summertide_portal_pin_unlocked', 'true');
+    localStorage.setItem('summertide_portal_session_version', portalSessionVersion.toString());
+    if (!currentJudgeName) {
+      setIsJudgeNameModalOpen(true);
+    }
+    showToast('Portal PIN verified. Welcome to Summertide Judging Portal!', 'success');
+  };
+
+  // Register a judge into the monitoring roster
+  const handleRegisterJudge = async (name: string) => {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+
+    // Optimistic local update
+    setRegisteredJudges((prev) => {
+      const exists = prev.some((j) => j.name.toLowerCase() === trimmed.toLowerCase());
+      if (exists) {
+        return prev.map((j) =>
+          j.name.toLowerCase() === trimmed.toLowerCase()
+            ? { ...j, lastActiveAt: new Date().toISOString() }
+            : j
+        );
+      }
+      return [
+        ...prev,
+        {
+          id: `judge-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+          name: trimmed,
+          registeredAt: new Date().toISOString(),
+          lastActiveAt: new Date().toISOString(),
+        },
+      ];
+    });
+
+    try {
+      const res = await apiFetch('/api/judges', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: trimmed }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.judges)) {
+          setRegisteredJudges(data.judges);
+          localStorage.setItem('summertide_registered_judges', JSON.stringify(data.judges));
+        }
+      }
+    } catch (e) {
+      console.error('Failed to register judge on server:', e);
+    }
+  };
+
+  const handleDeleteJudge = async (nameOrId: string) => {
+    setRegisteredJudges((prev) =>
+      prev.filter((j) => j.id !== nameOrId && j.name.toLowerCase() !== nameOrId.toLowerCase())
+    );
+
+    try {
+      const res = await apiFetch(`/api/judges/${encodeURIComponent(nameOrId)}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.judges)) {
+          setRegisteredJudges(data.judges);
+          localStorage.setItem('summertide_registered_judges', JSON.stringify(data.judges));
+        }
+      }
+    } catch (e) {
+      console.error('Failed to remove judge on server:', e);
+    }
+    showToast(`Removed judge "${nameOrId}" from monitoring roster.`, 'info');
+  };
+
+  // Handle saving / updating judge identity
+  const handleSaveJudgeName = (name: string) => {
+    setCurrentJudgeName(name);
+    localStorage.setItem('summertide_judge_name', name);
+    setIsJudgeNameModalOpen(false);
+    handleRegisterJudge(name);
+    showToast(`Welcome, Judge ${name}! Saved for your judging session.`, 'success');
+  };
+
+  // Check URL query parameters and saved session (Blind Judge mode is DEFAULT)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('role') === 'admin') {
+      setIsAdmin(true);
+    } else {
+      const savedAuth = sessionStorage.getItem('summertide_admin_unlocked');
+      if (savedAuth === 'true') {
+        setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
+      }
+    }
+    const nameParam = params.get('name');
+    if (nameParam && nameParam.trim()) {
+      setCurrentJudgeName(nameParam.trim());
+      handleRegisterJudge(nameParam.trim());
+    } else {
+      const savedName = localStorage.getItem('summertide_judge_name');
+      if (savedName && savedName.trim()) {
+        handleRegisterJudge(savedName.trim());
+      }
+    }
+  }, []);
+
+  // Calculate live rankings and statistics in real time whenever scores change
+  const rankings = useMemo(() => calculateRankings(scores, flags), [scores, flags]);
+  const stats = useMemo(() => computeSummaryStats(scores, rankings), [scores, rankings]);
+
+  // Lists for autocomplete in scorecard
+  const knownJudges = useMemo(() => {
+    const fromScores = scores.map((s) => s.judgeName);
+    if (currentJudgeName) fromScores.push(currentJudgeName);
+    return Array.from(new Set(fromScores)).filter(Boolean);
+  }, [scores, currentJudgeName]);
+
+  const knownEntrants = useMemo(() => {
+    const fromScores = scores.map((s) => s.entrantName);
+    const fromSongs = songs.map((s) => s.formattedEntrantName || s.songTitle);
+    return Array.from(new Set([...fromSongs, ...fromScores])).filter(Boolean);
+  }, [scores, songs]);
+
+  // Export full contest data to Excel (.xlsx)
+  const handleExportExcel = () => {
+    try {
+      exportContestToExcel(rankings, scores, songs, stats);
+      showToast('Downloaded official contest results as Excel (.xlsx)!', 'success');
+    } catch (err) {
+      console.error('Excel export error:', err);
+      showToast('Failed to export Excel file. Please try again.', 'error');
+    }
+  };
+
+  // Song Entry Handlers (Only Admin can add or upload songs)
+  const handleAddSong = async (newSong: ContestSongEntry) => {
+    if (!isAdmin) {
+      showToast('Notice: Only the contest producer/admin can upload entries.', 'error');
+      return;
+    }
+    // Optimistic update
+    setSongs((prev) => [newSong, ...prev.filter((s) => s.id !== newSong.id)]);
+    showToast(`Registered "${newSong.songTitle}" in the contest queue!`, 'success');
+
+    try {
+      const res = await apiFetch('/api/songs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newSong),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.songs)) {
+          setSongs(data.songs);
+          localStorage.setItem('summertide_contest_songs', JSON.stringify(data.songs));
+        }
+        showToast(`"${newSong.songTitle}" is now live online for all judges & producers!`, 'success');
+      }
+    } catch (e) {
+      console.error('Failed to upload song to server:', e);
+    }
+  };
+
+  const handleDeleteSong = (songId: string, songTitle: string, formattedEntrantName?: string) => {
+    if (!isAdmin) return;
+    setConfirmModal({
+      isOpen: true,
+      title: `Delete Song "${songTitle}"?`,
+      message: `Are you sure you want to remove "${songTitle}" from the contest queue? This will permanently delete this song and all corresponding judge scorecards online across all devices.`,
+      confirmLabel: 'Delete Song & Scores',
+      isDestructive: true,
+      action: async () => {
+        const titleLower = songTitle.trim().toLowerCase();
+        const formattedLower = (formattedEntrantName || '').trim().toLowerCase();
+
+        // Optimistic remove from local songs
+        setSongs((prev) =>
+          prev.filter(
+            (s) =>
+              s.id !== songId &&
+              s.songTitle.trim().toLowerCase() !== titleLower &&
+              (!formattedLower || (s.formattedEntrantName || '').trim().toLowerCase() !== formattedLower)
+          )
+        );
+
+        // Optimistic remove corresponding scores
+        setScores((prev) =>
+          prev.filter((sc) => {
+            const scTitle = (sc.songTitle || '').trim().toLowerCase();
+            const scEntrant = sc.entrantName.trim().toLowerCase();
+            if (scTitle === titleLower || scEntrant === titleLower) return false;
+            if (formattedLower && (scTitle === formattedLower || scEntrant === formattedLower)) return false;
+            return true;
+          })
+        );
+
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+
+        try {
+          const res = await apiFetch(`/api/songs/${encodeURIComponent(songId || songTitle)}`, {
+            method: 'DELETE',
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data.songs)) {
+              setSongs(data.songs);
+              localStorage.setItem('summertide_contest_songs', JSON.stringify(data.songs));
+            }
+            if (Array.isArray(data.scores)) {
+              setScores(data.scores);
+              localStorage.setItem('summertide_contest_scores', JSON.stringify(data.scores));
+            }
+          }
+        } catch (e) {
+          console.error('Failed to delete song on server:', e);
+        }
+        showToast(`Removed "${songTitle}" and all scorecards from the contest.`, 'info');
+      },
+    });
+  };
+
+  const handleTriggerDuplicateModal = (song: ContestSongEntry, filename?: string) => {
+    setDuplicateModal({
+      isOpen: true,
+      duplicateSong: song,
+      filename,
+    });
+  };
+
+  const handleConfirmGradeDuplicate = (song: ContestSongEntry) => {
+    setScorecardEntrantPreFill(song.formattedEntrantName || song.songTitle);
+    setActiveTab('scorecard');
+  };
+
+  const handleSelectSongToGrade = (song: ContestSongEntry) => {
+    setScorecardEntrantPreFill(song.formattedEntrantName || song.songTitle);
+    setActiveTab('scorecard');
+  };
+
+  // Submit Scorecard
+  const handleSubmitScore = async (submission: JudgeScoreSubmission): Promise<boolean> => {
+    const j = submission.judgeName.trim().toLowerCase();
+    const entrant = submission.entrantName.trim().toLowerCase();
+    const title = (submission.songTitle || '').trim().toLowerCase();
+
+    // Check duplicate locally
+    const duplicate = scores.find((s) => {
+      if (s.judgeName.trim().toLowerCase() !== j) return false;
+      const sEntrant = s.entrantName.trim().toLowerCase();
+      const sTitle = (s.songTitle || '').trim().toLowerCase();
+      return (
+        sEntrant === entrant ||
+        sTitle === title ||
+        (title && sEntrant === title) ||
+        (entrant && sTitle === entrant) ||
+        (title && sEntrant.includes(title))
+      );
+    });
+
+    if (duplicate) {
+      showToast(`Score has already been submitted for this song by Judge ${submission.judgeName}.`, 'error');
+      return false;
+    }
+
+    const newScoreItem: JudgeScoreSubmission = {
+      ...submission,
+      id: submission.id || `score-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      timestamp: submission.timestamp || new Date().toISOString(),
+    };
+
+    setScores((prev) => [newScoreItem, ...prev]);
+
+    if (submission.judgeName && submission.judgeName !== currentJudgeName) {
+      setCurrentJudgeName(submission.judgeName);
+    }
+    if (submission.judgeName) {
+      handleRegisterJudge(submission.judgeName);
+    }
+
+    try {
+      const res = await apiFetch('/api/scores', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newScoreItem),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.scores)) {
+          setScores(data.scores);
+          localStorage.setItem('summertide_contest_scores', JSON.stringify(data.scores));
+        }
+      } else if (res.status === 409) {
+        showToast('This scorecard has already been submitted online.', 'error');
+        return false;
+      }
+    } catch (e) {
+      console.error('Failed to post score to online server:', e);
+    }
+
+    showToast(
+      `Score recorded for "${submission.entrantName}"! Total: ${submission.totalScore}/100`,
+      'success'
+    );
+    return true;
+  };
+
+  // Admin PIN Unlock
+  const handleUnlockAdmin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (enteredPin === adminPin) {
+      setIsAdmin(true);
+      sessionStorage.setItem('summertide_admin_unlocked', 'true');
+      setIsPinModalOpen(false);
+      setEnteredPin('');
+      setPinError(null);
+      setActiveTab('rankings');
+      showToast('Producer Control Center unlocked.', 'success');
+    } else {
+      setPinError('Incorrect PIN. Please try again.');
+    }
+  };
+
+  const handleLockAdmin = () => {
+    setIsAdmin(false);
+    sessionStorage.setItem('summertide_admin_unlocked', 'false');
+    setActiveTab('songs');
+    showToast('Switched to Judge Mode (Blind). Leaderboard hidden from view.', 'info');
+  };
+
+  const handleUpdateAdminPin = async (newPin: string) => {
+    setAdminPin(newPin);
+    localStorage.setItem('summertide_admin_pin', newPin);
+    showToast('Producer PIN updated successfully!', 'success');
+
+    try {
+      await apiFetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ adminPin: newPin }),
+      });
+    } catch (e) {
+      console.error('Failed to sync admin pin with server:', e);
+    }
+  };
+
+  const handleUpdatePortalPin = async (newPin: string) => {
+    setPortalPin(newPin);
+    localStorage.setItem('summertide_portal_pin', newPin);
+    showToast(`Portal Access Security PIN updated to "${newPin}"!`, 'success');
+
+    try {
+      await apiFetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ portalPin: newPin }),
+      });
+    } catch (e) {
+      console.error('Failed to sync portal pin with server:', e);
+    }
+  };
+
+  // Remote Portal Lock (Forces all judges across all devices to re-enter PIN)
+  const handleLockPortal = async () => {
+    try {
+      const res = await apiFetch('/api/settings/lock-portal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.settings?.portalSessionVersion) {
+          setPortalSessionVersion(data.settings.portalSessionVersion);
+          localStorage.setItem('summertide_portal_session_version', data.settings.portalSessionVersion.toString());
+        }
+        showToast('Judging Portal has been LOCKED! All judges must re-enter the access PIN.', 'success');
+      }
+    } catch (e) {
+      console.error('Failed to lock portal on server:', e);
+      showToast('Failed to lock portal on server.', 'error');
+    }
+  };
+
+  // Flag & Rule Violation Handlers
+  const handleFlagSong = async (
+    songId: string,
+    songTitle: string,
+    entrantName: string,
+    reason: FlagReason,
+    reasonLabel: string,
+    notes: string
+  ) => {
+    const newFlag: SongFlag = {
+      id: `flag-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      songId,
+      songTitle,
+      entrantName,
+      flaggedBy: currentJudgeName || 'Independent Judge',
+      reason,
+      reasonLabel,
+      notes,
+      flaggedAt: new Date().toISOString(),
+      status: 'pending_review',
+    };
+
+    setFlags((prev) => [newFlag, ...prev]);
+    showToast(`Flag logged for "${songTitle}" (${reasonLabel}). Scoring aborted.`, 'error');
+
+    try {
+      const res = await apiFetch('/api/flags', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newFlag),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.flags)) {
+          setFlags(data.flags);
+          localStorage.setItem('summertide_contest_flags', JSON.stringify(data.flags));
+        }
+        if (Array.isArray(data.songs)) {
+          setSongs(data.songs);
+          localStorage.setItem('summertide_contest_songs', JSON.stringify(data.songs));
+        }
+      }
+    } catch (e) {
+      console.error('Failed to post flag to server:', e);
+    }
+  };
+
+  const handleUpdateFlagStatus = async (
+    flagId: string,
+    status: 'disqualified' | 'cleared'
+  ) => {
+    setFlags((prev) =>
+      prev.map((f) => (f.id === flagId ? { ...f, status, reviewedBy: 'Admin' } : f))
+    );
+
+    const message =
+      status === 'disqualified'
+        ? 'Song has been officially disqualified from contest standings.'
+        : 'Flag cleared. Song restored for judging!';
+    showToast(message, status === 'disqualified' ? 'error' : 'success');
+
+    try {
+      const res = await apiFetch(`/api/flags/${encodeURIComponent(flagId)}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status, reviewedBy: 'Admin' }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.flags)) {
+          setFlags(data.flags);
+          localStorage.setItem('summertide_contest_flags', JSON.stringify(data.flags));
+        }
+        if (Array.isArray(data.songs)) {
+          setSongs(data.songs);
+          localStorage.setItem('summertide_contest_songs', JSON.stringify(data.songs));
+        }
+      }
+    } catch (e) {
+      console.error('Failed to update flag status on server:', e);
+    }
+  };
+
+  const handleDeleteFlag = async (flagId: string) => {
+    setFlags((prev) => prev.filter((f) => f.id !== flagId));
+    showToast('Violation report removed.', 'info');
+
+    try {
+      const res = await apiFetch(`/api/flags/${encodeURIComponent(flagId)}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.flags)) {
+          setFlags(data.flags);
+          localStorage.setItem('summertide_contest_flags', JSON.stringify(data.flags));
+        }
+        if (Array.isArray(data.songs)) {
+          setSongs(data.songs);
+          localStorage.setItem('summertide_contest_songs', JSON.stringify(data.songs));
+        }
+      }
+    } catch (e) {
+      console.error('Failed to delete flag on server:', e);
+    }
+  };
+
+  // Admin: Delete a single score
+  const handleDeleteScore = (scoreId: string) => {
+    const target = scores.find((s, idx) => (s.id || `idx-${idx}`) === scoreId);
+    setConfirmModal({
+      isOpen: true,
+      title: 'Delete Scorecard?',
+      message: `Are you sure you want to delete the scorecard by ${target?.judgeName || 'this judge'} for "${target?.entrantName || 'this entry'}"? This action recalculates contest rankings online.`,
+      confirmLabel: 'Delete Scorecard',
+      isDestructive: true,
+      action: async () => {
+        setScores((prev) => prev.filter((s, idx) => (s.id || `idx-${idx}`) !== scoreId));
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+
+        try {
+          const res = await apiFetch(`/api/scores/${encodeURIComponent(scoreId)}`, {
+            method: 'DELETE',
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data.scores)) {
+              setScores(data.scores);
+              localStorage.setItem('summertide_contest_scores', JSON.stringify(data.scores));
+            }
+          }
+        } catch (e) {
+          console.error('Failed to delete score on server:', e);
+        }
+
+        showToast('Scorecard removed and rankings updated.', 'info');
+      },
+    });
+  };
+
+  // Admin: Delete an entire entrant and all their scores
+  const handleDeleteEntrant = (entrantName: string) => {
+    const matched = songs.find(
+      (s) =>
+        s.songTitle.trim().toLowerCase() === entrantName.trim().toLowerCase() ||
+        (s.formattedEntrantName && s.formattedEntrantName.trim().toLowerCase() === entrantName.trim().toLowerCase())
+    );
+    handleDeleteSong(matched?.id || entrantName, matched?.songTitle || entrantName, matched?.formattedEntrantName || entrantName);
+  };
+
+  // Admin: Rename an entrant across all historical scores & songs
+  const handleRenameEntrant = async (oldName: string, newName: string) => {
+    const oldLower = oldName.trim().toLowerCase();
+
+    setScores((prev) =>
+      prev.map((s) => {
+        const sTitle = (s.songTitle || '').trim().toLowerCase();
+        const sEntrant = s.entrantName.trim().toLowerCase();
+        if (sTitle === oldLower || sEntrant === oldLower) {
+          return { ...s, songTitle: newName, entrantName: newName };
+        }
+        return s;
+      })
+    );
+
+    setSongs((prev) =>
+      prev.map((s) => {
+        const sTitle = s.songTitle.trim().toLowerCase();
+        const sFormatted = (s.formattedEntrantName || '').trim().toLowerCase();
+        if (sTitle === oldLower || sFormatted === oldLower) {
+          return {
+            ...s,
+            songTitle: newName,
+            formattedEntrantName: s.alias ? `${newName} — ${s.alias}` : newName,
+          };
+        }
+        return s;
+      })
+    );
+
+    showToast(`Renamed "${oldName}" to "${newName}" across all scorecards.`, 'success');
+
+    try {
+      const res = await apiFetch(`/api/songs/${encodeURIComponent(oldName)}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newTitle: newName }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.songs)) setSongs(data.songs);
+        if (Array.isArray(data.scores)) setScores(data.scores);
+      }
+    } catch (e) {
+      console.error('Failed to update title on server:', e);
+    }
+  };
+
+  const handleOpenScorecardForEntrant = (name: string) => {
+    setScorecardEntrantPreFill(name);
+    setActiveTab('scorecard');
+  };
+
+  return (
+    <div className="relative min-h-screen text-[#20242d] font-sans antialiased flex flex-col selection:bg-pink-200 selection:text-pink-900 overflow-x-hidden">
+      {/* Background with Gentle Parallax and Enhanced Pink Gradient */}
+      <div
+        aria-hidden="true"
+        className="fixed inset-0 pointer-events-none -z-10 overflow-hidden select-none"
+      >
+        {/* Parallax Background Image Layer (Gentle translation with ample headroom to stay visible all the way through) */}
+        <div
+          className="absolute -top-[12%] -bottom-[12%] -left-[4%] -right-[4%] bg-cover bg-center bg-no-repeat will-change-transform"
+          style={{
+            backgroundImage: `url(${bgImageUrl})`,
+            transform: `translate3d(0, ${-Math.min(scrollY * 0.045, 110)}px, 0) scale(1.15)`,
+            transformOrigin: 'center center',
+            filter: 'blur(2px) saturate(1.18)',
+            opacity: 0.88,
+          }}
+        />
+
+        {/* Enhanced Summertide Pink Gradient Overlays (Increased intensity while keeping art visible) */}
+        <div className="absolute inset-0 bg-gradient-to-b from-pink-100/40 via-pink-200/50 to-pink-300/65 pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-pink-300/30 via-transparent to-rose-200/25 pointer-events-none" />
+      </div>
+
+      {/* Top Navbar */}
+      <Navbar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        isAdmin={isAdmin}
+        onRequestAdminUnlock={() => {
+          setPinError(null);
+          setEnteredPin('');
+          setIsPinModalOpen(true);
+        }}
+        onLockAdmin={handleLockAdmin}
+        totalSongsCount={songs.length}
+        onExportExcel={isAdmin ? handleExportExcel : undefined}
+        currentJudgeName={currentJudgeName}
+        onEditJudgeName={() => setIsJudgeNameModalOpen(true)}
+      />
+
+      {/* Main Content Area */}
+      <main className="relative z-10 flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        {/* Song Entries Tab (Available to both judges and admin; uploads restricted to admin) */}
+        {activeTab === 'songs' && (
+          <SongEntriesView
+            songs={songs}
+            scores={scores}
+            flags={flags}
+            currentJudgeName={currentJudgeName}
+            onChangeJudgeName={setCurrentJudgeName}
+            onSelectSongToGrade={handleSelectSongToGrade}
+            isAdmin={isAdmin}
+            onAddSong={isAdmin ? handleAddSong : undefined}
+            onDeleteSong={isAdmin ? handleDeleteSong : undefined}
+            onTriggerDuplicateModal={handleTriggerDuplicateModal}
+          />
+        )}
+
+        {/* Judge Scorecard View */}
+        {activeTab === 'scorecard' && (
+          <ScorecardView
+            initialEntrantName={scorecardEntrantPreFill}
+            defaultJudgeName={currentJudgeName}
+            onSubmitScore={handleSubmitScore}
+            knownJudges={knownJudges}
+            knownEntrants={knownEntrants}
+            existingScores={scores}
+            contestSongs={songs}
+            flags={flags}
+            onFlagSong={handleFlagSong}
+            isAdmin={isAdmin}
+            onGoToSongEntries={() => setActiveTab('songs')}
+            onTriggerDuplicateModal={handleTriggerDuplicateModal}
+          />
+        )}
+
+        {/* Leaderboard View (Admin Only) */}
+        {isAdmin && activeTab === 'rankings' && (
+          <LeaderboardView
+            rankings={rankings}
+            stats={stats}
+            onExportExcel={handleExportExcel}
+            onOpenScorecardForEntrant={handleOpenScorecardForEntrant}
+            onGoToScorecard={() => setActiveTab('scorecard')}
+          />
+        )}
+
+        {/* All Scores Matrix (Admin Only) */}
+        {isAdmin && activeTab === 'scores' && (
+          <AllScoresMatrix
+            scores={scores}
+            onOpenScorecardForEntrant={handleOpenScorecardForEntrant}
+            onGoToScorecard={() => setActiveTab('scorecard')}
+            onExportExcel={handleExportExcel}
+          />
+        )}
+
+        {/* Admin Control Center (Admin Only) */}
+        {isAdmin && activeTab === 'admin' && (
+          <AdminDashboard
+            scores={scores}
+            rankings={rankings}
+            songs={songs}
+            flags={flags}
+            registeredJudges={registeredJudges}
+            onDeleteScore={handleDeleteScore}
+            onDeleteSong={handleDeleteSong}
+            onDeleteEntrant={handleDeleteEntrant}
+            onRenameEntrant={handleRenameEntrant}
+            onExportExcel={handleExportExcel}
+            adminPin={adminPin}
+            portalPin={portalPin}
+            portalSessionVersion={portalSessionVersion}
+            onLockPortal={handleLockPortal}
+            onUpdateAdminPin={handleUpdateAdminPin}
+            onUpdatePortalPin={handleUpdatePortalPin}
+            onUpdateFlagStatus={handleUpdateFlagStatus}
+            onDeleteFlag={handleDeleteFlag}
+            onAddJudge={handleRegisterJudge}
+            onDeleteJudge={handleDeleteJudge}
+            onSwitchToJudgeMode={handleLockAdmin}
+          />
+        )}
+      </main>
+
+      {/* Admin Unlock PIN Modal */}
+      {isPinModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-150">
+          <div className="w-full max-w-sm bg-white/80 backdrop-blur-xl rounded-3xl border border-white/60 shadow-2xl p-6 text-stone-900">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-10 h-10 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center">
+                <KeyRound className="w-5 h-5" />
+              </div>
+              <button
+                onClick={() => setIsPinModalOpen(false)}
+                className="text-stone-400 hover:text-stone-600 p-1 rounded-lg cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <h3 className="text-lg font-bold text-stone-900">Producer Access</h3>
+            <p className="text-xs text-stone-500 mt-1">
+              Enter your Producer PIN to unlock the live leaderboard, all scores matrix, Excel exports,
+              and contest controls. (Default: <code>1234</code>)
+            </p>
+
+            <form onSubmit={handleUnlockAdmin} className="mt-4 space-y-4">
+              <div>
+                <input
+                  type="password"
+                  maxLength={8}
+                  value={enteredPin}
+                  onChange={(e) => {
+                    setEnteredPin(e.target.value);
+                    setPinError(null);
+                  }}
+                  placeholder="Enter 4-digit PIN"
+                  className="w-full text-center text-xl tracking-widest font-mono py-2.5 px-3 bg-stone-50 border border-stone-300 rounded-xl focus:ring-2 focus:ring-[#0284c7] focus:outline-hidden"
+                  autoFocus
+                />
+                {pinError && (
+                  <p className="text-xs text-rose-600 font-semibold mt-1.5 text-center">
+                    {pinError}
+                  </p>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsPinModalOpen(false)}
+                  className="flex-1 py-2.5 border border-stone-300 rounded-xl text-xs font-bold text-stone-700 hover:bg-stone-50 cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-2.5 bg-[#0284c7] hover:bg-[#0369a1] text-white rounded-xl text-xs font-bold shadow-xs transition-colors cursor-pointer"
+                >
+                  Unlock
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Portal PIN Access Gatekeeper (Configurable by admin) */}
+      <PortalPinModal
+        isOpen={!isPortalPinUnlocked}
+        requiredPin={portalPin}
+        onSuccess={handlePortalPinSuccess}
+      />
+
+      {/* Judge Name Onboarding & Edit Modal */}
+      <JudgeNameModal
+        isOpen={isJudgeNameModalOpen}
+        currentName={currentJudgeName}
+        isInitialRequired={!currentJudgeName}
+        onSave={handleSaveJudgeName}
+        onClose={() => {
+          if (currentJudgeName) {
+            setIsJudgeNameModalOpen(false);
+          }
+        }}
+      />
+
+      {/* Duplicate Upload Modal */}
+      <DuplicateUploadModal
+        isOpen={duplicateModal.isOpen}
+        duplicateSong={duplicateModal.duplicateSong}
+        uploadedFileName={duplicateModal.filename}
+        onConfirmGrade={handleConfirmGradeDuplicate}
+        onClose={() => setDuplicateModal({ isOpen: false, duplicateSong: null })}
+      />
+
+      {/* Confirmation Modal */}
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        detailItems={confirmModal.detailItems}
+        confirmLabel={confirmModal.confirmLabel}
+        isDestructive={confirmModal.isDestructive}
+        isLoading={false}
+        onConfirm={confirmModal.action}
+        onCancel={() => setConfirmModal((prev) => ({ ...prev, isOpen: false }))}
+      />
+
+      {/* Toast Notification Banner */}
+      {toast && (
+        <div className="fixed bottom-5 right-5 z-50 flex items-center gap-3 px-4 py-3 bg-stone-900 text-white rounded-2xl shadow-xl border border-stone-700 animate-in slide-in-from-bottom-5 duration-200 text-xs sm:text-sm">
+          {toast.type === 'success' ? (
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+          ) : toast.type === 'error' ? (
+            <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+          ) : (
+            <div className="w-2 h-2 rounded-full bg-blue-400 shrink-0" />
+          )}
+          <span className="font-medium">{toast.message}</span>
+          <button
+            onClick={() => setToast(null)}
+            className="text-stone-400 hover:text-white p-1 rounded-md cursor-pointer"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
+
+      {/* Footer */}
+      <footer className="relative z-10 border-t border-stone-200/80 bg-white/80 backdrop-blur-md py-4 text-center text-xs text-stone-500">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <div>Summertide Studio Lyric Contest · Producer & Judging System</div>
+          <div className="text-stone-400">
+            Four criteria · Maximum awardable: 100/100 · Automated Standings & Excel Export
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
