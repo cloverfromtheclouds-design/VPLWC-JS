@@ -34,6 +34,15 @@ export interface ContestSettings {
   adminPin: string;
 }
 
+export interface FirebaseStatus {
+  connected: boolean;
+  error?: string | null;
+  source?: string;
+  projectId?: string | null;
+  databaseId?: string;
+  hasApiKey?: boolean;
+}
+
 export interface JudgeScoreSubmission {
   id?: string;
   timestamp: string;

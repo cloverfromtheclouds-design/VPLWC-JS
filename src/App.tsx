@@ -11,6 +11,7 @@ import {
   SongFlag,
   RegisteredJudge,
   FlagReason,
+  FirebaseStatus,
 } from './types/contest';
 import {
   calculateRankings,
@@ -41,6 +42,9 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<'songs' | 'scorecard' | 'rankings' | 'scores' | 'admin'>(
     'songs'
   );
+
+  // Cloud Firebase Status (from /api/sync)
+  const [firebaseStatus, setFirebaseStatus] = useState<FirebaseStatus | null>(null);
 
   // Producer / Admin State (Blind Judging by default)
   const [isAdmin, setIsAdmin] = useState(false);
@@ -227,6 +231,9 @@ export default function App() {
               setPortalSessionVersion(serverVersion);
             }
           }
+        }
+        if (data.firebase) {
+          setFirebaseStatus(data.firebase);
         }
       }
     } catch (err) {
@@ -997,6 +1004,7 @@ export default function App() {
             songs={songs}
             flags={flags}
             registeredJudges={registeredJudges}
+            firebaseStatus={firebaseStatus}
             onDeleteScore={handleDeleteScore}
             onDeleteSong={handleDeleteSong}
             onDeleteEntrant={handleDeleteEntrant}

@@ -1,0 +1,83 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidSong(data) {
+      return data.id is string && data.id.size() <= 128
+        && data.songTitle is string && data.songTitle.size() <= 200
+        && data.addedAt is string && data.addedAt.size() <= 64;
+    }
+
+    function isValidScore(data) {
+      return data.id is string && data.id.size() <= 128
+        && data.judgeName is string && data.judgeName.size() <= 100
+        && data.entrantName is string && data.entrantName.size() <= 200
+        && data.totalScore is number
+        && data.timestamp is string && data.timestamp.size() <= 64;
+    }
+
+    function isValidFlag(data) {
+      return data.id is string && data.id.size() <= 128
+        && data.songTitle is string && data.songTitle.size() <= 200
+        && data.reason is string && data.reason.size() <= 100
+        && data.status is string && data.status.size() <= 50
+        && data.flaggedAt is string && data.flaggedAt.size() <= 64;
+    }
+
+    function isValidJudge(data) {
+      return data.id is string && data.id.size() <= 128
+        && data.name is string && data.name.size() <= 100
+        && data.registeredAt is string && data.registeredAt.size() <= 64
+        && data.lastActiveAt is string && data.lastActiveAt.size() <= 64;
+    }
+
+    function isValidSettings(data) {
+      return data.portalPin is string && data.portalPin.size() <= 20
+        && data.adminPin is string && data.adminPin.size() <= 20
+        && data.portalSessionVersion is number;
+    }
+
+    // Contest Songs
+    match /songs/{songId} {
+      allow read: if true;
+      allow create, update: if isValidId(songId) && isValidSong(request.resource.data);
+      allow delete: if isValidId(songId);
+    }
+
+    // Scores
+    match /scores/{scoreId} {
+      allow read: if true;
+      allow create, update: if isValidId(scoreId) && isValidScore(request.resource.data);
+      allow delete: if isValidId(scoreId);
+    }
+
+    // Flags
+    match /flags/{flagId} {
+      allow read: if true;
+      allow create, update: if isValidId(flagId) && isValidFlag(request.resource.data);
+      allow delete: if isValidId(flagId);
+    }
+
+    // Judges
+    match /judges/{judgeId} {
+      allow read: if true;
+      allow create, update: if isValidId(judgeId) && isValidJudge(request.resource.data);
+      allow delete: if isValidId(judgeId);
+    }
+
+    // Settings
+    match /settings/{settingId} {
+      allow read: if true;
+      allow create, update: if isValidId(settingId) && isValidSettings(request.resource.data);
+      allow delete: if isValidId(settingId);
+    }
+  }
+}

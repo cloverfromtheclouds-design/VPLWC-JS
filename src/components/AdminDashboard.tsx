@@ -24,6 +24,10 @@ import {
   Activity,
   KeyRound,
   RotateCcw,
+  Database,
+  Flame,
+  Cloud,
+  ExternalLink,
 } from 'lucide-react';
 import {
   JudgeScoreSubmission,
@@ -31,6 +35,7 @@ import {
   ContestSongEntry,
   SongFlag,
   RegisteredJudge,
+  FirebaseStatus,
 } from '../types/contest';
 import { JudgeMonitoringBoard } from './JudgeMonitoringBoard';
 
@@ -40,6 +45,7 @@ interface AdminDashboardProps {
   songs?: ContestSongEntry[];
   flags?: SongFlag[];
   registeredJudges?: RegisteredJudge[];
+  firebaseStatus?: FirebaseStatus | null;
   onDeleteScore: (scoreId: string) => void;
   onDeleteEntrant: (entrantName: string) => void;
   onDeleteSong?: (songId: string, songTitle: string, formattedEntrantName?: string) => void;
@@ -65,6 +71,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   songs = [],
   flags = [],
   registeredJudges = [],
+  firebaseStatus,
   onDeleteScore,
   onDeleteEntrant,
   onDeleteSong,
@@ -91,6 +98,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [selectedJudge, setSelectedJudge] = useState<string>('all');
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedPortalPin, setCopiedPortalPin] = useState(false);
+  const [copiedEnvVars, setCopiedEnvVars] = useState(false);
+  const [copiedSingleKey, setCopiedSingleKey] = useState<string | null>(null);
+  const [showRenderGuide, setShowRenderGuide] = useState(true);
 
   // Rename modal state
   const [renamingTarget, setRenamingTarget] = useState<string | null>(null);
@@ -798,6 +808,110 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <Copy className="w-4 h-4" />
                 )}
               </button>
+            </div>
+          </div>
+
+          {/* Firebase & Render Cloud Sync Panel (Zero Disk Cost) */}
+          <div className="bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-sky-500/10 backdrop-blur-md rounded-2xl border border-amber-300/60 p-5 sm:p-6 shadow-sm space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-xs">
+                  <Flame className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-stone-900 flex items-center gap-2">
+                    Firebase Firestore & Render Cloud Storage
+                  </h3>
+                  <p className="text-xs text-stone-500">
+                    Zero-disk architecture: All songs, scores, flags, and PINs persist in Firestore
+                  </p>
+                </div>
+              </div>
+
+              {/* Status Badge */}
+              <div className="flex items-center gap-2">
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
+                  firebaseStatus?.connected
+                    ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                    : 'bg-amber-100 text-amber-800 border border-amber-300'
+                }`}>
+                  <span className={`w-2 h-2 rounded-full ${firebaseStatus?.connected ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
+                  {firebaseStatus?.connected ? 'Connected to Firestore Cloud' : 'Using In-Memory Fallback'}
+                </span>
+              </div>
+            </div>
+
+            {/* Cloud metadata cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="p-3 bg-white/70 rounded-xl border border-white/60">
+                <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider block">Firebase Project</span>
+                <span className="text-xs font-mono font-bold text-stone-800 truncate block">
+                  {firebaseStatus?.projectId || 'supple-hulling-g3kqt'}
+                </span>
+              </div>
+              <div className="p-3 bg-white/70 rounded-xl border border-white/60">
+                <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider block">Firestore Database</span>
+                <span className="text-xs font-mono font-bold text-stone-800 truncate block">
+                  {firebaseStatus?.databaseId || '(default)'}
+                </span>
+              </div>
+              <div className="p-3 bg-white/70 rounded-xl border border-white/60">
+                <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider block">Render Cost Impact</span>
+                <span className="text-xs font-bold text-emerald-700 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  $0 / mo (No Disk Needed)
+                </span>
+              </div>
+            </div>
+
+            {/* Render Deployment Checklist & Copy Button */}
+            <div className="pt-2 border-t border-amber-200/50 space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <h4 className="text-xs sm:text-sm font-bold text-stone-800 flex items-center gap-1.5">
+                    <Cloud className="w-4 h-4 text-sky-600" />
+                    Deploying to Render (Free Tier Without Paid Disk)
+                  </h4>
+                  <p className="text-xs text-stone-600">
+                    Because Render free containers don't have persistent disks, our code now connects directly to Firebase Firestore.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const envText = [
+                      `FIREBASE_PROJECT_ID=supple-hulling-g3kqt`,
+                      `FIREBASE_API_KEY=AIzaSyDfKB90nPzHtpFMarJiPKuxsSTpP7A_L4U`,
+                      `FIREBASE_AUTH_DOMAIN=supple-hulling-g3kqt.firebaseapp.com`,
+                      `FIREBASE_FIRESTORE_DATABASE_ID=ai-studio-remixremixremixr-04e40b5b-d896-4399-b950-5472ce458c40`,
+                      `FIREBASE_STORAGE_BUCKET=supple-hulling-g3kqt.firebasestorage.app`,
+                      `FIREBASE_MESSAGING_SENDER_ID=1038668654986`,
+                      `FIREBASE_APP_ID=1:1038668654986:web:a8bb60c29a8dc63e700073`,
+                      `NODE_ENV=production`,
+                      `PORT=3000`,
+                    ].join('\n');
+                    navigator.clipboard.writeText(envText);
+                    setCopiedEnvVars(true);
+                    setTimeout(() => setCopiedEnvVars(false), 3000);
+                  }}
+                  className="px-3.5 py-1.5 bg-stone-900 hover:bg-stone-800 text-white rounded-xl text-xs font-bold shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer shrink-0"
+                >
+                  {copiedEnvVars ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copiedEnvVars ? 'Copied Render Env Vars!' : 'Copy All Render Env Vars'}</span>
+                </button>
+              </div>
+
+              {/* Step by step accordion */}
+              <div className="bg-white/60 rounded-xl p-3.5 text-xs text-stone-700 space-y-2 border border-white/50">
+                <div className="font-bold text-stone-800">5 Quick Steps to Deploy on Render:</div>
+                <ol className="list-decimal list-inside space-y-1.5 pl-1 leading-relaxed">
+                  <li><strong>Firebase Setup:</strong> Already provisioned and configured. Firestore is active and ready.</li>
+                  <li><strong>Code Updated:</strong> Backend server and storage migrated to Firestore — no local JSON disk required.</li>
+                  <li><strong>Push to GitHub:</strong> Commit and push the updated files to your GitHub repository.</li>
+                  <li><strong>Deploy on Render:</strong> Create a new Web Service connected to your repo. Set <code>Build Command: npm run build</code> and <code>Start Command: npm start</code>.</li>
+                  <li><strong>Add Environment Variables:</strong> In Render's <strong>Environment</strong> tab, paste the Firebase keys (click <em>"Copy All Render Env Vars"</em> above).</li>
+                </ol>
+              </div>
             </div>
           </div>
 

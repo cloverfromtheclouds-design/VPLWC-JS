@@ -1,0 +1,273 @@
+{
+  "entities": {
+    "Song": {
+      "title": "Song",
+      "description": "A lyric contest entry with metadata, lyrics, and optional flags.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the song entry",
+          "maxLength": 128
+        },
+        "songTitle": {
+          "type": "string",
+          "description": "Title of the song submission",
+          "maxLength": 200
+        },
+        "alias": {
+          "type": "string",
+          "description": "Songwriter artist or author alias",
+          "maxLength": 100
+        },
+        "discordUsername": {
+          "type": "string",
+          "description": "Songwriter Discord handle",
+          "maxLength": 100
+        },
+        "storyConcept": {
+          "type": "string",
+          "description": "Story concept or narrative background behind lyrics",
+          "maxLength": 3000
+        },
+        "lyrics": {
+          "type": "string",
+          "description": "Full lyric text of the contest entry",
+          "maxLength": 30000
+        },
+        "formattedEntrantName": {
+          "type": "string",
+          "description": "Formatted entrant display label",
+          "maxLength": 300
+        },
+        "isDisqualified": {
+          "type": "boolean",
+          "description": "Whether the entry has been disqualified"
+        },
+        "addedAt": {
+          "type": "string",
+          "description": "ISO timestamp of when the entry was uploaded",
+          "maxLength": 64
+        },
+        "addedBy": {
+          "type": "string",
+          "description": "Who uploaded or added the entry",
+          "maxLength": 100
+        }
+      },
+      "required": ["id", "songTitle", "addedAt"]
+    },
+    "Score": {
+      "title": "Score",
+      "description": "A score submission from a judge for a specific entrant song.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique ID of the score submission",
+          "maxLength": 128
+        },
+        "judgeName": {
+          "type": "string",
+          "description": "Name of the judging panelist",
+          "maxLength": 100
+        },
+        "entrantName": {
+          "type": "string",
+          "description": "Name of the entrant or song being scored",
+          "maxLength": 200
+        },
+        "songTitle": {
+          "type": "string",
+          "description": "Title of the song scored",
+          "maxLength": 200
+        },
+        "storyScore": {
+          "type": "number",
+          "description": "Story and thematic depth score (1-10)"
+        },
+        "vibeScore": {
+          "type": "number",
+          "description": "Vibe and emotional tone score (1-10)"
+        },
+        "creativityScore": {
+          "type": "number",
+          "description": "Creativity and lyrical craft score (1-10)"
+        },
+        "structureScore": {
+          "type": "number",
+          "description": "Song structure and rhythm score (1-10)"
+        },
+        "vocalFitScore": {
+          "type": "number",
+          "description": "Vocal/musical fit and singability score (1-10)"
+        },
+        "totalScore": {
+          "type": "number",
+          "description": "Total sum or weighted score (5-50)"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Feedback notes or remarks from judge",
+          "maxLength": 5000
+        },
+        "critiqueNotes": {
+          "type": "string",
+          "description": "Detailed constructive critique",
+          "maxLength": 5000
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "ISO timestamp of the score submission",
+          "maxLength": 64
+        }
+      },
+      "required": ["id", "judgeName", "entrantName", "totalScore", "timestamp"]
+    },
+    "Flag": {
+      "title": "Flag",
+      "description": "A reported rule violation or concern for a song entry.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique flag identifier",
+          "maxLength": 128
+        },
+        "songId": {
+          "type": "string",
+          "description": "ID of the flagged song",
+          "maxLength": 128
+        },
+        "songTitle": {
+          "type": "string",
+          "description": "Title of the flagged song",
+          "maxLength": 200
+        },
+        "entrantName": {
+          "type": "string",
+          "description": "Entrant name of the flagged song",
+          "maxLength": 200
+        },
+        "flaggedBy": {
+          "type": "string",
+          "description": "Name of judge or reviewer who raised the flag",
+          "maxLength": 100
+        },
+        "reason": {
+          "type": "string",
+          "description": "Category key of violation",
+          "maxLength": 100
+        },
+        "reasonLabel": {
+          "type": "string",
+          "description": "Human-readable violation description",
+          "maxLength": 200
+        },
+        "notes": {
+          "type": "string",
+          "description": "Specific rationale or timestamp details",
+          "maxLength": 3000
+        },
+        "flaggedAt": {
+          "type": "string",
+          "description": "ISO timestamp of when the flag was raised",
+          "maxLength": 64
+        },
+        "status": {
+          "type": "string",
+          "description": "Resolution status: pending_review, cleared, or disqualified",
+          "maxLength": 50
+        },
+        "reviewedBy": {
+          "type": "string",
+          "description": "Producer who resolved the flag",
+          "maxLength": 100
+        },
+        "reviewedAt": {
+          "type": "string",
+          "description": "ISO timestamp of resolution",
+          "maxLength": 64
+        }
+      },
+      "required": ["id", "songTitle", "reason", "flaggedAt", "status"]
+    },
+    "Judge": {
+      "title": "Judge",
+      "description": "A registered contest judge actively scoring entries.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique judge ID",
+          "maxLength": 128
+        },
+        "name": {
+          "type": "string",
+          "description": "Screen name or alias of the judge",
+          "maxLength": 100
+        },
+        "registeredAt": {
+          "type": "string",
+          "description": "ISO timestamp of registration",
+          "maxLength": 64
+        },
+        "lastActiveAt": {
+          "type": "string",
+          "description": "ISO timestamp of latest activity",
+          "maxLength": 64
+        }
+      },
+      "required": ["id", "name", "registeredAt", "lastActiveAt"]
+    },
+    "Settings": {
+      "title": "Settings",
+      "description": "Contest access PINs and remote lock configuration.",
+      "type": "object",
+      "properties": {
+        "portalPin": {
+          "type": "string",
+          "description": "4-digit portal access code for judges",
+          "maxLength": 20
+        },
+        "adminPin": {
+          "type": "string",
+          "description": "Producer/Admin passkey",
+          "maxLength": 20
+        },
+        "portalSessionVersion": {
+          "type": "number",
+          "description": "Version counter for remote session invalidation"
+        },
+        "lockedAt": {
+          "type": "string",
+          "description": "ISO timestamp when emergency lock was activated",
+          "maxLength": 64
+        }
+      },
+      "required": ["portalPin", "adminPin", "portalSessionVersion"]
+    }
+  },
+  "firestore": {
+    "/songs/{songId}": {
+      "schema": "Song",
+      "description": "Collection of all song entries submitted to the contest"
+    },
+    "/scores/{scoreId}": {
+      "schema": "Score",
+      "description": "Collection of judge scorecards and evaluations"
+    },
+    "/flags/{flagId}": {
+      "schema": "Flag",
+      "description": "Collection of contest flags and violation reports"
+    },
+    "/judges/{judgeId}": {
+      "schema": "Judge",
+      "description": "Collection of active registered judges"
+    },
+    "/settings/{settingId}": {
+      "schema": "Settings",
+      "description": "Contest settings document containing PINs and portal locks"
+    }
+  }
+}
