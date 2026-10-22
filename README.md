@@ -38,7 +38,7 @@ git push origin main
    - **Name**: `summertide-lyric-contest` (or your preferred name)
    - **Environment**: `Node`
    - **Branch**: `main`
-   - **Build Command**: `npm run build`
+   - **Build Command**: `npm install && npm run build`
    - **Start Command**: `npm start`
    - **Plan**: Free
 

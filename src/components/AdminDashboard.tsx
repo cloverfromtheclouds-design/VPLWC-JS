@@ -908,7 +908,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <li><strong>Firebase Setup:</strong> Already provisioned and configured. Firestore is active and ready.</li>
                   <li><strong>Code Updated:</strong> Backend server and storage migrated to Firestore — no local JSON disk required.</li>
                   <li><strong>Push to GitHub:</strong> Commit and push the updated files to your GitHub repository.</li>
-                  <li><strong>Deploy on Render:</strong> Create a new Web Service connected to your repo. Set <code>Build Command: npm run build</code> and <code>Start Command: npm start</code>.</li>
+                  <li><strong>Deploy on Render:</strong> Create a new Web Service connected to your repo. Set <code>Build Command: npm install && npm run build</code> and <code>Start Command: npm start</code>.</li>
                   <li><strong>Add Environment Variables:</strong> In Render's <strong>Environment</strong> tab, paste the Firebase keys (click <em>"Copy All Render Env Vars"</em> above).</li>
                 </ol>
               </div>
