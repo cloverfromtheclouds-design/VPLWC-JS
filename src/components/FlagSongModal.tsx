@@ -7,9 +7,8 @@ import {
   CopyCheck,
   X,
   ShieldAlert,
-  ArrowRight,
 } from 'lucide-react';
-import { FlagReason, SongFlag } from '../types/contest';
+import { FlagReason } from '../types/contest';
 
 interface FlagSongModalProps {
   isOpen: boolean;
@@ -23,46 +22,37 @@ interface FlagSongModalProps {
 const REASONS: {
   key: FlagReason;
   label: string;
-  description: string;
+  shortLabel: string;
+  hint: string;
   icon: React.ComponentType<{ className?: string }>;
-  color: string;
-  badgeBg: string;
 }[] = [
   {
     key: 'ai_generated',
     label: 'Suspicious of AI Generated',
-    description:
-      'Unnatural cadence, formulaic rhyming schemes, robotic artifacts, or unauthorized generative AI tool usage.',
+    shortLabel: 'AI Generated',
+    hint: 'Unnatural cadence, formulaic rhyming schemes, or bot artifacts.',
     icon: Bot,
-    color: 'text-purple-600',
-    badgeBg: 'bg-purple-50 border-purple-200 text-purple-700',
   },
   {
     key: 'inappropriate',
     label: 'Inappropriate or Explicit',
-    description:
-      'Contains offensive, sexually explicit, hateful, or excessively vulgar content violating community standards.',
+    shortLabel: 'Inappropriate',
+    hint: 'Offensive, vulgar, hateful, or sexually explicit content.',
     icon: Ban,
-    color: 'text-rose-600',
-    badgeBg: 'bg-rose-50 border-rose-200 text-rose-700',
   },
   {
     key: 'plagiarism',
     label: 'Potential Plagiarism',
-    description:
-      'Uncredited copying of existing published lyrics, copyrighted song reproduction, or intellectual property theft.',
+    shortLabel: 'Plagiarism',
+    hint: 'Copying published lyrics, uncredited lyrics, or theft.',
     icon: CopyCheck,
-    color: 'text-amber-600',
-    badgeBg: 'bg-amber-50 border-amber-200 text-amber-700',
   },
   {
     key: 'other',
     label: 'Other Rule Violation',
-    description:
-      'Violates contest submission terms, word count limits, ineligible language, or other specific guidelines.',
+    shortLabel: 'Other Violation',
+    hint: 'Exceeds limits, ineligible language, or general guidelines.',
     icon: Flag,
-    color: 'text-stone-600',
-    badgeBg: 'bg-stone-50 border-stone-200 text-stone-700',
   },
 ];
 
@@ -94,23 +84,19 @@ export const FlagSongModal: React.FC<FlagSongModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-md animate-in fade-in duration-150">
-      <div className="w-full max-w-lg bg-white/75 backdrop-blur-xl rounded-3xl border border-white/60 shadow-2xl p-6 sm:p-7 text-stone-900 relative overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/60 backdrop-blur-xs animate-in fade-in duration-100">
+      <div className="w-full max-w-sm sm:max-w-md bg-white rounded-2xl border border-stone-200 shadow-2xl p-4 sm:p-5 text-stone-900 relative">
         {/* Accent Top Border */}
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-rose-500 via-amber-500 to-purple-600" />
+        <div className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl bg-gradient-to-r from-rose-500 via-amber-500 to-purple-600" />
 
-        {/* Header */}
-        <div className="flex items-start justify-between gap-4 mb-3">
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-rose-100 text-rose-700 flex items-center justify-center shadow-xs shrink-0">
-              <ShieldAlert className="w-6 h-6" />
+        {/* Compact Header */}
+        <div className="flex items-center justify-between gap-2 mb-2.5">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center shrink-0">
+              <ShieldAlert className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-[11px] font-bold text-rose-700 uppercase tracking-wider flex items-center gap-1">
-                <AlertTriangle className="w-3.5 h-3.5" />
-                <span>Rule Enforcement</span>
-              </div>
-              <h3 className="text-xl font-black text-stone-900 tracking-tight leading-snug">
+              <h3 className="text-sm sm:text-base font-bold text-stone-900 leading-tight">
                 Flag Entry & Abort Scoring
               </h3>
             </div>
@@ -119,32 +105,31 @@ export const FlagSongModal: React.FC<FlagSongModalProps> = ({
           <button
             onClick={onClose}
             disabled={isSubmitting}
-            className="text-stone-400 hover:text-stone-600 p-1 rounded-xl hover:bg-stone-100 transition-colors cursor-pointer"
+            className="text-stone-400 hover:text-stone-600 p-1 rounded-lg hover:bg-stone-100 transition-colors cursor-pointer"
             title="Cancel"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Target Song Info */}
-        <div className="p-3 bg-stone-50 rounded-2xl border border-stone-200 mb-4 text-xs">
-          <span className="text-stone-500">Flagging submission: </span>
-          <strong className="text-stone-900 text-sm block mt-0.5 font-bold">
+        {/* Target Song Info - Compact Single Line */}
+        <div className="px-2.5 py-1.5 bg-stone-100 rounded-xl text-xs flex items-center gap-1.5 text-stone-600 mb-3 truncate">
+          <span className="text-stone-400 shrink-0">Song:</span>
+          <span className="font-bold text-stone-900 truncate">
             {songTitle || entrantName || 'Contest Entry'}
-          </strong>
+          </span>
           {entrantName && entrantName !== songTitle && (
-            <span className="text-stone-500 block text-[11px] truncate mt-0.5">
-              Entrant: {entrantName}
-            </span>
+            <span className="text-stone-400 truncate text-[11px]">({entrantName})</span>
           )}
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
+          {/* Reason Selector (Compact 2x2 Grid) */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-2">
-              Select Violation Reason <span className="text-rose-600">*</span>
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-600 mb-1.5">
+              Reason <span className="text-rose-600">*</span>
             </label>
-            <div className="space-y-2">
+            <div className="grid grid-cols-2 gap-1.5">
               {REASONS.map((r) => {
                 const IconComponent = r.icon;
                 const isSelected = selectedReason === r.key;
@@ -153,75 +138,67 @@ export const FlagSongModal: React.FC<FlagSongModalProps> = ({
                     key={r.key}
                     type="button"
                     onClick={() => setSelectedReason(r.key)}
-                    className={`w-full text-left p-3 rounded-2xl border transition-all flex items-start gap-3 cursor-pointer ${
+                    className={`px-2.5 py-2 rounded-xl border text-left flex items-center gap-2 transition-all cursor-pointer ${
                       isSelected
-                        ? 'border-rose-400 bg-rose-50/80 shadow-xs ring-2 ring-rose-300/60'
-                        : 'border-stone-200 hover:bg-stone-50 bg-white'
+                        ? 'border-rose-400 bg-rose-50 text-rose-900 font-bold ring-1 ring-rose-300'
+                        : 'border-stone-200 bg-white hover:bg-stone-50 text-stone-700'
                     }`}
                   >
-                    <div
-                      className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${
-                        isSelected ? 'bg-rose-600 text-white' : 'bg-stone-100 text-stone-600'
+                    <IconComponent
+                      className={`w-3.5 h-3.5 shrink-0 ${
+                        isSelected ? 'text-rose-600' : 'text-stone-400'
                       }`}
-                    >
-                      <IconComponent className="w-4 h-4" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-xs text-stone-900">{r.label}</span>
-                        {isSelected && (
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-rose-700 bg-rose-100 px-2 py-0.5 rounded-full">
-                            Selected
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-[11px] text-stone-500 mt-0.5 leading-relaxed">
-                        {r.description}
-                      </p>
-                    </div>
+                    />
+                    <span className="text-xs truncate">{r.shortLabel}</span>
                   </button>
                 );
               })}
             </div>
+            {/* 1-line subtle description for active selection */}
+            <p className="text-[11px] text-stone-500 mt-1.5 leading-snug truncate">
+              {currentReasonObj.hint}
+            </p>
           </div>
 
+          {/* Observations Textarea */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1.5">
-              Observations / Evidence{' '}
-              <span className="text-stone-400 font-normal lowercase">(recommended)</span>
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-stone-600 mb-1">
+              Notes <span className="text-stone-400 font-normal lowercase">(optional)</span>
             </label>
             <textarea
               rows={2}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="e.g. Lines 4-8 match an existing 2019 pop ballad, or lyrics display obvious repetitive GPT cadence..."
-              className="w-full px-3.5 py-2.5 rounded-2xl border border-stone-300 text-xs sm:text-sm text-stone-900 placeholder:text-stone-400 focus:outline-hidden focus:ring-2 focus:ring-rose-500 transition-all"
+              placeholder="e.g. Suspicious robotic cadence or specific uncredited lines..."
+              className="w-full px-3 py-1.5 rounded-xl border border-stone-300 text-xs text-stone-900 placeholder:text-stone-400 focus:outline-hidden focus:ring-2 focus:ring-rose-500 transition-all resize-none"
             />
           </div>
 
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3 text-[11px] text-amber-900 leading-relaxed">
-            <strong>What happens next:</strong> Scoring for this song will be aborted and marked as{' '}
-            <span className="font-bold text-rose-700">Flagged</span> under your name (
-            <em>{judgeName || 'Judge'}</em>). Contest producers will review the lyrics in the Admin
-            Control Center to determine formal disqualification or clearance.
+          {/* Compact Notice */}
+          <div className="bg-amber-50/80 border border-amber-200 rounded-xl px-2.5 py-1.5 text-[11px] text-amber-900 flex items-center gap-1.5">
+            <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+            <span className="truncate">
+              Scoring will abort; entry flagged by <strong>{judgeName || 'Judge'}</strong> for Admin review.
+            </span>
           </div>
 
-          <div className="flex items-center justify-end gap-2.5 pt-2">
+          {/* Actions */}
+          <div className="flex items-center justify-end gap-2 pt-1">
             <button
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="px-4 py-2.5 border border-stone-300 text-xs font-bold text-stone-700 rounded-xl hover:bg-stone-50 cursor-pointer transition-colors"
+              className="px-3 py-1.5 border border-stone-300 text-xs font-semibold text-stone-700 rounded-xl hover:bg-stone-50 cursor-pointer transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-5 py-2.5 bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-700 hover:to-rose-800 text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              className="px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
             >
               <Flag className="w-3.5 h-3.5" />
-              <span>{isSubmitting ? 'Logging Flag...' : 'Confirm Flag & Abort'}</span>
+              <span>{isSubmitting ? 'Flagging...' : 'Confirm Flag & Abort'}</span>
             </button>
           </div>
         </form>

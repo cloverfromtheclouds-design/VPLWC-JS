@@ -28,7 +28,7 @@ interface JudgeMonitoringBoardProps {
   songs: ContestSongEntry[];
   registeredJudges?: RegisteredJudge[];
   onAddJudge?: (name: string) => Promise<void>;
-  onDeleteJudge?: (nameOrId: string) => Promise<void>;
+  onDeleteJudge?: (nameOrId: string) => void | Promise<void>;
   onViewJudgeScores?: (judgeName: string) => void;
 }
 
@@ -496,8 +496,8 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
                     {onDeleteJudge && (
                       <button
                         onClick={() => onDeleteJudge(judge.name)}
-                        className="p-2 text-stone-300 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
-                        title="Remove judge from roster"
+                        className="p-2 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
+                        title={`Delete Judge "${judge.name}" and remove all their scorecards`}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>

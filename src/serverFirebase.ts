@@ -342,9 +342,42 @@ export async function upsertJudge(judge: any): Promise<void> {
   await setDoc(judgeDocRef, judge, { merge: true });
 }
 
-export async function removeJudge(judgeId: string): Promise<void> {
+export async function removeJudgeByNameOrId(
+  target: string
+): Promise<{ deletedJudges: string[]; deletedScores: string[] }> {
   if (!firestoreDb) throw new Error('Firestore not initialized');
-  await deleteDoc(doc(firestoreDb, 'judges', judgeId));
+  const targetLower = target.trim().toLowerCase();
+
+  // 1. Delete matching documents from judges collection
+  const judgeSnapshot = await getDocs(collection(firestoreDb, 'judges'));
+  const deletedJudges: string[] = [];
+  for (const docSnap of judgeSnapshot.docs) {
+    const data = docSnap.data();
+    const docId = docSnap.id.toLowerCase();
+    const judgeName = (data.name || '').trim().toLowerCase();
+    if (docId === targetLower || judgeName === targetLower) {
+      await deleteDoc(doc(firestoreDb, 'judges', docSnap.id));
+      deletedJudges.push(docSnap.id);
+    }
+  }
+
+  // 2. Also delete all scores submitted by this judge from scores collection
+  const scoreSnapshot = await getDocs(collection(firestoreDb, 'scores'));
+  const deletedScores: string[] = [];
+  for (const docSnap of scoreSnapshot.docs) {
+    const data = docSnap.data();
+    const judgeName = (data.judgeName || '').trim().toLowerCase();
+    if (judgeName === targetLower) {
+      await deleteDoc(doc(firestoreDb, 'scores', docSnap.id));
+      deletedScores.push(docSnap.id);
+    }
+  }
+
+  return { deletedJudges, deletedScores };
+}
+
+export async function removeJudge(judgeIdOrName: string): Promise<void> {
+  await removeJudgeByNameOrId(judgeIdOrName);
 }
 
 // 5. Settings

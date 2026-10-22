@@ -60,7 +60,7 @@ interface AdminDashboardProps {
   onUpdateFlagStatus?: (flagId: string, status: 'disqualified' | 'cleared') => Promise<void>;
   onDeleteFlag?: (flagId: string) => Promise<void>;
   onAddJudge?: (name: string) => Promise<void>;
-  onDeleteJudge?: (name: string) => Promise<void>;
+  onDeleteJudge?: (name: string) => void | Promise<void>;
   onSwitchToJudgeMode: () => void;
   onUploadSongTxt?: (file: File) => void;
 }

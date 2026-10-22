@@ -19,6 +19,7 @@ import {
   fetchAllJudges,
   upsertJudge,
   removeJudge,
+  removeJudgeByNameOrId,
   fetchSettings,
   saveSettings,
 } from './src/serverFirebase.ts';
@@ -585,23 +586,33 @@ app.post('/api/judges', async (req, res) => {
 
 app.delete('/api/judges/:name', async (req, res) => {
   const target = decodeURIComponent(req.params.name).trim().toLowerCase();
-  const removed = memoryCache.judges.find(
-    (j) => (j.id && j.id.toLowerCase() === target) || j.name.trim().toLowerCase() === target
-  );
 
-  memoryCache.judges = memoryCache.judges.filter(
-    (j) => (j.id && j.id.toLowerCase() === target) || j.name.trim().toLowerCase() !== target
+  // 1. Remove from memoryCache.judges
+  const removedJudges = memoryCache.judges.filter(
+    (j) => (j.id && j.id.toLowerCase() === target) || (j.name && j.name.trim().toLowerCase() === target)
   );
+  memoryCache.judges = memoryCache.judges.filter((j) => !removedJudges.includes(j));
 
-  if (removed?.id) {
-    try {
-      await removeJudge(removed.id);
-    } catch (err) {
-      console.error('[Firebase] Error removing judge from Firestore:', err);
-    }
+  // 2. Also remove all scorecards submitted by this judge from memoryCache.scores
+  const removedScores = memoryCache.scores.filter(
+    (sc) => sc.judgeName && sc.judgeName.trim().toLowerCase() === target
+  );
+  memoryCache.scores = memoryCache.scores.filter((sc) => !removedScores.includes(sc));
+
+  // 3. Purge from Firestore (both judges and scores collections)
+  try {
+    await removeJudgeByNameOrId(target);
+  } catch (err) {
+    console.error('[Firebase] Error removing judge and scores from Firestore:', err);
   }
 
-  res.json({ success: true, judges: memoryCache.judges });
+  res.json({
+    success: true,
+    judges: memoryCache.judges,
+    scores: memoryCache.scores,
+    removedJudgeCount: removedJudges.length,
+    removedScoreCount: removedScores.length,
+  });
 });
 
 // 6. Flags & Rule Violations API

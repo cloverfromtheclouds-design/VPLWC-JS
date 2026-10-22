@@ -363,26 +363,91 @@ export default function App() {
     }
   };
 
-  const handleDeleteJudge = async (nameOrId: string) => {
-    setRegisteredJudges((prev) =>
-      prev.filter((j) => j.id !== nameOrId && j.name.toLowerCase() !== nameOrId.toLowerCase())
+  const handleDeleteJudge = (nameOrId: string) => {
+    const judgeScores = scores.filter(
+      (s) => s.judgeName && s.judgeName.trim().toLowerCase() === nameOrId.trim().toLowerCase()
     );
 
-    try {
-      const res = await apiFetch(`/api/judges/${encodeURIComponent(nameOrId)}`, {
-        method: 'DELETE',
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (Array.isArray(data.judges)) {
-          setRegisteredJudges(data.judges);
-          localStorage.setItem('summertide_registered_judges', JSON.stringify(data.judges));
+    setConfirmModal({
+      isOpen: true,
+      title: `Delete Judge "${nameOrId}"?`,
+      message: `Are you sure you want to remove Judge "${nameOrId}" from the contest?`,
+      detailItems:
+        judgeScores.length > 0
+          ? [
+              `${judgeScores.length} scorecard${judgeScores.length === 1 ? '' : 's'} submitted by this judge will be permanently deleted.`,
+              'Contest rankings, criteria averages, and standings will recalculate automatically.',
+              'This judge will be removed from the monitoring board and cloud database.',
+              'This action cannot be undone.',
+            ]
+          : [
+              'This judge has not submitted any scorecards yet.',
+              'They will be permanently removed from the monitoring roster and database.',
+            ],
+      confirmLabel: judgeScores.length > 0 ? 'Delete Judge & Scorecards' : 'Delete Judge',
+      isDestructive: true,
+      action: async () => {
+        // 1. Optimistically remove judge from registeredJudges
+        setRegisteredJudges((prev) =>
+          prev.filter((j) => j.id !== nameOrId && j.name.toLowerCase() !== nameOrId.toLowerCase())
+        );
+
+        // 2. Optimistically remove all scorecards submitted by this judge from scores
+        setScores((prev) =>
+          prev.filter((s) => s.judgeName && s.judgeName.trim().toLowerCase() !== nameOrId.trim().toLowerCase())
+        );
+
+        // 3. If deleted judge is the current session judge, clear session name
+        if (currentJudgeName && currentJudgeName.trim().toLowerCase() === nameOrId.trim().toLowerCase()) {
+          setCurrentJudgeName('');
+          localStorage.removeItem('summertide_judge_name');
         }
-      }
-    } catch (e) {
-      console.error('Failed to remove judge on server:', e);
-    }
-    showToast(`Removed judge "${nameOrId}" from monitoring roster.`, 'info');
+
+        // 4. Update localStorage immediately
+        try {
+          const updatedJudges = registeredJudges.filter(
+            (j) => j.id !== nameOrId && j.name.toLowerCase() !== nameOrId.toLowerCase()
+          );
+          const updatedScores = scores.filter(
+            (s) => s.judgeName && s.judgeName.trim().toLowerCase() !== nameOrId.trim().toLowerCase()
+          );
+          localStorage.setItem('summertide_registered_judges', JSON.stringify(updatedJudges));
+          localStorage.setItem('summertide_contest_scores', JSON.stringify(updatedScores));
+        } catch (e) {
+          console.error('LocalStorage write error:', e);
+        }
+
+        // Close modal
+        setConfirmModal((prev) => ({ ...prev, isOpen: false }));
+
+        // 5. Call server to delete from memoryCache and Firestore
+        try {
+          const res = await apiFetch(`/api/judges/${encodeURIComponent(nameOrId)}`, {
+            method: 'DELETE',
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data.judges)) {
+              setRegisteredJudges(data.judges);
+              localStorage.setItem('summertide_registered_judges', JSON.stringify(data.judges));
+            }
+            if (Array.isArray(data.scores)) {
+              setScores(data.scores);
+              localStorage.setItem('summertide_contest_scores', JSON.stringify(data.scores));
+            }
+          }
+        } catch (e) {
+          console.error('Failed to remove judge on server:', e);
+        }
+
+        showToast(
+          judgeScores.length > 0
+            ? `Deleted Judge "${nameOrId}" and ${judgeScores.length} scorecard${judgeScores.length === 1 ? '' : 's'}.`
+            : `Deleted Judge "${nameOrId}" from contest.`,
+          'info'
+        );
+      },
+    });
   };
 
   // Handle saving / updating judge identity
