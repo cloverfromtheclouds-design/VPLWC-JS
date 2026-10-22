@@ -35,6 +35,14 @@ export interface ContestSettings {
   lockedAt?: string | null;
 }
 
+function cleanEnv(val: string | undefined): string | undefined {
+  if (!val) return undefined;
+  const trimmed = val.trim();
+  // Strip surrounding quotes if user copied them from .env.example
+  const unquoted = trimmed.replace(/^["']|["']$/g, '').trim();
+  return unquoted || undefined;
+}
+
 /**
  * Resolves Firebase configuration:
  * 1. Checks local provisioned firebase-applet-config.json first (source of truth for provisioned applet).
@@ -42,7 +50,67 @@ export interface ContestSettings {
  * 3. Checks individual environment variables (for Render deployment when files are not committed).
  */
 export function getFirebaseConfig(): { config: FirebaseConfig | null; source: string } {
-  // 1. Check local provisioned firebase-applet-config.json (Highest priority in local/preview)
+  // 1. Check for single JSON environment variable (Useful for Render dashboard single-string paste)
+  if (process.env.FIREBASE_CONFIG) {
+    try {
+      const parsed = JSON.parse(cleanEnv(process.env.FIREBASE_CONFIG) || '{}');
+      if (parsed.projectId && parsed.apiKey) {
+        return {
+          config: {
+            projectId: cleanEnv(parsed.projectId)!,
+            apiKey: cleanEnv(parsed.apiKey)!,
+            authDomain: cleanEnv(parsed.authDomain),
+            firestoreDatabaseId: cleanEnv(parsed.firestoreDatabaseId),
+            storageBucket: cleanEnv(parsed.storageBucket),
+            messagingSenderId: cleanEnv(parsed.messagingSenderId),
+            appId: cleanEnv(parsed.appId),
+          },
+          source: 'process.env.FIREBASE_CONFIG',
+        };
+      }
+    } catch (e) {
+      console.warn('[Firebase] Warning: Failed to parse FIREBASE_CONFIG env var as JSON:', e);
+    }
+  }
+
+  // 2. Check individual environment variables (Render Dashboard Environment Variables)
+  const envProjectId = cleanEnv(
+    process.env.FIREBASE_PROJECT_ID ||
+    process.env.VITE_FIREBASE_PROJECT_ID ||
+    process.env.PROJECT_ID
+  );
+
+  const envApiKey = cleanEnv(
+    process.env.FIREBASE_API_KEY ||
+    process.env.VITE_FIREBASE_API_KEY ||
+    process.env.API_KEY
+  );
+
+  // If user provided custom env vars on Render (and not the unconfigured default container project)
+  if (envProjectId && envApiKey && envProjectId !== 'smtstdvplwc') {
+    const config: FirebaseConfig = {
+      projectId: envProjectId,
+      apiKey: envApiKey,
+      authDomain:
+        cleanEnv(process.env.FIREBASE_AUTH_DOMAIN || process.env.VITE_FIREBASE_AUTH_DOMAIN) ||
+        `${envProjectId}.firebaseapp.com`,
+      firestoreDatabaseId: cleanEnv(
+        process.env.FIREBASE_FIRESTORE_DATABASE_ID ||
+        process.env.VITE_FIREBASE_DATABASE_ID ||
+        process.env.FIRESTORE_DATABASE_ID
+      ),
+      storageBucket:
+        cleanEnv(process.env.FIREBASE_STORAGE_BUCKET || process.env.VITE_FIREBASE_STORAGE_BUCKET) ||
+        `${envProjectId}.firebasestorage.app`,
+      messagingSenderId: cleanEnv(
+        process.env.FIREBASE_MESSAGING_SENDER_ID || process.env.VITE_FIREBASE_MESSAGING_SENDER_ID
+      ),
+      appId: cleanEnv(process.env.FIREBASE_APP_ID || process.env.VITE_FIREBASE_APP_ID),
+    };
+    return { config, source: 'process.env (Render environment variables)' };
+  }
+
+  // 3. Check local provisioned firebase-applet-config.json (Highest priority in local/preview)
   const configLocations = [
     path.resolve(process.cwd(), 'firebase-applet-config.json'),
     path.resolve(__dirname, '..', 'firebase-applet-config.json'),
@@ -60,56 +128,6 @@ export function getFirebaseConfig(): { config: FirebaseConfig | null; source: st
     } catch (e) {
       console.warn(`[Firebase] Could not read ${loc}:`, e);
     }
-  }
-
-  // 2. Check for single JSON environment variable (Useful for Render dashboard single-string paste)
-  if (process.env.FIREBASE_CONFIG) {
-    try {
-      const parsed = JSON.parse(process.env.FIREBASE_CONFIG);
-      if (parsed.projectId && parsed.apiKey) {
-        return { config: parsed, source: 'process.env.FIREBASE_CONFIG' };
-      }
-    } catch (e) {
-      console.warn('[Firebase] Warning: Failed to parse FIREBASE_CONFIG env var as JSON:', e);
-    }
-  }
-
-  // 3. Check for individual environment variables (Render Dashboard Environment Variables)
-  const envProjectId =
-    process.env.FIREBASE_PROJECT_ID ||
-    process.env.VITE_FIREBASE_PROJECT_ID ||
-    process.env.PROJECT_ID;
-
-  const envApiKey =
-    process.env.FIREBASE_API_KEY ||
-    process.env.VITE_FIREBASE_API_KEY ||
-    process.env.API_KEY;
-
-  // Ignore default container project placeholder if it has not been configured
-  if (envProjectId && envApiKey && envProjectId !== 'smtstdvplwc') {
-    const config: FirebaseConfig = {
-      projectId: envProjectId,
-      apiKey: envApiKey,
-      authDomain:
-        process.env.FIREBASE_AUTH_DOMAIN ||
-        process.env.VITE_FIREBASE_AUTH_DOMAIN ||
-        `${envProjectId}.firebaseapp.com`,
-      firestoreDatabaseId:
-        process.env.FIREBASE_FIRESTORE_DATABASE_ID ||
-        process.env.VITE_FIREBASE_DATABASE_ID ||
-        process.env.FIRESTORE_DATABASE_ID,
-      storageBucket:
-        process.env.FIREBASE_STORAGE_BUCKET ||
-        process.env.VITE_FIREBASE_STORAGE_BUCKET ||
-        `${envProjectId}.firebasestorage.app`,
-      messagingSenderId:
-        process.env.FIREBASE_MESSAGING_SENDER_ID ||
-        process.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-      appId:
-        process.env.FIREBASE_APP_ID ||
-        process.env.VITE_FIREBASE_APP_ID,
-    };
-    return { config, source: 'process.env (individual variables)' };
   }
 
   return { config: null, source: 'none' };
@@ -133,9 +151,14 @@ export async function initializeFirestore(): Promise<{
   activeConfig = config;
   activeSource = source;
 
+  console.log('[Firebase] Resolving configuration from:', source);
+  if (config) {
+    console.log(`[Firebase] Project: "${config.projectId}", Database: "${config.firestoreDatabaseId || '(default)'}", Key Present: ${!!config.apiKey}`);
+  }
+
   if (!config) {
     const msg =
-      'No Firebase credentials found. Please set FIREBASE_PROJECT_ID and FIREBASE_API_KEY environment variables on Render, or provide firebase-applet-config.json.';
+      'No Firebase credentials found. Please set FIREBASE_PROJECT_ID and FIREBASE_API_KEY environment variables in your Render Dashboard, or commit firebase-applet-config.json.';
     console.warn(`[Firebase] ${msg}`);
     connectionError = msg;
     isConnected = false;

@@ -766,12 +766,19 @@ app.get('/api/firebase/status', (req, res) => {
   });
 });
 
+// Health check endpoints for Render and uptime monitoring
+app.get('/health', (req, res) => res.status(200).send('OK'));
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+    firebase: getFirebaseStatus(),
+  });
+});
+
 // Vite middleware integration for Full-Stack setup
 async function startServer() {
-  console.log('[Server] Initializing Firebase Firestore connection...');
-  await initializeFirestore();
-  await syncFromFirestore();
-
   const distPath = path.resolve(__dirname, 'dist');
   const hasDist = fs.existsSync(distPath);
   const isProduction =
@@ -795,10 +802,21 @@ async function startServer() {
     }
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Summertide Lyric Contest Server listening on port ${PORT}`);
-    const fb = getFirebaseStatus();
-    console.log(`[Storage] Database Engine: ${fb.connected ? '🔥 Firebase Firestore (Cloud)' : '⚠️ In-Memory Fallback'}`);
+  // Bind to port immediately so Render health checks pass without delay
+  app.listen(PORT, '0.0.0.0', async () => {
+    console.log(`[Server] Summertide Lyric Contest Server listening on port ${PORT} (0.0.0.0)`);
+    console.log(`[Server] Mode: ${isProduction ? 'Production' : 'Development'}`);
+
+    // Asynchronously connect to Firebase Firestore so server boot never hangs
+    try {
+      console.log('[Server] Connecting to Firebase Firestore...');
+      await initializeFirestore();
+      await syncFromFirestore();
+      const fb = getFirebaseStatus();
+      console.log(`[Storage] Database Engine: ${fb.connected ? '🔥 Firebase Firestore (Cloud)' : '⚠️ In-Memory Fallback'}`);
+    } catch (fbErr: any) {
+      console.error('[Firebase] Startup connection warning (continuing with memory cache):', fbErr?.message || fbErr);
+    }
   });
 }
 
