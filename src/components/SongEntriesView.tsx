@@ -10,7 +10,6 @@ import {
   Trash2,
   FileText,
   Sliders,
-  Sparkles,
   ExternalLink,
   ChevronRight,
   User,
@@ -22,6 +21,8 @@ import {
   ShieldAlert,
   Flag,
 } from 'lucide-react';
+import { SummertideFlowerLogo } from './SummertideFlowerLogo';
+import { HibiscusInlay } from './HibiscusInlay';
 import { ContestSongEntry, JudgeScoreSubmission, SongFlag } from '../types/contest';
 import { parseLyricSubmission } from '../utils/lyricParser';
 
@@ -229,11 +230,11 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Top Banner with Circular Progress Bar */}
-      <div className="bg-white/70 backdrop-blur-md rounded-3xl border border-white/60 shadow-xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="bg-gradient-to-b from-white/80 via-white/70 to-white/60 backdrop-blur-2xl rounded-3xl border border-white/90 shadow-[0_20px_50px_rgba(255,20,147,0.08),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex-1 text-center md:text-left">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-sky-50/90 text-[#0284c7] border border-sky-200/80 mb-2">
-            <Music className="w-3.5 h-3.5" />
-            Contest Submissions & Judging Queue
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-pink-50/90 text-pink-700 border border-pink-200/90 mb-2 shadow-2xs">
+            <SummertideFlowerLogo size="xs" />
+            <span>Summertide Studio · Judging Queue</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight">
             Contest Song Entries
@@ -263,7 +264,7 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
         </div>
 
         {/* Circular Progress Gauge */}
-        <div className="flex flex-col sm:flex-row items-center gap-4 bg-white/60 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-white/60 shadow-sm shrink-0">
+        <div className="flex flex-col sm:flex-row items-center gap-4 bg-white/65 backdrop-blur-xl p-4 sm:p-5 rounded-2xl border border-white/90 shadow-[0_8px_24px_rgba(255,20,147,0.06),0_1px_0_rgba(255,255,255,0.9)_inset] ring-1 ring-white/60 shrink-0">
           <div className="relative w-28 h-28 flex items-center justify-center shrink-0">
             <svg className="w-28 h-28 -rotate-90 transform" viewBox="0 0 100 100">
               {/* Background circle track */}
@@ -324,7 +325,7 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
       </div>
 
       {/* Control Bar: Filter, Search, and Admin Actions */}
-      <div className="bg-white/70 backdrop-blur-md rounded-2xl border border-white/60 p-4 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      <div className="bg-white/60 backdrop-blur-2xl rounded-2xl border border-white/90 p-4 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         {/* Search */}
         <div className="relative flex-1 max-w-md">
           <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -333,7 +334,7 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by song title, artist alias, or discord..."
-            className="w-full pl-9 pr-4 py-2 rounded-xl border border-stone-200/90 bg-white/60 text-xs sm:text-sm text-stone-900 focus:outline-hidden focus:ring-2 focus:ring-[#0284c7] focus:bg-white transition-all shadow-inner font-medium"
+            className="w-full pl-9 pr-4 py-2 rounded-xl border border-stone-200/90 bg-white/80 text-xs sm:text-sm text-stone-900 focus:outline-hidden focus:ring-2 focus:ring-pink-500/50 focus:bg-white transition-all shadow-inner font-medium"
           />
           {searchQuery && (
             <button
@@ -351,8 +352,8 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
             onClick={() => setFilterMode('all')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
               filterMode === 'all'
-                ? 'bg-[#0284c7] text-white shadow-2xs'
-                : 'bg-white/60 hover:bg-white text-stone-700 border border-white/60'
+                ? 'bg-gradient-to-r from-[#ff1493] to-[#ff2d78] text-white shadow-xs'
+                : 'bg-white/70 hover:bg-white text-stone-700 border border-white/80 shadow-2xs'
             }`}
           >
             All Songs ({totalSongs})
@@ -361,8 +362,8 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
             onClick={() => setFilterMode('pending')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
               filterMode === 'pending'
-                ? 'bg-[#0284c7] text-white shadow-2xs'
-                : 'bg-white/60 hover:bg-white text-stone-700 border border-white/60'
+                ? 'bg-gradient-to-r from-[#ff1493] to-[#ff2d78] text-white shadow-xs'
+                : 'bg-white/70 hover:bg-white text-stone-700 border border-white/80 shadow-2xs'
             }`}
           >
             Needs Grading ({totalSongs - gradedSongsCount})
@@ -371,8 +372,8 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
             onClick={() => setFilterMode('graded')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
               filterMode === 'graded'
-                ? 'bg-[#0284c7] text-white shadow-2xs'
-                : 'bg-white/60 hover:bg-white text-stone-700 border border-white/60'
+                ? 'bg-gradient-to-r from-[#ff1493] to-[#ff2d78] text-white shadow-xs'
+                : 'bg-white/70 hover:bg-white text-stone-700 border border-white/80 shadow-2xs'
             }`}
           >
             Graded by You ({gradedSongsCount})
@@ -478,10 +479,10 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
             return (
               <div
                 key={song.id}
-                className={`bg-white/70 backdrop-blur-md rounded-2xl border shadow-md hover:shadow-xl transition-all duration-200 p-5 flex flex-col justify-between group ${
+                className={`bg-white/65 backdrop-blur-2xl rounded-3xl border shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 hover:shadow-xl transition-all duration-200 p-5 flex flex-col justify-between group ${
                   songFlag
-                    ? 'border-rose-300 ring-1 ring-rose-200'
-                    : 'border-white/60 hover:border-[#38bdf8]/60'
+                    ? 'border-rose-300 ring-rose-200'
+                    : 'border-white/90 ring-white/60 hover:border-pink-300/80'
                 }`}
               >
                 <div>

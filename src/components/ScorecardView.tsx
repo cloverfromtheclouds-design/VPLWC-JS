@@ -8,7 +8,6 @@ import {
   AlertCircle,
   FileSpreadsheet,
   HelpCircle,
-  Sparkles,
   BookOpen,
   Eye,
   EyeOff,
@@ -20,6 +19,8 @@ import {
   Flag,
   ShieldAlert,
 } from 'lucide-react';
+import { SummertideFlowerLogo } from './SummertideFlowerLogo';
+import { HibiscusInlay } from './HibiscusInlay';
 import {
   CRITERIA_CONFIG,
   TIER_DESCRIPTIONS,
@@ -431,12 +432,16 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
         isLyricsOpen ? 'max-w-7xl' : 'max-w-3xl'
       }`}
     >
-      {/* Header Info Banner - Translucent Frosted Glass with White Tint */}
-      <div className="relative overflow-hidden rounded-3xl bg-white/70 backdrop-blur-md border border-white/60 shadow-lg shadow-pink-900/5 p-5 sm:p-6 mb-6">
+      {/* Header Info Banner - Translucent Frosted Glass with iOS Edge Highlight */}
+      <div className="relative overflow-hidden rounded-3xl bg-white/65 backdrop-blur-2xl border border-white/90 shadow-[0_12px_40px_rgba(255,20,147,0.1),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 p-5 sm:p-6 mb-6">
         <div className="absolute top-0 right-0 -mt-6 -mr-6 w-36 h-36 bg-gradient-to-br from-pink-300/25 to-sky-200/20 rounded-full blur-2xl pointer-events-none" />
+        
+        {/* Hibiscus Inlay Debossed Watermark */}
+        <HibiscusInlay size="xl" position="bottom-right" opacity="opacity-[0.055] sm:opacity-[0.07]" />
+
         <div className="relative z-10">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-100/90 text-pink-700 border border-pink-300/80 text-xs font-bold uppercase tracking-wider mb-2.5 shadow-2xs">
-            <Sparkles className="w-3.5 h-3.5 text-pink-600" />
+            <SummertideFlowerLogo size="xs" />
             <span>Summertide Studio · Judging Portal</span>
           </div>
           <h2 className="text-2xl sm:text-4xl font-black text-stone-900 tracking-tight leading-tight">
@@ -518,8 +523,11 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
         {/* Right Column: Scorecard Form */}
         <form
           onSubmit={handleSubmit}
-          className="bg-white/70 backdrop-blur-md rounded-3xl border border-white/60 shadow-xl p-5 sm:p-8 space-y-6"
+          className="bg-white/60 backdrop-blur-2xl rounded-3xl border border-white/90 shadow-[0_20px_60px_rgba(255,20,147,0.1),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 p-5 sm:p-8 space-y-6 relative overflow-hidden"
         >
+          {/* Hibiscus Inlay Debossed Watermark */}
+          <HibiscusInlay size="xl" position="bottom-right" opacity="opacity-[0.05] sm:opacity-[0.065]" />
+
           {/* Active Song & Judge Evaluation Bar (Replaces manual Judge Name & Contest Song inputs) */}
           <div className="bg-gradient-to-r from-sky-50/70 via-white/50 to-pink-50/70 backdrop-blur-xs border border-sky-200/80 rounded-2xl p-4 sm:p-5 shadow-xs">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -890,7 +898,7 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
               ) : statusMessage.type === 'error' ? (
                 <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
               ) : (
-                <Sparkles className="w-4 h-4 shrink-0 text-stone-600" />
+                <SummertideFlowerLogo size="xs" />
               )}
               <span>{statusMessage.text}</span>
             </div>

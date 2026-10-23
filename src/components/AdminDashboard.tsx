@@ -13,7 +13,6 @@ import {
   FileSpreadsheet,
   Lock,
   Unlock,
-  Sparkles,
   ArrowRight,
   Check,
   Download,
@@ -241,7 +240,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div
           onClick={() => setActiveAdminTab('monitoring')}
-          className="bg-white/70 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-white/60 shadow-xs cursor-pointer hover:border-[#0284c7]/50 transition-colors"
+          className="bg-white/60 backdrop-blur-2xl p-3.5 sm:p-4 rounded-2xl border border-white/90 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 cursor-pointer hover:border-pink-400/60 transition-all"
         >
           <div className="text-[11px] font-bold text-stone-500 uppercase tracking-wide flex items-center gap-1.5">
             <Users className="w-3.5 h-3.5 text-[#0284c7]" />
@@ -257,7 +256,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
         <div
           onClick={() => setActiveAdminTab('entrants')}
-          className="bg-white/70 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-white/60 shadow-xs cursor-pointer hover:border-[#0284c7]/50 transition-colors"
+          className="bg-white/60 backdrop-blur-2xl p-3.5 sm:p-4 rounded-2xl border border-white/90 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 cursor-pointer hover:border-pink-400/60 transition-all"
         >
           <div className="text-[11px] font-bold text-stone-500 uppercase tracking-wide flex items-center gap-1.5">
             <Music className="w-3.5 h-3.5 text-[#0284c7]" />
@@ -271,10 +270,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
         <div
           onClick={() => setActiveAdminTab('flags')}
-          className={`backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border shadow-xs cursor-pointer transition-colors ${
+          className={`backdrop-blur-2xl p-3.5 sm:p-4 rounded-2xl border shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 cursor-pointer transition-all ${
             activeFlagsCount > 0
-              ? 'bg-rose-50/70 border-rose-300/80 hover:border-rose-400'
-              : 'bg-white/70 border-white/60 hover:border-stone-300'
+              ? 'bg-rose-50/70 border-rose-300 hover:border-rose-400'
+              : 'bg-white/60 border-white/90 hover:border-pink-300'
           }`}
         >
           <div className="text-[11px] font-bold uppercase tracking-wide flex items-center gap-1.5 text-rose-700">
@@ -291,7 +290,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
         </div>
 
-        <div className="bg-white/70 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-white/60 shadow-xs flex flex-col justify-between">
+        <div className="bg-white/60 backdrop-blur-2xl p-3.5 sm:p-4 rounded-2xl border border-white/90 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 flex flex-col justify-between">
           <div>
             <div className="text-[11px] font-bold text-stone-500 uppercase tracking-wide flex items-center gap-1.5">
               <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />

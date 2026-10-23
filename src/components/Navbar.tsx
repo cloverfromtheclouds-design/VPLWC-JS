@@ -13,6 +13,8 @@ import {
   Pencil,
 } from 'lucide-react';
 
+import { SummertideFlowerLogo } from './SummertideFlowerLogo';
+
 interface NavbarProps {
   activeTab: 'songs' | 'scorecard' | 'rankings' | 'scores' | 'admin';
   setActiveTab: (tab: 'songs' | 'scorecard' | 'rankings' | 'scores' | 'admin') => void;
@@ -38,28 +40,14 @@ export const Navbar: React.FC<NavbarProps> = ({
   currentJudgeName = '',
   onEditJudgeName,
 }) => {
-  const logoUrl = `${import.meta.env.BASE_URL}assets/aistudio/hibiscus-flower-vector-logo_fbb8b643.png`;
-
   return (
-    <header className="bg-white/70 backdrop-blur-md border-b border-white/60 sticky top-0 z-40 shadow-xs">
+    <header className="bg-white/65 backdrop-blur-2xl border-b border-white/80 sticky top-0 z-40 shadow-[0_4px_20px_rgba(255,20,147,0.06),0_1px_0_rgba(255,255,255,0.9)_inset]">
       {/* Top Banner with Studio Brand & Actions */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-pink-50 to-pink-100/80 border border-pink-200/90 flex items-center justify-center p-1 shadow-xs overflow-hidden shrink-0">
-              <div
-                className="w-8 h-8 bg-gradient-to-tr from-[#ec4899] via-[#f43f5e] to-[#fb7185] transition-transform hover:scale-105"
-                style={{
-                  maskImage: `url(${logoUrl})`,
-                  WebkitMaskImage: `url(${logoUrl})`,
-                  maskSize: 'contain',
-                  WebkitMaskSize: 'contain',
-                  maskRepeat: 'no-repeat',
-                  WebkitMaskRepeat: 'no-repeat',
-                  maskPosition: 'center',
-                  WebkitMaskPosition: 'center',
-                }}
-              />
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-pink-50 to-pink-100/90 border border-pink-200/90 flex items-center justify-center p-1 shadow-[0_4px_12px_rgba(255,20,147,0.18)] shrink-0">
+              <SummertideFlowerLogo size="lg" glow />
             </div>
             <div>
               <div className="flex items-center gap-2">

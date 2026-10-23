@@ -10,10 +10,10 @@ import {
   FileSpreadsheet,
   Search,
   MessageSquare,
-  Sparkles,
   CheckCircle2,
   AlertCircle,
 } from 'lucide-react';
+import { SummertideFlowerLogo } from './SummertideFlowerLogo';
 import { EntrantRanking, ContestSummaryStats, getTier } from '../types/contest';
 
 interface LeaderboardViewProps {
@@ -103,8 +103,8 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
       {/* Top Header & Actions */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#426b63] bg-[#eaf2ef] px-3 py-1 rounded-full mb-2">
-            <Sparkles className="w-3.5 h-3.5" />
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-pink-700 bg-pink-50/90 border border-pink-200/90 px-3 py-1 rounded-full mb-2 shadow-2xs">
+            <SummertideFlowerLogo size="xs" />
             Automated Aggregation Engine
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-stone-900 tracking-tight">
@@ -151,7 +151,7 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
 
       {/* KPI Stats Bar */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div className="bg-white/70 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-white/60 shadow-2xs">
+        <div className="bg-white/60 backdrop-blur-2xl p-4 sm:p-5 rounded-2xl border border-white/90 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60">
           <div className="text-xs font-bold text-stone-500 uppercase tracking-wide">
             Submissions Ranked
           </div>
@@ -161,7 +161,7 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
           <div className="text-xs text-stone-500 mt-1 font-medium">Eligible contest entries</div>
         </div>
 
-        <div className="bg-white/70 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-white/60 shadow-2xs">
+        <div className="bg-white/60 backdrop-blur-2xl p-4 sm:p-5 rounded-2xl border border-white/90 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60">
           <div className="text-xs font-bold text-stone-500 uppercase tracking-wide">
             Participating Judges
           </div>
@@ -173,7 +173,7 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
           </div>
         </div>
 
-        <div className="bg-white/70 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-white/60 shadow-2xs">
+        <div className="bg-white/60 backdrop-blur-2xl p-4 sm:p-5 rounded-2xl border border-white/90 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60">
           <div className="text-xs font-bold text-stone-500 uppercase tracking-wide">
             Contest Score Average
           </div>
@@ -188,7 +188,7 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
           </div>
         </div>
 
-        <div className="bg-white/70 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-white/60 shadow-2xs">
+        <div className="bg-white/60 backdrop-blur-2xl p-4 sm:p-5 rounded-2xl border border-white/90 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60">
           <div className="text-xs font-bold text-amber-700 uppercase tracking-wide flex items-center gap-1">
             <Trophy className="w-3.5 h-3.5" />
             Top Contender
@@ -305,7 +305,7 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
       )}
 
       {/* Main Rankings Table Container */}
-      <div className="bg-white/70 backdrop-blur-md rounded-2xl border border-white/60 shadow-md overflow-hidden">
+      <div className="bg-white/65 backdrop-blur-2xl rounded-3xl border border-white/90 shadow-[0_15px_40px_rgba(255,20,147,0.08),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 overflow-hidden">
         {/* Table Search & Controls Bar */}
         <div className="p-4 sm:p-5 border-b border-stone-200/80 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white/40">
           <div className="relative flex-1 max-w-md">

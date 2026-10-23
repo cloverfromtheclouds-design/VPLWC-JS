@@ -7,7 +7,6 @@ import {
   Music,
   Calendar,
   MessageSquare,
-  Sparkles,
   ArrowUpDown,
   Download,
   AlertCircle,
@@ -163,7 +162,7 @@ export const AllScoresMatrix: React.FC<AllScoresMatrixProps> = ({
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white/70 backdrop-blur-md p-4 rounded-2xl border border-white/60 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      <div className="bg-white/60 backdrop-blur-2xl p-4 rounded-2xl border border-white/90 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div className="relative flex-1 max-w-md">
           <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
@@ -171,7 +170,7 @@ export const AllScoresMatrix: React.FC<AllScoresMatrixProps> = ({
             placeholder="Search by entrant, judge, or comment keyword..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-white/70 border border-stone-200 rounded-xl text-xs sm:text-sm text-stone-900 placeholder:text-stone-400 focus:outline-hidden focus:ring-2 focus:ring-[#0284c7] focus:bg-white transition-all shadow-inner font-medium"
+            className="w-full pl-9 pr-4 py-2 bg-white/80 border border-stone-200/90 rounded-xl text-xs sm:text-sm text-stone-900 placeholder:text-stone-400 focus:outline-hidden focus:ring-2 focus:ring-pink-500/50 focus:bg-white transition-all shadow-inner font-medium"
           />
         </div>
 
@@ -182,7 +181,7 @@ export const AllScoresMatrix: React.FC<AllScoresMatrixProps> = ({
             <select
               value={selectedJudge}
               onChange={(e) => setSelectedJudge(e.target.value)}
-              className="bg-white/70 border border-stone-200 text-stone-800 rounded-xl px-3 py-1.5 text-xs font-medium focus:outline-hidden focus:ring-2 focus:ring-[#0284c7]"
+              className="bg-white/80 border border-stone-200 text-stone-800 rounded-xl px-3 py-1.5 text-xs font-medium focus:outline-hidden focus:ring-2 focus:ring-pink-500/50"
             >
               <option value="all">All Judges ({judges.length})</option>
               {judges.map((j) => (
@@ -197,7 +196,7 @@ export const AllScoresMatrix: React.FC<AllScoresMatrixProps> = ({
 
       {/* Empty State */}
       {scores.length === 0 ? (
-        <div className="bg-white/70 backdrop-blur-md rounded-2xl border border-white/60 p-12 text-center shadow-sm">
+        <div className="bg-white/60 backdrop-blur-2xl rounded-3xl border border-white/90 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 p-12 text-center">
           <AlertCircle className="w-12 h-12 text-stone-300 mx-auto mb-3" />
           <h3 className="text-base font-bold text-stone-800">No judge scores recorded yet</h3>
           <p className="text-sm text-stone-500 max-w-md mx-auto mt-1">
@@ -208,7 +207,7 @@ export const AllScoresMatrix: React.FC<AllScoresMatrixProps> = ({
             <div className="mt-5">
               <button
                 onClick={onGoToScorecard}
-                className="px-4 py-2 bg-[#0284c7] text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs hover:bg-[#0369a1] transition-all cursor-pointer"
+                className="px-4 py-2 bg-gradient-to-r from-[#ff1493] to-[#ff2d78] text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs transition-all cursor-pointer"
               >
                 + Go to Judge Scorecard
               </button>
@@ -217,7 +216,7 @@ export const AllScoresMatrix: React.FC<AllScoresMatrixProps> = ({
         </div>
       ) : viewMode === 'matrix' ? (
         /* Cross Matrix View */
-        <div className="bg-white/70 backdrop-blur-md rounded-2xl border border-white/60 shadow-md overflow-hidden">
+        <div className="bg-white/65 backdrop-blur-2xl rounded-3xl border border-white/90 shadow-[0_15px_40px_rgba(255,20,147,0.08),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs sm:text-sm">
               <thead>
@@ -318,7 +317,7 @@ export const AllScoresMatrix: React.FC<AllScoresMatrixProps> = ({
         </div>
       ) : (
         /* Detailed Chronological Scorecard Log */
-        <div className="bg-white/70 backdrop-blur-md rounded-2xl border border-white/60 shadow-md overflow-hidden">
+        <div className="bg-white/65 backdrop-blur-2xl rounded-3xl border border-white/90 shadow-[0_15px_40px_rgba(255,20,147,0.08),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs sm:text-sm">
               <thead>

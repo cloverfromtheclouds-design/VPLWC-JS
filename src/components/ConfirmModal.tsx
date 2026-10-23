@@ -1,5 +1,7 @@
 import React from 'react';
 import { AlertTriangle, X } from 'lucide-react';
+import { SummertideFlowerLogo } from './SummertideFlowerLogo';
+import { HibiscusInlay } from './HibiscusInlay';
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -29,54 +31,74 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-150">
       <div
-        className="w-full max-w-md bg-white/75 backdrop-blur-xl rounded-2xl border border-white/60 shadow-2xl p-6 text-stone-900"
+        className="w-full max-w-md bg-gradient-to-b from-white/85 via-white/75 to-white/65 backdrop-blur-2xl rounded-3xl border border-white/90 shadow-[0_20px_50px_rgba(255,20,147,0.16),0_1px_2px_rgba(255,255,255,0.95)_inset] p-5 sm:p-6 text-stone-900 relative ring-1 ring-white/60 overflow-hidden"
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-headline"
       >
-        <div className="flex items-start justify-between gap-3">
+        {/* Top iOS Specular Edge Highlight & Accent Bar */}
+        <div
+          className={`absolute top-0 left-0 right-0 h-1.5 shadow-sm ${
+            isDestructive
+              ? 'bg-gradient-to-r from-rose-500 via-pink-500 to-rose-600'
+              : 'bg-gradient-to-r from-pink-500 via-rose-500 to-sky-500'
+          }`}
+        />
+
+        {/* Hibiscus Inlay Debossed Watermark */}
+        <HibiscusInlay size="lg" position="bottom-right" opacity="opacity-[0.065] sm:opacity-[0.08]" />
+
+        <div className="flex items-start justify-between gap-3 mb-2">
           <div className="flex items-center gap-3">
             <div
-              className={`p-2.5 rounded-xl ${
-                isDestructive ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-800'
+              className={`w-11 h-11 rounded-2xl flex items-center justify-center shadow-xs shrink-0 ${
+                isDestructive
+                  ? 'bg-rose-100/90 text-rose-700 border border-rose-200'
+                  : 'bg-pink-100/90 text-pink-700 border border-pink-200'
               }`}
             >
               <AlertTriangle className="w-5 h-5" />
             </div>
-            <h3 id="modal-headline" className="text-lg font-bold text-stone-900 leading-tight">
-              {title}
-            </h3>
+            <div>
+              <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-pink-600">
+                <SummertideFlowerLogo size="xs" />
+                <span>Summertide Studio</span>
+              </div>
+              <h3 id="modal-headline" className="text-lg font-black text-stone-900 leading-tight mt-0.5">
+                {title}
+              </h3>
+            </div>
           </div>
           <button
             onClick={onCancel}
             disabled={isLoading}
-            className="text-stone-400 hover:text-stone-600 p-1 rounded-lg hover:bg-stone-100 transition-colors"
+            className="text-stone-400 hover:text-stone-600 p-1.5 rounded-xl hover:bg-white/60 transition-colors cursor-pointer"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        <p className="mt-3 text-sm text-stone-600 leading-relaxed">{message}</p>
+        <p className="mt-2 text-xs sm:text-sm text-stone-600 leading-relaxed">{message}</p>
 
         {detailItems && detailItems.length > 0 && (
-          <div className="mt-3 max-h-36 overflow-y-auto bg-stone-50 border border-stone-200 rounded-lg p-3 text-xs text-stone-700 space-y-1">
+          <div className="mt-3.5 max-h-36 overflow-y-auto bg-white/70 backdrop-blur-md border border-white/90 rounded-2xl p-3 text-xs text-stone-700 space-y-1.5 shadow-inner">
             {detailItems.map((item, idx) => (
-              <div key={idx} className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-stone-400" />
-                <span className="truncate">{item}</span>
+              <div key={idx} className="flex items-start gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-pink-500 shrink-0 mt-1.5" />
+                <span className="leading-snug">{item}</span>
               </div>
             ))}
           </div>
         )}
 
-        <div className="mt-6 flex items-center justify-end gap-3">
+        <div className="mt-5 flex items-center justify-end gap-2.5">
           <button
             type="button"
             onClick={onCancel}
             disabled={isLoading}
-            className="px-4 py-2.5 rounded-xl border border-stone-300 text-sm font-semibold text-stone-700 hover:bg-stone-50 transition-colors disabled:opacity-50"
+            className="px-4 py-2.5 rounded-2xl bg-white/70 hover:bg-white border border-stone-200 text-xs sm:text-sm font-bold text-stone-700 hover:text-stone-900 transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
           >
             {cancelLabel}
           </button>
@@ -84,10 +106,10 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             type="button"
             onClick={onConfirm}
             disabled={isLoading}
-            className={`px-4 py-2.5 rounded-xl text-sm font-semibold text-white shadow-sm transition-all disabled:opacity-50 ${
+            className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold text-white shadow-md transition-all disabled:opacity-50 cursor-pointer ${
               isDestructive
-                ? 'bg-rose-600 hover:bg-rose-700'
-                : 'bg-[#0284c7] hover:bg-[#0369a1]'
+                ? 'bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-700 hover:to-rose-800 shadow-[0_4px_16px_rgba(225,29,72,0.3)]'
+                : 'bg-gradient-to-r from-pink-500 via-rose-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 shadow-[0_4px_16px_rgba(255,20,147,0.3)]'
             }`}
           >
             {isLoading ? 'Updating...' : confirmLabel}

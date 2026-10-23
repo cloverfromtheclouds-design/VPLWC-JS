@@ -364,52 +364,75 @@ export default function App() {
   };
 
   const handleDeleteJudge = (nameOrId: string) => {
+    const targetClean = nameOrId.trim().toLowerCase();
+
+    // Identify all matching names and IDs
+    const matchedNames = new Set<string>([targetClean]);
+    registeredJudges.forEach((j) => {
+      const jId = (j.id || '').trim().toLowerCase();
+      const jName = (j.name || '').trim().toLowerCase();
+      if (jId === targetClean || jName === targetClean) {
+        if (jName) matchedNames.add(jName);
+        if (jId) matchedNames.add(jId);
+      }
+    });
+
     const judgeScores = scores.filter(
-      (s) => s.judgeName && s.judgeName.trim().toLowerCase() === nameOrId.trim().toLowerCase()
+      (s) => s.judgeName && matchedNames.has(s.judgeName.trim().toLowerCase())
     );
+
+    const displayName =
+      registeredJudges.find((j) => matchedNames.has(j.name.trim().toLowerCase()))?.name ||
+      nameOrId;
 
     setConfirmModal({
       isOpen: true,
-      title: `Delete Judge "${nameOrId}"?`,
-      message: `Are you sure you want to remove Judge "${nameOrId}" from the contest?`,
+      title: `Delete Judge "${displayName}"?`,
+      message: `Are you sure you want to permanently delete Judge "${displayName}" and remove them from the contest?`,
       detailItems:
         judgeScores.length > 0
           ? [
-              `${judgeScores.length} scorecard${judgeScores.length === 1 ? '' : 's'} submitted by this judge will be permanently deleted.`,
+              `⚠️ WARNING: ${judgeScores.length} scorecard${judgeScores.length === 1 ? '' : 's'} graded by ${displayName} will be permanently deleted.`,
               'Contest rankings, criteria averages, and standings will recalculate automatically.',
               'This judge will be removed from the monitoring board and cloud database.',
               'This action cannot be undone.',
             ]
           : [
-              'This judge has not submitted any scorecards yet.',
-              'They will be permanently removed from the monitoring roster and database.',
+              `⚠️ WARNING: Judge "${displayName}" will be permanently removed from the contest monitoring roster and database.`,
+              'Any links previously issued to this judge will no longer link to their record.',
             ],
-      confirmLabel: judgeScores.length > 0 ? 'Delete Judge & Scorecards' : 'Delete Judge',
+      confirmLabel: judgeScores.length > 0 ? 'Yes, Delete Judge & All Scores' : 'Yes, Delete Judge',
       isDestructive: true,
       action: async () => {
         // 1. Optimistically remove judge from registeredJudges
         setRegisteredJudges((prev) =>
-          prev.filter((j) => j.id !== nameOrId && j.name.toLowerCase() !== nameOrId.toLowerCase())
+          prev.filter((j) => {
+            const jId = (j.id || '').trim().toLowerCase();
+            const jName = (j.name || '').trim().toLowerCase();
+            return !matchedNames.has(jId) && !matchedNames.has(jName);
+          })
         );
 
         // 2. Optimistically remove all scorecards submitted by this judge from scores
         setScores((prev) =>
-          prev.filter((s) => s.judgeName && s.judgeName.trim().toLowerCase() !== nameOrId.trim().toLowerCase())
+          prev.filter((s) => !matchedNames.has((s.judgeName || '').trim().toLowerCase()))
         );
 
         // 3. If deleted judge is the current session judge, clear session name
-        if (currentJudgeName && currentJudgeName.trim().toLowerCase() === nameOrId.trim().toLowerCase()) {
+        if (currentJudgeName && matchedNames.has(currentJudgeName.trim().toLowerCase())) {
           setCurrentJudgeName('');
           localStorage.removeItem('summertide_judge_name');
         }
 
         // 4. Update localStorage immediately
         try {
-          const updatedJudges = registeredJudges.filter(
-            (j) => j.id !== nameOrId && j.name.toLowerCase() !== nameOrId.toLowerCase()
-          );
+          const updatedJudges = registeredJudges.filter((j) => {
+            const jId = (j.id || '').trim().toLowerCase();
+            const jName = (j.name || '').trim().toLowerCase();
+            return !matchedNames.has(jId) && !matchedNames.has(jName);
+          });
           const updatedScores = scores.filter(
-            (s) => s.judgeName && s.judgeName.trim().toLowerCase() !== nameOrId.trim().toLowerCase()
+            (s) => !matchedNames.has((s.judgeName || '').trim().toLowerCase())
           );
           localStorage.setItem('summertide_registered_judges', JSON.stringify(updatedJudges));
           localStorage.setItem('summertide_contest_scores', JSON.stringify(updatedScores));
@@ -442,8 +465,8 @@ export default function App() {
 
         showToast(
           judgeScores.length > 0
-            ? `Deleted Judge "${nameOrId}" and ${judgeScores.length} scorecard${judgeScores.length === 1 ? '' : 's'}.`
-            : `Deleted Judge "${nameOrId}" from contest.`,
+            ? `Deleted Judge "${displayName}" and ${judgeScores.length} scorecard${judgeScores.length === 1 ? '' : 's'}.`
+            : `Deleted Judge "${displayName}" from contest.`,
           'info'
         );
       },
@@ -451,12 +474,26 @@ export default function App() {
   };
 
   // Handle saving / updating judge identity
-  const handleSaveJudgeName = (name: string) => {
+  const handleSaveJudgeName = (name: string, isExistingLogin = false) => {
     setCurrentJudgeName(name);
     localStorage.setItem('summertide_judge_name', name);
     setIsJudgeNameModalOpen(false);
     handleRegisterJudge(name);
-    showToast(`Welcome, Judge ${name}! Saved for your judging session.`, 'success');
+
+    const existingScoresCount = scores.filter(
+      (s) => s.judgeName && s.judgeName.trim().toLowerCase() === name.trim().toLowerCase()
+    ).length;
+
+    if (isExistingLogin || existingScoresCount > 0) {
+      showToast(
+        `Welcome back, Judge ${name}! Restored ${existingScoresCount} scorecard${
+          existingScoresCount === 1 ? '' : 's'
+        } on this device.`,
+        'success'
+      );
+    } else {
+      showToast(`Welcome, Judge ${name}! Ready to score contest songs.`, 'success');
+    }
   };
 
   // Check URL query parameters and saved session (Blind Judge mode is DEFAULT)
@@ -1165,6 +1202,9 @@ export default function App() {
         isOpen={isJudgeNameModalOpen}
         currentName={currentJudgeName}
         isInitialRequired={!currentJudgeName}
+        registeredJudges={registeredJudges}
+        scores={scores}
+        totalSongsCount={songs.length}
         onSave={handleSaveJudgeName}
         onClose={() => {
           if (currentJudgeName) {

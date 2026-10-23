@@ -345,10 +345,11 @@ export async function upsertJudge(judge: any): Promise<void> {
 export async function removeJudgeByNameOrId(
   target: string
 ): Promise<{ deletedJudges: string[]; deletedScores: string[] }> {
-  if (!firestoreDb) throw new Error('Firestore not initialized');
+  if (!firestoreDb) return { deletedJudges: [], deletedScores: [] };
   const targetLower = target.trim().toLowerCase();
+  const matchedNames = new Set<string>([targetLower]);
 
-  // 1. Delete matching documents from judges collection
+  // 1. Delete matching documents from judges collection and collect names
   const judgeSnapshot = await getDocs(collection(firestoreDb, 'judges'));
   const deletedJudges: string[] = [];
   for (const docSnap of judgeSnapshot.docs) {
@@ -356,6 +357,7 @@ export async function removeJudgeByNameOrId(
     const docId = docSnap.id.toLowerCase();
     const judgeName = (data.name || '').trim().toLowerCase();
     if (docId === targetLower || judgeName === targetLower) {
+      if (judgeName) matchedNames.add(judgeName);
       await deleteDoc(doc(firestoreDb, 'judges', docSnap.id));
       deletedJudges.push(docSnap.id);
     }
@@ -367,7 +369,7 @@ export async function removeJudgeByNameOrId(
   for (const docSnap of scoreSnapshot.docs) {
     const data = docSnap.data();
     const judgeName = (data.judgeName || '').trim().toLowerCase();
-    if (judgeName === targetLower) {
+    if (matchedNames.has(judgeName)) {
       await deleteDoc(doc(firestoreDb, 'scores', docSnap.id));
       deletedScores.push(docSnap.id);
     }

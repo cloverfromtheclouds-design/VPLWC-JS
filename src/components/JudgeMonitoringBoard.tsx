@@ -12,7 +12,6 @@ import {
   ChevronUp,
   BarChart3,
   Award,
-  Sparkles,
   Copy,
   Check,
   Music,
@@ -248,7 +247,7 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
 
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="bg-white/70 backdrop-blur-md p-4 rounded-2xl border border-white/60 shadow-xs">
+        <div className="bg-white/60 backdrop-blur-2xl p-4 rounded-2xl border border-white/90 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60">
           <div className="text-[11px] font-bold text-stone-500 uppercase tracking-wide flex items-center gap-1.5">
             <Users className="w-3.5 h-3.5 text-[#0284c7]" />
             Registered Judges
@@ -259,7 +258,7 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
           <div className="text-[11px] text-stone-500 mt-0.5 font-medium">Active evaluating panel</div>
         </div>
 
-        <div className="bg-white/70 backdrop-blur-md p-4 rounded-2xl border border-white/60 shadow-xs">
+        <div className="bg-white/60 backdrop-blur-2xl p-4 rounded-2xl border border-white/90 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60">
           <div className="text-[11px] font-bold text-emerald-700 uppercase tracking-wide flex items-center gap-1.5">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
             100% Completed
@@ -270,7 +269,7 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
           <div className="text-[11px] text-stone-500 mt-0.5 font-medium">Finished all {totalSongs} entries</div>
         </div>
 
-        <div className="bg-white/70 backdrop-blur-md p-4 rounded-2xl border border-white/60 shadow-xs">
+        <div className="bg-white/60 backdrop-blur-2xl p-4 rounded-2xl border border-white/90 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60">
           <div className="text-[11px] font-bold text-amber-700 uppercase tracking-wide flex items-center gap-1.5">
             <Clock className="w-3.5 h-3.5 text-amber-600" />
             In Progress
@@ -281,7 +280,7 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
           <div className="text-[11px] text-stone-500 mt-0.5 font-medium">Currently grading songs</div>
         </div>
 
-        <div className="bg-white/70 backdrop-blur-md p-4 rounded-2xl border border-white/60 shadow-xs">
+        <div className="bg-white/60 backdrop-blur-2xl p-4 rounded-2xl border border-white/90 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60">
           <div className="text-[11px] font-bold text-stone-600 uppercase tracking-wide flex items-center gap-1.5">
             <AlertCircle className="w-3.5 h-3.5 text-stone-500" />
             Not Started
@@ -294,7 +293,7 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-white/70 backdrop-blur-md rounded-2xl border border-white/60 p-3 sm:p-4 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      <div className="bg-white/60 backdrop-blur-2xl rounded-2xl border border-white/90 p-3 sm:p-4 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div className="relative flex-1 max-w-md">
           <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
@@ -302,7 +301,7 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
             placeholder="Search judges by name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-white/90 border border-stone-300 rounded-xl text-xs sm:text-sm text-stone-900 focus:outline-hidden focus:ring-2 focus:ring-[#0284c7]"
+            className="w-full pl-10 pr-4 py-2 bg-white/80 border border-stone-200/90 rounded-xl text-xs sm:text-sm text-stone-900 focus:outline-hidden focus:ring-2 focus:ring-pink-500/50 shadow-inner"
           />
         </div>
 
@@ -323,8 +322,8 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
                 onClick={() => setStatusFilter(filterKey)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                   statusFilter === filterKey
-                    ? 'bg-[#0284c7] text-white shadow-xs'
-                    : 'bg-white border border-stone-200 text-stone-600 hover:bg-stone-50'
+                    ? 'bg-gradient-to-r from-[#ff1493] to-[#ff2d78] text-white shadow-sm'
+                    : 'bg-white/80 border border-white/90 text-stone-600 hover:bg-white shadow-2xs'
                 }`}
               >
                 {labels[filterKey]}
@@ -336,7 +335,7 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
 
       {/* Judges Cards Grid / Roster */}
       {filteredJudges.length === 0 ? (
-        <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-white/80 p-12 text-center text-stone-400">
+        <div className="bg-white/60 backdrop-blur-2xl rounded-2xl border border-white/90 p-12 text-center text-stone-400 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60">
           <Users className="w-8 h-8 mx-auto mb-2 opacity-40 text-stone-500" />
           <p className="text-sm font-semibold">
             {searchQuery
@@ -358,7 +357,7 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
             return (
               <div
                 key={judge.name}
-                className="bg-white/70 backdrop-blur-md rounded-2xl border border-white/60 shadow-sm hover:shadow-md transition-all overflow-hidden"
+                className="bg-white/65 backdrop-blur-2xl rounded-2xl border border-white/90 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 hover:shadow-lg hover:border-pink-300/60 transition-all overflow-hidden"
               >
                 {/* Main Judge Summary Row */}
                 <div className="p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">

@@ -587,21 +587,45 @@ app.post('/api/judges', async (req, res) => {
 app.delete('/api/judges/:name', async (req, res) => {
   const target = decodeURIComponent(req.params.name).trim().toLowerCase();
 
+  // Find all possible judge names and IDs corresponding to this target
+  const targetNames = new Set<string>([target]);
+  memoryCache.judges.forEach((j) => {
+    const jId = (j.id || '').trim().toLowerCase();
+    const jName = (j.name || '').trim().toLowerCase();
+    if (jId === target || jName === target) {
+      if (jName) targetNames.add(jName);
+      if (jId) targetNames.add(jId);
+    }
+  });
+
+  // Also check scores for any matching judgeName
+  memoryCache.scores.forEach((sc) => {
+    const scJudge = (sc.judgeName || '').trim().toLowerCase();
+    if (scJudge === target) {
+      targetNames.add(scJudge);
+    }
+  });
+
   // 1. Remove from memoryCache.judges
-  const removedJudges = memoryCache.judges.filter(
-    (j) => (j.id && j.id.toLowerCase() === target) || (j.name && j.name.trim().toLowerCase() === target)
-  );
+  const removedJudges = memoryCache.judges.filter((j) => {
+    const jId = (j.id || '').trim().toLowerCase();
+    const jName = (j.name || '').trim().toLowerCase();
+    return targetNames.has(jId) || targetNames.has(jName);
+  });
   memoryCache.judges = memoryCache.judges.filter((j) => !removedJudges.includes(j));
 
   // 2. Also remove all scorecards submitted by this judge from memoryCache.scores
-  const removedScores = memoryCache.scores.filter(
-    (sc) => sc.judgeName && sc.judgeName.trim().toLowerCase() === target
-  );
+  const removedScores = memoryCache.scores.filter((sc) => {
+    const scJudge = (sc.judgeName || '').trim().toLowerCase();
+    return targetNames.has(scJudge);
+  });
   memoryCache.scores = memoryCache.scores.filter((sc) => !removedScores.includes(sc));
 
   // 3. Purge from Firestore (both judges and scores collections)
   try {
-    await removeJudgeByNameOrId(target);
+    for (const t of targetNames) {
+      await removeJudgeByNameOrId(t);
+    }
   } catch (err) {
     console.error('[Firebase] Error removing judge and scores from Firestore:', err);
   }
