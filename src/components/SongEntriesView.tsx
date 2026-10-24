@@ -25,6 +25,7 @@ import { SummertideFlowerLogo } from './SummertideFlowerLogo';
 import { HibiscusInlay } from './HibiscusInlay';
 import { ContestSongEntry, JudgeScoreSubmission, SongFlag } from '../types/contest';
 import { parseLyricSubmission } from '../utils/lyricParser';
+import { DiscordHandleReveal } from './DiscordHandleReveal';
 
 interface SongEntriesViewProps {
   songs: ContestSongEntry[];
@@ -528,9 +529,7 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
                       {song.alias || 'Unknown Artist'}
                     </span>
                     {song.discordUsername && (
-                      <span className="font-mono text-[11px] text-stone-500 bg-stone-100 px-1.5 py-0.5 rounded-md">
-                        @{song.discordUsername}
-                      </span>
+                      <DiscordHandleReveal username={song.discordUsername} size="xs" />
                     )}
                   </div>
 
@@ -740,12 +739,12 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
                   Contest Submission Lyrics
                 </span>
                 <h3 className="text-xl font-bold text-stone-900">{viewingLyricsSong.songTitle}</h3>
-                <div className="text-xs text-stone-600 mt-0.5">
-                  Artist: <span className="font-semibold">{viewingLyricsSong.alias || 'Unknown'}</span>
+                <div className="text-xs text-stone-600 mt-1 flex flex-wrap items-center gap-2">
+                  <span>
+                    Artist: <span className="font-semibold text-stone-900">{viewingLyricsSong.alias || 'Unknown'}</span>
+                  </span>
                   {viewingLyricsSong.discordUsername && (
-                    <span className="ml-2 font-mono text-stone-500">
-                      @{viewingLyricsSong.discordUsername}
-                    </span>
+                    <DiscordHandleReveal username={viewingLyricsSong.discordUsername} size="xs" />
                   )}
                 </div>
               </div>

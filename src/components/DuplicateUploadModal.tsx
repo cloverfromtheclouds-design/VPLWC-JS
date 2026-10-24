@@ -1,6 +1,7 @@
 import React from 'react';
 import { AlertCircle, FileText, ArrowRight, X } from 'lucide-react';
 import { ContestSongEntry } from '../types/contest';
+import { DiscordHandleReveal } from './DiscordHandleReveal';
 
 interface DuplicateUploadModalProps {
   isOpen: boolean;
@@ -57,12 +58,12 @@ export const DuplicateUploadModal: React.FC<DuplicateUploadModalProps> = ({
               <div className="text-base font-bold text-stone-900 truncate">
                 {duplicateSong.songTitle}
               </div>
-              <div className="text-xs text-stone-600 mt-0.5">
-                Artist: <span className="font-semibold text-stone-800">{duplicateSong.alias || 'Unknown'}</span>
+              <div className="text-xs text-stone-600 mt-1 flex flex-wrap items-center gap-1.5">
+                <span>
+                  Artist: <span className="font-semibold text-stone-800">{duplicateSong.alias || 'Unknown'}</span>
+                </span>
                 {duplicateSong.discordUsername && (
-                  <span className="text-stone-500 ml-1.5 font-mono text-[11px]">
-                    (@{duplicateSong.discordUsername})
-                  </span>
+                  <DiscordHandleReveal username={duplicateSong.discordUsername} size="xs" />
                 )}
               </div>
             </div>

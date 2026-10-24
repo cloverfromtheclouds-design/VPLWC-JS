@@ -688,14 +688,24 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
               value={comments}
               disabled={isAlreadySubmitted || isFlagged}
               onChange={(e) => setComments(e.target.value)}
-              placeholder="Share thoughts, critique, or click 'Note / Quote' next to any lyric line on the left to quote directly with your note…"
+              placeholder={
+                isAlreadySubmitted
+                  ? 'Official scorecard and opinion submitted. Comments and notes are locked.'
+                  : isFlagged
+                  ? 'Scoring has been aborted due to a reported rule violation.'
+                  : "Share thoughts, critique, or click 'Note / Quote' next to any lyric line on the left to quote directly with your note…"
+              }
               className={`w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-stone-900 text-sm focus:outline-hidden focus:ring-2 focus:ring-[#0284c7] focus:border-transparent transition-all ${
                 isAlreadySubmitted || isFlagged ? 'bg-stone-50 text-stone-600 cursor-not-allowed opacity-80' : ''
               }`}
             />
             <p className="text-[11px] text-stone-500 mt-1.5 flex items-center gap-1.5">
               <Quote className="w-3.5 h-3.5 text-[#0284c7] shrink-0" />
-              <span>Quotes and notes taken on the lyric sheet appear directly in this opinion box.</span>
+              <span>
+                {isAlreadySubmitted
+                  ? 'Score submitted — lyric notes and opinion are locked for integrity.'
+                  : 'Quotes and notes taken on the lyric sheet appear directly in this opinion box.'}
+              </span>
             </p>
           </div>
 

@@ -13,6 +13,7 @@ import {
   Flag,
 } from 'lucide-react';
 import { ParsedLyricSubmission } from '../utils/lyricParser';
+import { DiscordHandleReveal } from './DiscordHandleReveal';
 
 interface LyricReaderPanelProps {
   submission: ParsedLyricSubmission;
@@ -51,6 +52,9 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
     submission.storyConcept
   );
 
+  // Quoting and line noting is only permitted before submission
+  const canQuote = !!onQuoteLyric && !isAlreadySubmitted && !isFlagged;
+
   const handleCopyLyrics = () => {
     if (!submission.lyrics) return;
     navigator.clipboard.writeText(submission.lyrics);
@@ -60,7 +64,7 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
 
   // Handle line quote submission
   const handleSendLineQuote = (lineText: string, note?: string) => {
-    if (!onQuoteLyric) return;
+    if (!canQuote) return;
     const cleanLine = lineText.trim();
     if (!cleanLine) return;
 
@@ -76,7 +80,7 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
 
   // Handle floating selection quote
   const handleQuoteSelection = () => {
-    if (!onQuoteLyric || !selectedText) return;
+    if (!canQuote || !selectedText) return;
     onQuoteLyric(selectedText);
     setSelectedText('');
     setSelectionPos(null);
@@ -165,8 +169,8 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
                   {line}
                 </div>
 
-                {/* Inline Quote / Note Trigger */}
-                {onQuoteLyric && (
+                {/* Inline Quote / Note Trigger - only available before submission */}
+                {canQuote && (
                   <div className="shrink-0 flex items-center gap-1">
                     {wasJustQuoted ? (
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-200 animate-in fade-in duration-150">
@@ -199,8 +203,8 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
                 )}
               </div>
 
-              {/* Expandable Inline Note Box */}
-              {isEditorOpen && (
+              {/* Expandable Inline Note Box - only available before submission */}
+              {canQuote && isEditorOpen && (
                 <div className="mt-2.5 mb-3 p-3 bg-gradient-to-r from-sky-50/90 via-white to-pink-50/60 rounded-xl border border-sky-200/90 shadow-sm space-y-2.5 font-sans animate-in fade-in slide-in-from-top-1 duration-150">
                   <div className="flex items-center justify-between text-[11px] font-bold text-sky-900">
                     <span className="flex items-center gap-1.5">
@@ -277,8 +281,8 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
       onMouseUp={handleMouseUp}
       className="bg-white/60 backdrop-blur-2xl rounded-3xl border border-white/90 shadow-[0_20px_50px_rgba(255,20,147,0.08),0_1px_1px_rgba(255,255,255,0.95)_inset] p-5 sm:p-7 flex flex-col h-full ring-1 ring-white/60 relative animate-in fade-in duration-200"
     >
-      {/* Floating Selection Tooltip */}
-      {selectedText && selectionPos && onQuoteLyric && (
+      {/* Floating Selection Tooltip - only available before submission */}
+      {canQuote && selectedText && selectionPos && (
         <div
           style={{ top: `${selectionPos.top}px`, left: `${selectionPos.left}px` }}
           className="absolute z-30 transform -translate-y-full animate-in fade-in zoom-in-95 duration-100"
@@ -399,18 +403,20 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
             )}
 
             {submission.discordUsername && (
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 text-xs font-semibold text-[#5865F2]">
-                <MessageCircle className="w-3.5 h-3.5" />
-                <span className="font-mono">@{submission.discordUsername}</span>
-              </div>
+              <DiscordHandleReveal username={submission.discordUsername} size="sm" />
             )}
 
-            {onQuoteLyric && (
+            {canQuote ? (
               <span className="text-[11px] text-[#0284c7] font-semibold bg-sky-50 px-2.5 py-1 rounded-lg border border-sky-200/80 hidden sm:inline-flex items-center gap-1">
                 <Quote className="w-3 h-3" />
                 Click 'Note / Quote' next to any line or select text to quote to your opinion
               </span>
-            )}
+            ) : isAlreadySubmitted ? (
+              <span className="text-[11px] text-emerald-800 font-semibold bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200 hidden sm:inline-flex items-center gap-1.5">
+                <Check className="w-3 h-3 text-emerald-600" />
+                Score Submitted · Lyric Notes & Quotes Locked
+              </span>
+            ) : null}
           </div>
 
           {/* Optional Story / Concept Callout */}

@@ -21,6 +21,7 @@ import {
   ContestSongEntry,
   RegisteredJudge,
 } from '../types/contest';
+import { DiscordHandleReveal } from './DiscordHandleReveal';
 
 interface JudgeMonitoringBoardProps {
   scores: JudgeScoreSubmission[];
@@ -587,8 +588,11 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
                                 <div className="font-bold text-stone-900 truncate">
                                   {song.songTitle}
                                 </div>
-                                <div className="text-[11px] text-stone-500 truncate">
-                                  {song.alias || 'Unknown'} {song.discordUsername && `@${song.discordUsername}`}
+                                <div className="text-[11px] text-stone-500 flex flex-wrap items-center gap-1.5 mt-0.5">
+                                  <span className="truncate">{song.alias || 'Unknown'}</span>
+                                  {song.discordUsername && (
+                                    <DiscordHandleReveal username={song.discordUsername} size="xs" />
+                                  )}
                                 </div>
                               </div>
                               <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 shrink-0">

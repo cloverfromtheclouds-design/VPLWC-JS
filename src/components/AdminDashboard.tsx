@@ -33,6 +33,7 @@ import {
   RegisteredJudge,
   FirebaseStatus,
 } from '../types/contest';
+import { DiscordHandleReveal } from './DiscordHandleReveal';
 import { JudgeMonitoringBoard } from './JudgeMonitoringBoard';
 
 interface AdminDashboardProps {
@@ -709,9 +710,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                           </span>
                         )}
                         {song.discordUsername && (
-                          <span className="text-[11px] font-mono text-stone-500 bg-stone-50 px-1.5 py-0.5 rounded border border-stone-200">
-                            @{song.discordUsername}
-                          </span>
+                          <DiscordHandleReveal username={song.discordUsername} size="xs" />
                         )}
                       </div>
 
