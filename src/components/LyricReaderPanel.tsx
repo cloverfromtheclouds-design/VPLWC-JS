@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   FileText,
   Copy,
@@ -7,20 +7,42 @@ import {
   MessageCircle,
   BookOpen,
   X,
+  Quote,
+  MessageSquare,
+  CornerDownRight,
+  Flag,
 } from 'lucide-react';
 import { ParsedLyricSubmission } from '../utils/lyricParser';
 
 interface LyricReaderPanelProps {
   submission: ParsedLyricSubmission;
   onClear?: () => void;
+  onQuoteLyric?: (quoteText: string, judgeNote?: string) => void;
+  onFlagSong?: () => void;
+  isFlagged?: boolean;
+  isAlreadySubmitted?: boolean;
 }
 
 export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
   submission,
   onClear,
+  onQuoteLyric,
+  onFlagSong,
+  isFlagged = false,
+  isAlreadySubmitted = false,
 }) => {
   const [fontSize, setFontSize] = useState<'sm' | 'base' | 'lg'>('base');
   const [isCopied, setIsCopied] = useState(false);
+
+  // Inline Note Editor State per line
+  const [activeNoteLineIndex, setActiveNoteLineIndex] = useState<number | null>(null);
+  const [lineNoteText, setLineNoteText] = useState('');
+  const [recentlyQuotedIndex, setRecentlyQuotedIndex] = useState<number | null>(null);
+
+  // Floating text selection state
+  const [selectedText, setSelectedText] = useState('');
+  const [selectionPos, setSelectionPos] = useState<{ top: number; left: number } | null>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   const hasContent = !!(
     submission.songTitle ||
@@ -36,7 +58,63 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
     setTimeout(() => setIsCopied(false), 2000);
   };
 
-  // Render stylized lyrics with colored badges for section tags
+  // Handle line quote submission
+  const handleSendLineQuote = (lineText: string, note?: string) => {
+    if (!onQuoteLyric) return;
+    const cleanLine = lineText.trim();
+    if (!cleanLine) return;
+
+    onQuoteLyric(cleanLine, note);
+    setRecentlyQuotedIndex(activeNoteLineIndex);
+    setActiveNoteLineIndex(null);
+    setLineNoteText('');
+
+    setTimeout(() => {
+      setRecentlyQuotedIndex(null);
+    }, 2500);
+  };
+
+  // Handle floating selection quote
+  const handleQuoteSelection = () => {
+    if (!onQuoteLyric || !selectedText) return;
+    onQuoteLyric(selectedText);
+    setSelectedText('');
+    setSelectionPos(null);
+    window.getSelection()?.removeAllRanges();
+  };
+
+  // Track text selection within panel
+  const handleMouseUp = () => {
+    const sel = window.getSelection();
+    if (!sel || sel.isCollapsed) {
+      setSelectedText('');
+      setSelectionPos(null);
+      return;
+    }
+
+    const text = sel.toString().trim();
+    if (text.length > 2 && panelRef.current && panelRef.current.contains(sel.anchorNode)) {
+      try {
+        const range = sel.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+        const panelRect = panelRef.current.getBoundingClientRect();
+
+        setSelectedText(text);
+        setSelectionPos({
+          top: rect.top - panelRect.top - 38,
+          left: Math.max(10, rect.left - panelRect.left + rect.width / 2 - 80),
+        });
+      } catch (e) {
+        setSelectedText('');
+        setSelectionPos(null);
+      }
+    } else {
+      setSelectedText('');
+      setSelectionPos(null);
+    }
+  };
+
+  // Render stylized lyrics with colored badges for section tags and inline quote/note actions
   const renderFormattedLyrics = () => {
     if (!submission.lyrics) {
       return (
@@ -69,18 +147,116 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
             return <div key={idx} className="h-3" />;
           }
 
+          const isEditorOpen = activeNoteLineIndex === idx;
+          const wasJustQuoted = recentlyQuotedIndex === idx;
+
           return (
-            <div
-              key={idx}
-              className={`leading-relaxed text-stone-800 font-serif tracking-normal ${
-                fontSize === 'sm'
-                  ? 'text-xs'
-                  : fontSize === 'lg'
-                  ? 'text-base sm:text-lg'
-                  : 'text-sm sm:text-base'
-              }`}
-            >
-              {line}
+            <div key={idx} className="group relative rounded-xl px-2.5 py-1 -mx-2.5 transition-colors hover:bg-sky-50/50">
+              <div className="flex items-start justify-between gap-2">
+                <div
+                  className={`leading-relaxed text-stone-800 font-serif tracking-normal flex-1 select-text ${
+                    fontSize === 'sm'
+                      ? 'text-xs'
+                      : fontSize === 'lg'
+                      ? 'text-base sm:text-lg'
+                      : 'text-sm sm:text-base'
+                  }`}
+                >
+                  {line}
+                </div>
+
+                {/* Inline Quote / Note Trigger */}
+                {onQuoteLyric && (
+                  <div className="shrink-0 flex items-center gap-1">
+                    {wasJustQuoted ? (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-200 animate-in fade-in duration-150">
+                        <Check className="w-3 h-3 text-emerald-600" />
+                        Quoted!
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (isEditorOpen) {
+                            setActiveNoteLineIndex(null);
+                          } else {
+                            setActiveNoteLineIndex(idx);
+                            setLineNoteText('');
+                          }
+                        }}
+                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-semibold transition-all cursor-pointer font-sans shadow-2xs ${
+                          isEditorOpen
+                            ? 'bg-[#0284c7] text-white opacity-100'
+                            : 'opacity-0 group-hover:opacity-100 bg-white/90 hover:bg-sky-100 text-[#0284c7] border border-sky-200/70'
+                        }`}
+                        title="Add note next to this lyric and quote to your opinion"
+                      >
+                        <Quote className="w-3 h-3" />
+                        <span className="hidden sm:inline">Note / Quote</span>
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Expandable Inline Note Box */}
+              {isEditorOpen && (
+                <div className="mt-2.5 mb-3 p-3 bg-gradient-to-r from-sky-50/90 via-white to-pink-50/60 rounded-xl border border-sky-200/90 shadow-sm space-y-2.5 font-sans animate-in fade-in slide-in-from-top-1 duration-150">
+                  <div className="flex items-center justify-between text-[11px] font-bold text-sky-900">
+                    <span className="flex items-center gap-1.5">
+                      <Quote className="w-3.5 h-3.5 text-[#0284c7]" />
+                      Quote to Judge's Opinion
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setActiveNoteLineIndex(null)}
+                      className="p-1 rounded-md text-stone-400 hover:text-stone-700 hover:bg-stone-100"
+                      title="Cancel"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+
+                  <div className="text-xs italic text-stone-700 bg-white/90 p-2.5 rounded-lg border border-sky-100 border-l-2 border-l-[#0284c7] font-serif">
+                    “{trimmed}”
+                  </div>
+
+                  <div className="space-y-2">
+                    <input
+                      type="text"
+                      value={lineNoteText}
+                      onChange={(e) => setLineNoteText(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleSendLineQuote(trimmed, lineNoteText);
+                        }
+                      }}
+                      placeholder="Write your note or feedback on this line..."
+                      className="w-full px-3 py-2 text-xs bg-white rounded-lg border border-stone-200 text-stone-900 placeholder-stone-400 focus:outline-hidden focus:ring-2 focus:ring-[#0284c7] shadow-2xs"
+                      autoFocus
+                    />
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleSendLineQuote(trimmed, '')}
+                        className="px-2.5 py-1.5 bg-white hover:bg-stone-50 border border-stone-200 text-stone-700 text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs"
+                        title="Quote lyric line without extra commentary"
+                      >
+                        Quote Line Only
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleSendLineQuote(trimmed, lineNoteText)}
+                        className="px-3.5 py-1.5 bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold rounded-lg transition-colors cursor-pointer shadow-2xs flex items-center gap-1.5"
+                      >
+                        <CornerDownRight className="w-3.5 h-3.5" />
+                        <span>Insert into Opinion</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           );
         })}
@@ -96,7 +272,28 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
     : 0;
 
   return (
-    <div className="bg-white/60 backdrop-blur-2xl rounded-3xl border border-white/90 shadow-[0_20px_50px_rgba(255,20,147,0.08),0_1px_1px_rgba(255,255,255,0.95)_inset] p-5 sm:p-7 flex flex-col h-full ring-1 ring-white/60 animate-in fade-in duration-200">
+    <div
+      ref={panelRef}
+      onMouseUp={handleMouseUp}
+      className="bg-white/60 backdrop-blur-2xl rounded-3xl border border-white/90 shadow-[0_20px_50px_rgba(255,20,147,0.08),0_1px_1px_rgba(255,255,255,0.95)_inset] p-5 sm:p-7 flex flex-col h-full ring-1 ring-white/60 relative animate-in fade-in duration-200"
+    >
+      {/* Floating Selection Tooltip */}
+      {selectedText && selectionPos && onQuoteLyric && (
+        <div
+          style={{ top: `${selectionPos.top}px`, left: `${selectionPos.left}px` }}
+          className="absolute z-30 transform -translate-y-full animate-in fade-in zoom-in-95 duration-100"
+        >
+          <button
+            type="button"
+            onClick={handleQuoteSelection}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-stone-900 text-white text-xs font-bold shadow-lg hover:bg-[#0284c7] transition-all cursor-pointer whitespace-nowrap"
+          >
+            <Quote className="w-3 h-3 text-sky-300" />
+            <span>Quote Selection to Opinion</span>
+          </button>
+        </div>
+      )}
+
       {/* Top Header */}
       <div className="flex items-start justify-between gap-3 pb-4 border-b border-stone-200">
         <div>
@@ -156,17 +353,28 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
               <button
                 type="button"
                 onClick={handleCopyLyrics}
-                className="p-2 rounded-xl border border-stone-200 hover:bg-stone-50 text-stone-700 transition-colors cursor-pointer"
+                className="p-2 rounded-xl border border-stone-200 hover:bg-stone-50 text-stone-700 transition-colors cursor-pointer shadow-2xs"
                 title="Copy raw lyrics"
               >
                 {isCopied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
               </button>
 
+              {onFlagSong && !isFlagged && !isAlreadySubmitted && (
+                <button
+                  type="button"
+                  onClick={onFlagSong}
+                  className="p-2 rounded-xl border border-rose-300 bg-rose-50 hover:bg-rose-100 text-rose-700 transition-colors cursor-pointer shadow-2xs"
+                  title="Flag / Abort entry for rule violations"
+                >
+                  <Flag className="w-4 h-4 text-rose-600" />
+                </button>
+              )}
+
               {onClear && (
                 <button
                   type="button"
                   onClick={onClear}
-                  className="p-2 rounded-xl border border-stone-200 hover:bg-rose-50 hover:text-rose-600 text-stone-400 transition-colors cursor-pointer"
+                  className="p-2 rounded-xl border border-stone-200 hover:bg-rose-50 hover:text-rose-600 text-stone-400 transition-colors cursor-pointer shadow-2xs"
                   title="Clear lyric view"
                 >
                   <X className="w-4 h-4" />
@@ -179,7 +387,7 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
 
       {/* Main Content Body */}
       {hasContent ? (
-        <div className="flex-1 overflow-y-auto space-y-5 pt-4 pr-1">
+        <div className="flex-1 overflow-y-auto space-y-4 pt-4 pr-1">
           {/* Metadata Badges (Alias & Discord) */}
           <div className="flex flex-wrap items-center gap-2">
             {submission.alias && (
@@ -195,6 +403,13 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
                 <MessageCircle className="w-3.5 h-3.5" />
                 <span className="font-mono">@{submission.discordUsername}</span>
               </div>
+            )}
+
+            {onQuoteLyric && (
+              <span className="text-[11px] text-[#0284c7] font-semibold bg-sky-50 px-2.5 py-1 rounded-lg border border-sky-200/80 hidden sm:inline-flex items-center gap-1">
+                <Quote className="w-3 h-3" />
+                Click 'Note / Quote' next to any line or select text to quote to your opinion
+              </span>
             )}
           </div>
 
@@ -226,7 +441,7 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
               No Contest Song Selected
             </h4>
             <p className="text-xs text-stone-500 max-w-sm mt-1 leading-relaxed">
-              Select an entry from the song picker or click 'Grade This Song' in the Song Entries tab to view lyrics and submit your evaluation.
+              Select an entry in the Song Entries tab by clicking 'Grade This Song' to view lyrics and submit your evaluation.
             </p>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Send,
   RotateCcw,
@@ -8,16 +8,10 @@ import {
   AlertCircle,
   FileSpreadsheet,
   HelpCircle,
-  BookOpen,
-  Eye,
-  EyeOff,
-  Upload,
-  FileText,
   Music,
-  Check,
-  ChevronDown,
   Flag,
   ShieldAlert,
+  Quote,
 } from 'lucide-react';
 import { SummertideFlowerLogo } from './SummertideFlowerLogo';
 import { HibiscusInlay } from './HibiscusInlay';
@@ -76,11 +70,9 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
   const [judgeName, setJudgeName] = useState(defaultJudgeName || '');
   const [entrantName, setEntrantName] = useState(initialEntrantName || '');
   const [comments, setComments] = useState('');
-  const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [isFlagModalOpen, setIsFlagModalOpen] = useState(false);
 
-  // Split-Screen Lyrics Panel State
-  const [isLyricsOpen, setIsLyricsOpen] = useState(true);
+  // Split-Screen Lyrics Panel State (always visible side-by-side)
   const [parsedSubmission, setParsedSubmission] = useState<ParsedLyricSubmission>({
     songTitle: '',
     alias: '',
@@ -131,7 +123,6 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
           lyrics: songMatch.lyrics || '',
           formattedEntrantName: songMatch.formattedEntrantName || songMatch.songTitle,
         });
-        setIsLyricsOpen(true);
       } else {
         // Fallback to check if existing scores have lyrics
         const matched = existingScores.find(
@@ -146,7 +137,6 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
             lyrics: matched.lyrics || '',
             formattedEntrantName: initialEntrantName,
           });
-          setIsLyricsOpen(true);
         }
       }
     }
@@ -164,76 +154,40 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
       const matchJudge = s.judgeName.trim().toLowerCase() === j;
       if (!matchJudge) return false;
 
-      const sTitle = (s.songTitle || '').trim().toLowerCase();
-      const sEntrant = (s.entrantName || '').trim().toLowerCase();
-      const sTitleExtracted = sTitle.includes(' — ') ? sTitle.split(' — ')[0].trim().toLowerCase() : sTitle;
-      const targetExtracted = song.includes(' — ') ? song.split(' — ')[0].trim().toLowerCase() : song;
+      const sSong = (s.songTitle || '').trim().toLowerCase();
+      const sEntrant = s.entrantName.trim().toLowerCase();
 
       return (
-        (song && sTitle === song) ||
-        (song && sEntrant === song) ||
-        (song && sTitleExtracted === targetExtracted) ||
+        (song && sSong === song) ||
         (entrant && sEntrant === entrant) ||
-        (entrant && sTitle === entrant) ||
-        (song && sEntrant.includes(song)) ||
-        (entrant && sTitle.includes(entrant))
+        (song && sEntrant === song) ||
+        (entrant && sSong === entrant)
       );
-    }) || null;
+    });
   }, [existingScores, judgeName, defaultJudgeName, parsedSubmission.songTitle, entrantName]);
 
-  const isAlreadySubmitted = Boolean(alreadySubmittedScore);
+  const isAlreadySubmitted = !!alreadySubmittedScore;
 
-  // Active flag check for currently selected song
-  const activeFlag = useMemo(() => {
-    const activeSong = (parsedSubmission.songTitle || entrantName).trim().toLowerCase();
-    const activeEntrant = entrantName.trim().toLowerCase();
-    if (!activeSong && !activeEntrant) return null;
+  // Check if current song is flagged / aborted by any judge or producer
+  const activeFlag = React.useMemo(() => {
+    const currentSongTitle = (parsedSubmission.songTitle || entrantName).trim().toLowerCase();
+    const currentEntrant = entrantName.trim().toLowerCase();
+    if (!currentSongTitle && !currentEntrant) return null;
 
-    return (
-      flags.find((f) => {
-        if (f.status === 'cleared') return false;
-        const fTitle = f.songTitle.trim().toLowerCase();
-        const fEntrant = (f.entrantName || '').trim().toLowerCase();
-        const fExtracted = fTitle.includes(' — ') ? fTitle.split(' — ')[0].trim().toLowerCase() : fTitle;
-        const songExtracted = activeSong.includes(' — ') ? activeSong.split(' — ')[0].trim().toLowerCase() : activeSong;
-
-        return (
-          fTitle === activeSong ||
-          fTitle === activeEntrant ||
-          fTitle === songExtracted ||
-          fEntrant === activeSong ||
-          fEntrant === activeEntrant ||
-          fExtracted === songExtracted
-        );
-      }) || null
-    );
+    return flags.find((f) => {
+      const fSong = (f.songTitle || '').trim().toLowerCase();
+      const fEntrant = (f.entrantName || '').trim().toLowerCase();
+      return (
+        (currentSongTitle && fSong === currentSongTitle) ||
+        (currentEntrant && fEntrant === currentEntrant) ||
+        (currentSongTitle && fEntrant === currentSongTitle)
+      );
+    });
   }, [flags, parsedSubmission.songTitle, entrantName]);
 
-  const isFlagged = Boolean(activeFlag);
+  const isFlagged = !!activeFlag;
 
-  const handleConfirmFlagModal = async (reason: FlagReason, reasonLabel: string, notes: string) => {
-    if (!onFlagSong) return;
-    const activeSong = parsedSubmission.songTitle || entrantName;
-    const songMatch = contestSongs.find(
-      (s) =>
-        s.songTitle.trim().toLowerCase() === activeSong.trim().toLowerCase() ||
-        s.formattedEntrantName.trim().toLowerCase() === activeSong.trim().toLowerCase()
-    );
-    await onFlagSong(
-      songMatch?.id || '',
-      activeSong,
-      entrantName || activeSong,
-      reason,
-      reasonLabel,
-      notes
-    );
-    setStatusMessage({
-      type: 'error',
-      text: `Entry flagged for "${reasonLabel}". Scoring has been aborted.`,
-    });
-  };
-
-  // If already submitted, sync criteria scores & comments to submitted evaluation
+  // Pre-fill score if already submitted
   useEffect(() => {
     if (alreadySubmittedScore) {
       setScores({
@@ -248,6 +202,30 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
     }
   }, [alreadySubmittedScore]);
 
+  const handleConfirmFlagModal = async (reason: FlagReason, reasonLabel: string, notes: string) => {
+    if (!onFlagSong) return;
+
+    const activeJudge = (judgeName || defaultJudgeName).trim();
+    const activeEntrant = (entrantName || parsedSubmission.formattedEntrantName || parsedSubmission.songTitle).trim();
+    const activeTitle = (parsedSubmission.songTitle || activeEntrant).trim();
+
+    // Look for song ID if available
+    const songMatch = contestSongs.find(
+      (s) =>
+        s.songTitle.trim().toLowerCase() === activeTitle.toLowerCase() ||
+        s.formattedEntrantName.trim().toLowerCase() === activeEntrant.toLowerCase()
+    );
+    const songId = songMatch?.id || `song-${Date.now()}`;
+
+    await onFlagSong(songId, activeTitle, activeEntrant, reason, reasonLabel, notes);
+    setIsFlagModalOpen(false);
+
+    setStatusMessage({
+      type: 'info',
+      text: `Song "${activeTitle}" has been flagged for ${reasonLabel}. Scoring for this entry is aborted.`,
+    });
+  };
+
   const totalScore =
     scores.writing + scores.originality + scores.emotion + scores.structure;
   const averageScore = totalScore / 4;
@@ -255,7 +233,7 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
   const summaryNarration = getSummaryNarration(totalScore);
 
   const handleScoreChange = (key: string, val: number) => {
-    if (isAlreadySubmitted) return;
+    if (isAlreadySubmitted || isFlagged) return;
     const clamped = Math.max(1, Math.min(25, val));
     setScores((prev) => ({
       ...prev,
@@ -264,7 +242,7 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
   };
 
   const handleReset = () => {
-    if (isAlreadySubmitted) return;
+    if (isAlreadySubmitted || isFlagged) return;
     setScores({
       writing: 18,
       originality: 18,
@@ -285,53 +263,30 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
     });
   };
 
-  // Auto-fill lyrics when an existing song is picked
-  const handleSelectExistingSong = (song: ContestSongEntry) => {
-    setEntrantName(song.formattedEntrantName || song.songTitle);
-    setIsPickerOpen(false);
+  // Direct Lyric Quoting handler: appends quoted lyrics & note into the judge's personal opinion
+  const handleQuoteLyric = (quoteText: string, judgeNote?: string) => {
+    const cleanQuote = quoteText.trim();
+    if (!cleanQuote) return;
 
-    setParsedSubmission({
-      songTitle: song.songTitle,
-      alias: song.alias || '',
-      discordUsername: song.discordUsername || '',
-      storyConcept: song.storyConcept || '',
-      lyrics: song.lyrics || '',
-      formattedEntrantName: song.formattedEntrantName || song.songTitle,
+    const formattedBlock = judgeNote && judgeNote.trim()
+      ? `> "${cleanQuote}"\n— ${judgeNote.trim()}`
+      : `> "${cleanQuote}"`;
+
+    setComments((prev) => {
+      const trimmed = prev.trim();
+      if (!trimmed) {
+        return formattedBlock + '\n\n';
+      }
+      return `${trimmed}\n\n${formattedBlock}\n\n`;
     });
-    setIsLyricsOpen(true);
-  };
 
-  const handleSelectExistingEntrant = (selected: string) => {
-    setEntrantName(selected);
-    setIsPickerOpen(false);
-
-    // Look for matching song entry first
-    const songMatch = contestSongs.find(
-      (s) =>
-        s.songTitle.trim().toLowerCase() === selected.trim().toLowerCase() ||
-        s.formattedEntrantName.trim().toLowerCase() === selected.trim().toLowerCase()
-    );
-
-    if (songMatch) {
-      handleSelectExistingSong(songMatch);
-      return;
-    }
-
-    // Look for previous lyrics stored in session
-    const matched = existingScores.find(
-      (s) => s.entrantName.trim().toLowerCase() === selected.trim().toLowerCase() && s.lyrics
-    );
-    if (matched && matched.lyrics) {
-      setParsedSubmission({
-        songTitle: matched.songTitle || selected,
-        alias: matched.alias || '',
-        discordUsername: matched.discordUsername || '',
-        storyConcept: matched.storyConcept || '',
-        lyrics: matched.lyrics || '',
-        formattedEntrantName: selected,
-      });
-      setIsLyricsOpen(true);
-    }
+    setStatusMessage({
+      type: 'info',
+      text: `Quoted "${cleanQuote.slice(0, 36)}${cleanQuote.length > 36 ? '...' : ''}" to your opinion.`,
+    });
+    setTimeout(() => {
+      setStatusMessage((current) => (current?.type === 'info' ? null : current));
+    }, 2500);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -341,6 +296,14 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
       setStatusMessage({
         type: 'error',
         text: 'This scorecard has already been submitted. Resubmissions are not permitted.',
+      });
+      return;
+    }
+
+    if (isFlagged) {
+      setStatusMessage({
+        type: 'error',
+        text: 'Scoring for this entry has been aborted due to a reported rule violation.',
       });
       return;
     }
@@ -427,11 +390,7 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
   };
 
   return (
-    <div
-      className={`mx-auto py-2 sm:py-6 animate-in fade-in duration-200 transition-all ${
-        isLyricsOpen ? 'max-w-7xl' : 'max-w-3xl'
-      }`}
-    >
+    <div className="max-w-7xl mx-auto py-2 sm:py-6 animate-in fade-in duration-200">
       {/* Header Info Banner - Translucent Frosted Glass with iOS Edge Highlight */}
       <div className="relative overflow-hidden rounded-3xl bg-white/65 backdrop-blur-2xl border border-white/90 shadow-[0_12px_40px_rgba(255,20,147,0.1),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 p-5 sm:p-6 mb-6">
         <div className="absolute top-0 right-0 -mt-6 -mr-6 w-36 h-36 bg-gradient-to-br from-pink-300/25 to-sky-200/20 rounded-full blur-2xl pointer-events-none" />
@@ -439,86 +398,51 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
         {/* Hibiscus Inlay Debossed Watermark */}
         <HibiscusInlay size="xl" position="bottom-right" opacity="opacity-[0.055] sm:opacity-[0.07]" />
 
-        <div className="relative z-10">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-100/90 text-pink-700 border border-pink-300/80 text-xs font-bold uppercase tracking-wider mb-2.5 shadow-2xs">
-            <SummertideFlowerLogo size="xs" />
-            <span>Summertide Studio · Judging Portal</span>
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-100/90 text-pink-700 border border-pink-300/80 text-xs font-bold uppercase tracking-wider mb-2.5 shadow-2xs">
+              <SummertideFlowerLogo size="xs" />
+              <span>Summertide Studio · Judging Portal</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-stone-900 tracking-tight leading-tight">
+              {parsedSubmission.songTitle ? `Scoring: ${parsedSubmission.songTitle}` : 'Lyric Contest Judge Scorecard'}
+            </h2>
+            <p className="text-xs sm:text-sm text-stone-700 font-medium mt-1.5 max-w-3xl leading-relaxed">
+              Score each eligible submission across four criteria (1 to 25 pts each, max 100). Take notes directly next to the lyrics on the left to quote lines straight into your personal opinion.
+            </p>
           </div>
-          <h2 className="text-2xl sm:text-4xl font-black text-stone-900 tracking-tight leading-tight">
-            Lyric Contest Judge Scorecard
-          </h2>
-          <p className="text-sm sm:text-base text-stone-700 font-medium mt-2 max-w-3xl leading-relaxed">
-            Score each eligible submission across four criteria. View lyrics on the left while scoring on
-            the right. Each criterion is scored from{' '}
-            <strong className="text-pink-800 font-bold bg-pink-100/90 px-2 py-0.5 rounded-md border border-pink-200/80 shadow-2xs">
-              1 to 25 points
-            </strong>
-            , for a maximum total of{' '}
-            <strong className="text-sky-800 font-bold bg-sky-100/90 px-2 py-0.5 rounded-md border border-sky-200/80 shadow-2xs">
-              100 points
-            </strong>
-            .
-          </p>
+
+          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+            <div className="px-3.5 py-2 bg-white/90 border border-stone-200/90 rounded-xl text-xs font-semibold text-stone-700 shadow-2xs">
+              Judge: <span className="font-bold text-stone-900">{judgeName || defaultJudgeName || 'Judge'}</span>
+            </div>
+            {onGoToSongEntries && (
+              <button
+                type="button"
+                onClick={onGoToSongEntries}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-sky-200 bg-sky-50 hover:bg-sky-100 text-[#0284c7] text-xs font-bold transition-colors shadow-2xs cursor-pointer"
+              >
+                <Music className="w-3.5 h-3.5" />
+                <span>Browse All Songs</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Top Toggle Bar for Split Screen Lyrics */}
-      <div className="bg-white/70 backdrop-blur-md rounded-2xl border border-white/60 p-3 sm:p-4 mb-6 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => setIsLyricsOpen(!isLyricsOpen)}
-            className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-2xs ${
-              isLyricsOpen
-                ? 'bg-[#0284c7] text-white shadow-xs hover:bg-[#0369a1]'
-                : 'bg-white/70 hover:bg-white text-stone-700 border border-white/60'
-            }`}
-          >
-            {isLyricsOpen ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-            <span>{isLyricsOpen ? 'Lyrics Visible (Split View)' : 'Lyrics Hidden (Scorecard Only)'}</span>
-          </button>
-
-          {parsedSubmission.songTitle ? (
-            <span className="text-xs font-semibold text-sky-900 bg-sky-50 border border-sky-200 px-2.5 py-1 rounded-lg truncate max-w-xs">
-              🎵 {parsedSubmission.songTitle}
-            </span>
-          ) : (
-            <span className="text-xs text-stone-400 hidden sm:inline">
-              Select a contest song to view lyrics
-            </span>
-          )}
-        </div>
-
-        {/* Action Button: Browse All Songs */}
-        <div className="flex items-center gap-2">
-          {onGoToSongEntries && (
-            <button
-              type="button"
-              onClick={onGoToSongEntries}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-sky-200 bg-sky-50 hover:bg-sky-100 text-[#0284c7] text-xs font-bold transition-colors shadow-2xs cursor-pointer"
-            >
-              <Music className="w-3.5 h-3.5" />
-              <span>Browse All Songs</span>
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Main Split Layout: Left side lyrics, Right side scorecard */}
-      <div
-        className={`gap-6 items-start ${
-          isLyricsOpen ? 'grid grid-cols-1 lg:grid-cols-2' : 'max-w-3xl mx-auto'
-        }`}
-      >
+      {/* Main Split Layout: Left side lyrics with line notes, Right side scorecard */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         {/* Left Column: Lyric Reader Panel */}
-        {isLyricsOpen && (
-          <div className="lg:sticky lg:top-24">
-            <LyricReaderPanel
-              submission={parsedSubmission}
-              onClear={handleClearLyrics}
-            />
-          </div>
-        )}
+        <div className="lg:sticky lg:top-24">
+          <LyricReaderPanel
+            submission={parsedSubmission}
+            onClear={handleClearLyrics}
+            onQuoteLyric={handleQuoteLyric}
+            onFlagSong={onFlagSong && !activeFlag && !isAlreadySubmitted ? () => setIsFlagModalOpen(true) : undefined}
+            isFlagged={isFlagged}
+            isAlreadySubmitted={isAlreadySubmitted}
+          />
+        </div>
 
         {/* Right Column: Scorecard Form */}
         <form
@@ -527,128 +451,6 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
         >
           {/* Hibiscus Inlay Debossed Watermark */}
           <HibiscusInlay size="xl" position="bottom-right" opacity="opacity-[0.05] sm:opacity-[0.065]" />
-
-          {/* Active Song & Judge Evaluation Bar (Replaces manual Judge Name & Contest Song inputs) */}
-          <div className="bg-gradient-to-r from-sky-50/70 via-white/50 to-pink-50/70 backdrop-blur-xs border border-sky-200/80 rounded-2xl p-4 sm:p-5 shadow-xs">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div className="min-w-0 flex-1">
-                <div className="text-[11px] font-bold uppercase tracking-wider text-stone-500 flex items-center gap-1.5 mb-1">
-                  <Music className="w-3.5 h-3.5 text-[#0284c7]" />
-                  <span>Currently Evaluating Contest Entry</span>
-                </div>
-                <div className="text-lg sm:text-xl font-black text-stone-900 flex flex-wrap items-center gap-2">
-                  <span className="truncate">
-                    {parsedSubmission.songTitle || entrantName || 'No song selected'}
-                  </span>
-                  {parsedSubmission.alias && (
-                    <span className="text-xs font-bold text-[#0284c7] bg-sky-100/90 px-2.5 py-0.5 rounded-full border border-sky-200">
-                      {parsedSubmission.alias}
-                    </span>
-                  )}
-                  {parsedSubmission.discordUsername && (
-                    <span className="text-[11px] font-mono text-stone-500 bg-stone-100 px-2 py-0.5 rounded-md">
-                      @{parsedSubmission.discordUsername}
-                    </span>
-                  )}
-                </div>
-                {parsedSubmission.storyConcept && (
-                  <p className="text-xs text-stone-600 line-clamp-1 mt-1 italic">
-                    "{parsedSubmission.storyConcept}"
-                  </p>
-                )}
-              </div>
-
-              <div className="flex items-center gap-2 shrink-0">
-                <div className="px-3 py-1.5 bg-white border border-stone-200 rounded-xl text-xs font-semibold text-stone-700 shadow-2xs">
-                  Judge: <span className="font-bold text-stone-900">{judgeName || defaultJudgeName || 'Judge'}</span>
-                </div>
-
-                {onFlagSong && !activeFlag && !isAlreadySubmitted && (
-                  <button
-                    type="button"
-                    onClick={() => setIsFlagModalOpen(true)}
-                    className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 border border-rose-300 text-rose-700 rounded-xl text-xs font-bold cursor-pointer transition-colors shadow-2xs inline-flex items-center gap-1.5"
-                    title="Abort entry and report rule violation (AI, Plagiarism, Inappropriate)"
-                  >
-                    <Flag className="w-3.5 h-3.5 text-rose-600" />
-                    <span>Flag / Abort</span>
-                  </button>
-                )}
-
-                {(contestSongs.length > 0 || knownEntrants.length > 0) && (
-                  <button
-                    type="button"
-                    onClick={() => setIsPickerOpen(!isPickerOpen)}
-                    className="px-3 py-1.5 bg-sky-50 hover:bg-sky-100 border border-sky-200 text-[#0284c7] rounded-xl text-xs font-bold cursor-pointer transition-colors shadow-2xs inline-flex items-center gap-1"
-                  >
-                    <span>{isPickerOpen ? 'Close Picker' : 'Change Song'}</span>
-                    <ChevronDown className={`w-3 h-3 transition-transform ${isPickerOpen ? 'rotate-180' : ''}`} />
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Quick Song Switcher Dropdown */}
-            {isPickerOpen && (
-              <div className="mt-3 pt-3 border-t border-sky-200/80 max-h-60 overflow-y-auto space-y-1.5 animate-in fade-in duration-100">
-                <div className="text-[10px] font-bold text-stone-400 uppercase tracking-wider px-1">
-                  Choose a Song to Grade:
-                </div>
-                {contestSongs.length > 0 ? (
-                  contestSongs.map((song) => {
-                    const isGradedByMe = judgeName.trim() && existingScores.some(
-                      (s) =>
-                        s.judgeName.trim().toLowerCase() === judgeName.trim().toLowerCase() &&
-                        (s.songTitle?.trim().toLowerCase() === song.songTitle.trim().toLowerCase() ||
-                         s.entrantName.trim().toLowerCase() === (song.formattedEntrantName || song.songTitle).trim().toLowerCase())
-                    );
-                    const isSelected =
-                      (parsedSubmission.songTitle || entrantName).trim().toLowerCase() === song.songTitle.trim().toLowerCase();
-
-                    return (
-                      <button
-                        key={song.id}
-                        type="button"
-                        onClick={() => handleSelectExistingSong(song)}
-                        className={`w-full text-left px-3 py-2 rounded-xl text-xs font-medium transition-colors flex items-center justify-between ${
-                          isSelected
-                            ? 'bg-sky-100 text-[#0284c7] font-bold border border-sky-300'
-                            : 'hover:bg-sky-50/80 bg-white border border-stone-200 text-stone-800'
-                        }`}
-                      >
-                        <div>
-                          <div className="font-bold text-stone-900">{song.songTitle}</div>
-                          <div className="text-[11px] text-stone-500">
-                            {song.alias || 'Unknown'} {song.discordUsername && `@${song.discordUsername}`}
-                          </div>
-                        </div>
-                        {isGradedByMe ? (
-                          <span className="text-[10px] text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full font-bold border border-emerald-200">
-                            ✓ Submitted
-                          </span>
-                        ) : (
-                          <span className="text-[10px] text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full font-semibold border border-amber-200">
-                            Pending
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })
-                ) : (
-                  knownEntrants.map((item) => (
-                    <button
-                      key={item}
-                      type="button"
-                      onClick={() => handleSelectExistingEntrant(item)}
-                      className="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-sky-50 text-xs font-semibold text-stone-800 transition-colors"
-                    >
-                      {item}
-                    </button>
-                  ))
-                )}
-              </div>
-            )}
-          </div>
 
           {/* If entry is flagged, show prominent Aborted / Rule Violation Banner */}
           {activeFlag && (
@@ -727,8 +529,8 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
             </div>
           )}
 
-          {/* QUICK SCALE REFERENCE: Switched to the TOP as requested */}
-          <div className="pt-2 border-t border-stone-200">
+          {/* QUICK SCALE REFERENCE */}
+          <div className="pt-1">
             <div className="flex items-center justify-between mb-2">
               <h4 className="text-xs font-bold text-stone-700 uppercase tracking-wider flex items-center gap-1.5">
                 <HelpCircle className="w-3.5 h-3.5 text-[#0284c7]" />
@@ -862,24 +664,39 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
             </div>
           </div>
 
-          {/* PERSONAL OPINION / JUDGE'S COMMENTS: Switched to the BOTTOM as requested */}
+          {/* PERSONAL OPINION / JUDGE'S COMMENTS with Direct Lyric Quoting */}
           <div className="pt-2 border-t border-stone-200">
-            <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-1.5">
-              Personal Opinion / Judge's Comments{' '}
-              <span className="text-stone-400 font-normal lowercase">
-                {isFlagged ? '(aborted)' : isAlreadySubmitted ? '(submitted)' : '(optional)'}
-              </span>
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-bold text-stone-700 uppercase tracking-wider">
+                Personal Opinion / Judge's Comments{' '}
+                <span className="text-stone-400 font-normal lowercase">
+                  {isFlagged ? '(aborted)' : isAlreadySubmitted ? '(submitted)' : '(optional)'}
+                </span>
+              </label>
+              {comments && !isAlreadySubmitted && !isFlagged && (
+                <button
+                  type="button"
+                  onClick={() => setComments('')}
+                  className="text-[11px] text-stone-400 hover:text-rose-600 transition-colors cursor-pointer"
+                >
+                  Clear Notes
+                </button>
+              )}
+            </div>
             <textarea
-              rows={3}
+              rows={4}
               value={comments}
               disabled={isAlreadySubmitted || isFlagged}
               onChange={(e) => setComments(e.target.value)}
-              placeholder="Share any additional thoughts, feedback, lyrical highlights, or impressions about this submission…"
+              placeholder="Share thoughts, critique, or click 'Note / Quote' next to any lyric line on the left to quote directly with your note…"
               className={`w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-stone-900 text-sm focus:outline-hidden focus:ring-2 focus:ring-[#0284c7] focus:border-transparent transition-all ${
                 isAlreadySubmitted || isFlagged ? 'bg-stone-50 text-stone-600 cursor-not-allowed opacity-80' : ''
               }`}
             />
+            <p className="text-[11px] text-stone-500 mt-1.5 flex items-center gap-1.5">
+              <Quote className="w-3.5 h-3.5 text-[#0284c7] shrink-0" />
+              <span>Quotes and notes taken on the lyric sheet appear directly in this opinion box.</span>
+            </p>
           </div>
 
           {/* Status Message */}
@@ -919,7 +736,7 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
             ) : (
               <button
                 type="submit"
-                disabled={isSubmitting || !parsedSubmission.songTitle && !entrantName}
+                disabled={isSubmitting || (!parsedSubmission.songTitle && !entrantName)}
                 className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#0284c7] hover:bg-[#0369a1] text-white font-bold text-sm shadow-md transition-all hover:shadow-lg disabled:opacity-60 cursor-pointer"
               >
                 <Send className="w-4 h-4" />

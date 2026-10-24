@@ -263,8 +263,8 @@ export const JudgeNameModal: React.FC<JudgeNameModalProps> = ({
             {/* Header */}
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-100/90 to-rose-100/90 border border-pink-200/90 shadow-[0_4px_12px_rgba(255,20,147,0.18)] flex items-center justify-center shrink-0">
-                  <SummertideFlowerLogo size="lg" glow />
+                <div className="w-13 h-13 rounded-2xl bg-gradient-to-br from-pink-100/90 to-rose-100/90 border border-pink-200/90 shadow-[0_4px_14px_rgba(255,20,147,0.22)] flex items-center justify-center shrink-0 animate-flower-popup">
+                  <SummertideFlowerLogo size="xl" glow />
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5 text-[11px] font-extrabold text-pink-600 uppercase tracking-wider">

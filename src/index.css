@@ -1,1 +1,54 @@
 @import "tailwindcss";
+
+@keyframes flowerPopup {
+  0% {
+    transform: scale(0.15) rotate(-18deg);
+    opacity: 0;
+    filter: blur(10px);
+  }
+  55% {
+    transform: scale(1.18) rotate(4deg);
+    opacity: 1;
+    filter: blur(0px);
+  }
+  75% {
+    transform: scale(0.96) rotate(-1deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+    filter: blur(0px);
+  }
+}
+
+@keyframes flowerFloat {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(1.5deg);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1.15);
+  }
+  50% {
+    opacity: 0.65;
+    transform: scale(1.4);
+  }
+}
+
+.animate-flower-popup {
+  animation: flowerPopup 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-flower-float {
+  animation: flowerFloat 4.5s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 3s ease-in-out infinite;
+}

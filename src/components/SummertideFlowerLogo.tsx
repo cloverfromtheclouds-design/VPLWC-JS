@@ -2,7 +2,7 @@ import React from 'react';
 
 interface SummertideFlowerLogoProps {
   className?: string;
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'hero';
   glow?: boolean;
 }
 
@@ -19,6 +19,8 @@ export const SummertideFlowerLogo: React.FC<SummertideFlowerLogoProps> = ({
     md: 'w-6 h-6',
     lg: 'w-8 h-8',
     xl: 'w-12 h-12',
+    '2xl': 'w-16 h-16',
+    hero: 'w-24 h-24 sm:w-28 sm:h-28',
   };
 
   const dim = sizeClasses[size] || sizeClasses.md;

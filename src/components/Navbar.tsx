@@ -26,6 +26,7 @@ interface NavbarProps {
   onExportExcel?: () => void;
   currentJudgeName?: string;
   onEditJudgeName?: () => void;
+  onLockScreen?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -39,6 +40,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onExportExcel,
   currentJudgeName = '',
   onEditJudgeName,
+  onLockScreen,
 }) => {
   return (
     <header className="bg-white/65 backdrop-blur-2xl border-b border-white/80 sticky top-0 z-40 shadow-[0_4px_20px_rgba(255,20,147,0.06),0_1px_0_rgba(255,255,255,0.9)_inset]">
@@ -89,6 +91,19 @@ export const Navbar: React.FC<NavbarProps> = ({
                   {currentJudgeName || 'Set Name'}
                 </span>
                 <Pencil className="w-3 h-3 text-pink-500 opacity-60 group-hover:opacity-100 shrink-0 ml-0.5" />
+              </button>
+            )}
+
+            {/* Judge Screen Privacy Lock Button */}
+            {onLockScreen && (
+              <button
+                onClick={onLockScreen}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-stone-200/90 bg-white/80 hover:bg-stone-100 text-stone-700 text-xs font-bold transition-all shadow-2xs cursor-pointer group"
+                title="Lock your screen immediately for privacy. Re-enter PIN to unlock."
+              >
+                <Lock className="w-3.5 h-3.5 text-stone-500 group-hover:text-stone-900 transition-colors shrink-0" />
+                <span className="hidden sm:inline">Lock Screen</span>
+                <span className="sm:hidden">Lock</span>
               </button>
             )}
 

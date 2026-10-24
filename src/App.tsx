@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import {
   JudgeScoreSubmission,
   EntrantRanking,
@@ -28,6 +28,7 @@ import { ConfirmModal } from './components/ConfirmModal';
 import { DuplicateUploadModal } from './components/DuplicateUploadModal';
 import { JudgeNameModal } from './components/JudgeNameModal';
 import { PortalPinModal } from './components/PortalPinModal';
+import { WelcomeSplashIntro } from './components/WelcomeSplashIntro';
 import { CheckCircle2, AlertCircle, X, KeyRound } from 'lucide-react';
 
 const bgImageUrl = `${import.meta.env.BASE_URL}assets/aistudio/Snomicom_Halfbody_27Nov25_5d4fd688.png`;
@@ -79,6 +80,17 @@ export default function App() {
   const [isJudgeNameModalOpen, setIsJudgeNameModalOpen] = useState(() => {
     const unlocked = localStorage.getItem('summertide_portal_pin_unlocked') === 'true';
     return unlocked && !localStorage.getItem('summertide_judge_name');
+  });
+
+  // Judge screen privacy lock state
+  const [isScreenLocked, setIsScreenLocked] = useState(false);
+
+  // Entrance welcome animation state (shows smooth flower blooming on initial web entry)
+  const [showWelcomeIntro, setShowWelcomeIntro] = useState(() => {
+    const unlocked = localStorage.getItem('summertide_portal_pin_unlocked') === 'true';
+    const judge = localStorage.getItem('summertide_judge_name');
+    const seen = sessionStorage.getItem('summertide_intro_seen') === 'true';
+    return unlocked && !!judge && !seen;
   });
 
   // Parallax scroll position (gentle bounded tracking to stay visible throughout the page)
@@ -185,35 +197,93 @@ export default function App() {
     }, 4500);
   }, []);
 
-  // Continuous Online Server Sync (Real-time live sharing for all producers and judges)
+  // Performance-optimized sync cache ref to avoid unnecessary re-renders & lag
+  const lastSyncedRef = useRef<{
+    songs: string;
+    scores: string;
+    flags: string;
+    judges: string;
+    portalPin: string;
+    adminPin: string;
+    sessionVersion: number;
+    firebase: string;
+  }>({
+    songs: '',
+    scores: '',
+    flags: '',
+    judges: '',
+    portalPin: '',
+    adminPin: '',
+    sessionVersion: 0,
+    firebase: '',
+  });
+
+  // Continuous Online Server Sync with smart diff comparison
   const fetchContestData = useCallback(async (isSilent = true) => {
+    // Avoid background work if browser tab is hidden to save CPU and avoid lag
+    if (document.hidden && isSilent) return;
+
     try {
       const res = await apiFetch('/api/sync');
       if (!okRes(res)) return;
       const data = await res.json();
       if (data.success) {
         if (Array.isArray(data.songs)) {
-          setSongs(data.songs);
-          localStorage.setItem('summertide_contest_songs', JSON.stringify(data.songs));
+          const songsStr = JSON.stringify(data.songs);
+          if (songsStr !== lastSyncedRef.current.songs) {
+            lastSyncedRef.current.songs = songsStr;
+            setSongs(data.songs);
+            try {
+              localStorage.setItem('summertide_contest_songs', songsStr);
+            } catch (e) {
+              // Ignore storage quotas
+            }
+          }
         }
         if (Array.isArray(data.scores)) {
-          setScores(data.scores);
-          localStorage.setItem('summertide_contest_scores', JSON.stringify(data.scores));
+          const scoresStr = JSON.stringify(data.scores);
+          if (scoresStr !== lastSyncedRef.current.scores) {
+            lastSyncedRef.current.scores = scoresStr;
+            setScores(data.scores);
+            try {
+              localStorage.setItem('summertide_contest_scores', scoresStr);
+            } catch (e) {
+              // Ignore storage quotas
+            }
+          }
         }
         if (Array.isArray(data.flags)) {
-          setFlags(data.flags);
-          localStorage.setItem('summertide_contest_flags', JSON.stringify(data.flags));
+          const flagsStr = JSON.stringify(data.flags);
+          if (flagsStr !== lastSyncedRef.current.flags) {
+            lastSyncedRef.current.flags = flagsStr;
+            setFlags(data.flags);
+            try {
+              localStorage.setItem('summertide_contest_flags', flagsStr);
+            } catch (e) {
+              // Ignore storage quotas
+            }
+          }
         }
         if (Array.isArray(data.judges)) {
-          setRegisteredJudges(data.judges);
-          localStorage.setItem('summertide_registered_judges', JSON.stringify(data.judges));
+          const judgesStr = JSON.stringify(data.judges);
+          if (judgesStr !== lastSyncedRef.current.judges) {
+            lastSyncedRef.current.judges = judgesStr;
+            setRegisteredJudges(data.judges);
+            try {
+              localStorage.setItem('summertide_registered_judges', judgesStr);
+            } catch (e) {
+              // Ignore storage quotas
+            }
+          }
         }
         if (data.settings) {
-          if (data.settings.portalPin) {
+          if (data.settings.portalPin && data.settings.portalPin !== lastSyncedRef.current.portalPin) {
+            lastSyncedRef.current.portalPin = data.settings.portalPin;
             setPortalPin(data.settings.portalPin);
             localStorage.setItem('summertide_portal_pin', data.settings.portalPin);
           }
-          if (data.settings.adminPin) {
+          if (data.settings.adminPin && data.settings.adminPin !== lastSyncedRef.current.adminPin) {
+            lastSyncedRef.current.adminPin = data.settings.adminPin;
             setAdminPin(data.settings.adminPin);
             localStorage.setItem('summertide_admin_pin', data.settings.adminPin);
           }
@@ -233,13 +303,17 @@ export default function App() {
           }
         }
         if (data.firebase) {
-          setFirebaseStatus(data.firebase);
+          const fbStr = JSON.stringify(data.firebase);
+          if (fbStr !== lastSyncedRef.current.firebase) {
+            lastSyncedRef.current.firebase = fbStr;
+            setFirebaseStatus(data.firebase);
+          }
         }
       }
     } catch (err) {
       if (!isSilent) console.error('Failed to sync contest data from server:', err);
     }
-  }, []);
+  }, [showToast]);
 
   // Helper for fetch response
   function okRes(res: Response) {
@@ -250,49 +324,24 @@ export default function App() {
     // Initial fetch from online server on boot
     fetchContestData(false);
 
-    // Live continuous sync every 3.5 seconds
+    // Live continuous sync every 4.5 seconds
     const interval = setInterval(() => {
       fetchContestData(true);
-    }, 3500);
+    }, 4500);
 
-    return () => clearInterval(interval);
+    // Immediate sync when tab becomes visible again
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchContestData(true);
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, [fetchContestData]);
-
-  // Save songs to localStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem('summertide_contest_songs', JSON.stringify(songs));
-    } catch (e) {
-      console.error('Failed to save songs to localStorage:', e);
-    }
-  }, [songs]);
-
-  // Save scores to localStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem('summertide_contest_scores', JSON.stringify(scores));
-    } catch (e) {
-      console.error('Failed to save scores to localStorage:', e);
-    }
-  }, [scores]);
-
-  // Save flags to localStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem('summertide_contest_flags', JSON.stringify(flags));
-    } catch (e) {
-      console.error('Failed to save flags to localStorage:', e);
-    }
-  }, [flags]);
-
-  // Save registered judges to localStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem('summertide_registered_judges', JSON.stringify(registeredJudges));
-    } catch (e) {
-      console.error('Failed to save registered judges to localStorage:', e);
-    }
-  }, [registeredJudges]);
 
   // Save portal pin to localStorage
   useEffect(() => {
@@ -308,15 +357,36 @@ export default function App() {
     }
   }, [currentJudgeName]);
 
+  // Dismiss entrance welcome animation
+  const handleFinishWelcomeIntro = useCallback(() => {
+    sessionStorage.setItem('summertide_intro_seen', 'true');
+    setShowWelcomeIntro(false);
+  }, []);
+
+  // Judges Screen Privacy Lock: Locks portal immediately and prompts for PIN to re-enter
+  const handleLockScreen = useCallback(() => {
+    setIsPortalPinUnlocked(false);
+    setIsScreenLocked(true);
+    localStorage.removeItem('summertide_portal_pin_unlocked');
+    showToast('Screen locked for privacy. Enter your access PIN to resume judging.', 'info');
+  }, [showToast]);
+
   // Handle Portal PIN verification
   const handlePortalPinSuccess = () => {
     setIsPortalPinUnlocked(true);
     localStorage.setItem('summertide_portal_pin_unlocked', 'true');
     localStorage.setItem('summertide_portal_session_version', portalSessionVersion.toString());
+    const wasLocked = isScreenLocked;
+    setIsScreenLocked(false);
     if (!currentJudgeName) {
       setIsJudgeNameModalOpen(true);
     }
-    showToast('Portal PIN verified. Welcome to Summertide Judging Portal!', 'success');
+    showToast(
+      wasLocked
+        ? 'Judging session unlocked. Welcome back!'
+        : 'Portal PIN verified. Welcome to Summertide Judging Portal!',
+      'success'
+    );
   };
 
   // Register a judge into the monitoring roster
@@ -1039,6 +1109,7 @@ export default function App() {
         onExportExcel={isAdmin ? handleExportExcel : undefined}
         currentJudgeName={currentJudgeName}
         onEditJudgeName={() => setIsJudgeNameModalOpen(true)}
+        onLockScreen={handleLockScreen}
       />
 
       {/* Main Content Area */}
@@ -1190,10 +1261,19 @@ export default function App() {
         </div>
       )}
 
-      {/* Portal PIN Access Gatekeeper (Configurable by admin) */}
+      {/* Welcome Entrance Splash with Flower Pop-Up (Initial visit with active session) */}
+      {showWelcomeIntro && (
+        <WelcomeSplashIntro
+          judgeName={currentJudgeName}
+          onFinish={handleFinishWelcomeIntro}
+        />
+      )}
+
+      {/* Portal PIN Access Gatekeeper (Configurable by admin or session lock) */}
       <PortalPinModal
         isOpen={!isPortalPinUnlocked}
         requiredPin={portalPin}
+        isScreenLocked={isScreenLocked}
         onSuccess={handlePortalPinSuccess}
       />
 
