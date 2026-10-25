@@ -14,9 +14,11 @@ import {
   AlertCircle,
   Copy,
   Check,
+  Maximize2,
 } from 'lucide-react';
 import { SummertideFlowerLogo } from './SummertideFlowerLogo';
 import { EntrantRanking, ContestSummaryStats, getTier } from '../types/contest';
+import { JudgeOpinionModal, JudgeOpinionModalData } from './JudgeOpinionModal';
 
 interface LeaderboardViewProps {
   rankings: EntrantRanking[];
@@ -37,6 +39,7 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
   const [expandedEntrants, setExpandedEntrants] = useState<{ [key: string]: boolean }>({});
   const [expandedOpinions, setExpandedOpinions] = useState<{ [key: string]: boolean }>({});
   const [copiedOpinionKey, setCopiedOpinionKey] = useState<string | null>(null);
+  const [activeOpinionModal, setActiveOpinionModal] = useState<JudgeOpinionModalData | null>(null);
   const [sortBy, setSortBy] = useState<'rank' | 'score' | 'judges' | 'name'>('rank');
 
   const toggleExpand = (name: string) => {
@@ -620,20 +623,28 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
 
                                     {jb.comments ? (
                                       <div
-                                        onClick={(e) =>
-                                          toggleOpinionExpand(`jb-${entrant.entrantName}-${jIdx}`, e)
+                                        onClick={() =>
+                                          setActiveOpinionModal({
+                                            judgeName: jb.judgeName,
+                                            entrantName: entrant.entrantName,
+                                            totalScore: jb.totalScore,
+                                            comments: jb.comments,
+                                            timestamp: jb.timestamp,
+                                            scores: {
+                                              writing: jb.writing,
+                                              originality: jb.originality,
+                                              emotion: jb.emotion,
+                                              structure: jb.structure,
+                                            },
+                                          })
                                         }
-                                        className={`relative rounded-xl border transition-all cursor-pointer group text-xs ${
-                                          expandedOpinions[`jb-${entrant.entrantName}-${jIdx}`]
-                                            ? 'bg-sky-50/70 border-sky-200 p-3 shadow-xs'
-                                            : 'bg-stone-50/80 hover:bg-sky-50/50 border-stone-200/70 p-2.5'
-                                        }`}
-                                        title="Click to expand or collapse opinion"
+                                        className="relative rounded-xl border border-stone-200/90 bg-stone-50/80 hover:bg-sky-50/70 hover:border-sky-300 transition-all cursor-pointer group text-xs p-2.5 shadow-2xs"
+                                        title="Click to open full opinion in screen pop-up"
                                       >
                                         <div className="flex items-center justify-between gap-2 mb-1">
-                                          <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 group-hover:text-[#0284c7] transition-colors flex items-center gap-1">
+                                          <span className="text-[10px] font-bold uppercase tracking-wider text-[#0284c7] transition-colors flex items-center gap-1">
                                             <MessageSquare className="w-3 h-3 text-[#0284c7]" />
-                                            Judge Opinion
+                                            <span>Opinion · Click for Pop-up</span>
                                           </span>
                                           <div className="flex items-center gap-1.5">
                                             <button
@@ -645,8 +656,8 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
                                                   e
                                                 )
                                               }
-                                              className="p-1 rounded-md hover:bg-white text-stone-400 hover:text-stone-700 transition-colors inline-flex items-center gap-1 text-[10px] font-semibold"
-                                              title="Copy / Extract opinion text"
+                                              className="p-1 rounded-md bg-white hover:bg-stone-100 text-stone-600 hover:text-stone-900 border border-stone-200 transition-colors inline-flex items-center gap-1 text-[10px] font-semibold"
+                                              title="Copy opinion text"
                                             >
                                               {copiedOpinionKey === `jb-${entrant.entrantName}-${jIdx}` ? (
                                                 <span className="text-emerald-700 font-bold flex items-center gap-0.5">
@@ -658,21 +669,11 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
                                                 </span>
                                               )}
                                             </button>
-                                            <span className="text-[10px] text-stone-400 group-hover:text-[#0284c7] font-semibold">
-                                              {expandedOpinions[`jb-${entrant.entrantName}-${jIdx}`]
-                                                ? '▲'
-                                                : '▼'}
-                                            </span>
+                                            <Maximize2 className="w-3 h-3 text-sky-500 opacity-70 group-hover:opacity-100" />
                                           </div>
                                         </div>
 
-                                        <div
-                                          className={`font-serif italic text-stone-800 leading-relaxed whitespace-pre-wrap ${
-                                            expandedOpinions[`jb-${entrant.entrantName}-${jIdx}`]
-                                              ? ''
-                                              : 'line-clamp-2'
-                                          }`}
-                                        >
+                                        <div className="font-serif italic text-stone-800 leading-relaxed whitespace-pre-wrap line-clamp-2">
                                           “{jb.comments}”
                                         </div>
                                       </div>
@@ -696,6 +697,12 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
           </div>
         )}
       </div>
+
+      {/* Screen Pop-up Modal for Reading Judge Opinion */}
+      <JudgeOpinionModal
+        data={activeOpinionModal}
+        onClose={() => setActiveOpinionModal(null)}
+      />
     </div>
   );
 };

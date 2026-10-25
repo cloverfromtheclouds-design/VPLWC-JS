@@ -15,8 +15,10 @@ import {
   FileSpreadsheet,
   Copy,
   Check,
+  Maximize2,
 } from 'lucide-react';
 import { JudgeScoreSubmission, getTier } from '../types/contest';
+import { JudgeOpinionModal, JudgeOpinionModalData } from './JudgeOpinionModal';
 
 interface AllScoresMatrixProps {
   scores: JudgeScoreSubmission[];
@@ -36,6 +38,7 @@ export const AllScoresMatrix: React.FC<AllScoresMatrixProps> = ({
   const [viewMode, setViewMode] = useState<'matrix' | 'table'>('matrix');
   const [expandedComments, setExpandedComments] = useState<{ [key: string]: boolean }>({});
   const [copiedCommentKey, setCopiedCommentKey] = useState<string | null>(null);
+  const [activeOpinionModal, setActiveOpinionModal] = useState<JudgeOpinionModalData | null>(null);
 
   const toggleCommentExpand = (key: string) => {
     setExpandedComments((prev) => ({
@@ -382,46 +385,53 @@ export const AllScoresMatrix: React.FC<AllScoresMatrixProps> = ({
                     <td className="py-3.5 pr-4 sm:pr-6 pl-3 text-stone-700 text-xs max-w-sm">
                       {score.comments ? (
                         <div
-                          onClick={() => toggleCommentExpand(`matrix-${score.id || idx}`)}
-                          className={`rounded-xl border transition-all cursor-pointer group ${
-                            expandedComments[`matrix-${score.id || idx}`]
-                              ? 'bg-sky-50/70 border-sky-200 p-2.5 shadow-xs'
-                              : 'bg-stone-50/80 hover:bg-sky-50/50 border-stone-200/70 p-2'
-                          }`}
-                          title="Click to expand or collapse opinion"
+                          onClick={() =>
+                            setActiveOpinionModal({
+                              judgeName: score.judgeName,
+                              entrantName: score.entrantName,
+                              songTitle: score.songTitle,
+                              totalScore: score.totalScore,
+                              comments: score.comments,
+                              timestamp: score.timestamp,
+                              scores: {
+                                writing: score.writing,
+                                originality: score.originality,
+                                emotion: score.emotion,
+                                structure: score.structure,
+                              },
+                            })
+                          }
+                          className="rounded-xl border border-stone-200/90 bg-stone-50/80 hover:bg-sky-50/70 hover:border-sky-300 p-2.5 transition-all cursor-pointer group shadow-2xs"
+                          title="Click to open full opinion in screen pop-up"
                         >
-                          <div className="flex items-center justify-between gap-1 text-[10px] text-stone-400 group-hover:text-[#0284c7] font-semibold mb-0.5">
-                            <span className="flex items-center gap-1 font-bold">
+                          <div className="flex items-center justify-between gap-1 text-[10px] text-stone-400 group-hover:text-[#0284c7] font-semibold mb-1">
+                            <span className="flex items-center gap-1 font-bold text-[#0284c7]">
                               <MessageSquare className="w-3 h-3 text-[#0284c7]" />
-                              Opinion
+                              <span>Opinion · Click for Pop-up</span>
                             </span>
-                            <div className="flex items-center gap-1">
+                            <div className="flex items-center gap-1.5">
                               <button
                                 type="button"
                                 onClick={(e) =>
                                   handleCopyComment(score.comments, `matrix-${score.id || idx}`, e)
                                 }
-                                className="px-1 py-0.5 rounded hover:bg-white text-stone-500 hover:text-stone-800 transition-colors inline-flex items-center gap-0.5"
-                                title="Copy opinion"
+                                className="px-1.5 py-0.5 rounded bg-white hover:bg-stone-100 text-stone-600 hover:text-stone-900 border border-stone-200 transition-colors inline-flex items-center gap-0.5 text-[9px] font-semibold"
+                                title="Copy opinion text"
                               >
                                 {copiedCommentKey === `matrix-${score.id || idx}` ? (
                                   <span className="text-emerald-700 font-bold flex items-center gap-0.5">
-                                    <Check className="w-3 h-3 text-emerald-600" /> Copied
+                                    <Check className="w-2.5 h-2.5 text-emerald-600" /> Copied
                                   </span>
                                 ) : (
                                   <span className="flex items-center gap-0.5">
-                                    <Copy className="w-3 h-3" /> Copy
+                                    <Copy className="w-2.5 h-2.5 text-stone-400" /> Copy
                                   </span>
                                 )}
                               </button>
-                              <span>{expandedComments[`matrix-${score.id || idx}`] ? '▲' : '▼'}</span>
+                              <Maximize2 className="w-3 h-3 text-sky-500 opacity-70 group-hover:opacity-100" />
                             </div>
                           </div>
-                          <div
-                            className={`font-serif italic text-stone-800 leading-relaxed whitespace-pre-wrap ${
-                              expandedComments[`matrix-${score.id || idx}`] ? '' : 'line-clamp-2'
-                            }`}
-                          >
+                          <div className="font-serif italic text-stone-800 leading-relaxed whitespace-pre-wrap line-clamp-2">
                             “{score.comments}”
                           </div>
                         </div>
@@ -436,6 +446,12 @@ export const AllScoresMatrix: React.FC<AllScoresMatrixProps> = ({
           </div>
         </div>
       )}
+
+      {/* Screen Pop-up Modal for Reading Judge Opinion */}
+      <JudgeOpinionModal
+        data={activeOpinionModal}
+        onClose={() => setActiveOpinionModal(null)}
+      />
     </div>
   );
 };

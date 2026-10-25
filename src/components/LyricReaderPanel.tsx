@@ -200,7 +200,7 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
                         setSectionNoteText('');
                       }
                     }}
-                    className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all shadow-2xs border ${
+                    className={`inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all duration-200 shadow-2xs border ${
                       isSectionOpen
                         ? 'bg-gradient-to-r from-[#0284c7] to-[#0891b2] text-white border-[#0284c7] shadow-sm ring-2 ring-[#0284c7]/20'
                         : canQuote
@@ -215,22 +215,25 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
                         : trimmed
                     }
                   >
-                    <span
-                      className={`w-2 h-2 rounded-full transition-colors ${
-                        isSectionOpen ? 'bg-white' : 'bg-[#0284c7]'
-                      }`}
-                    />
                     <span>{trimmed}</span>
                     {canQuote && hasSectionLines && (
                       <span
-                        className={`text-[10px] font-bold lowercase px-1.5 py-0.5 rounded-md transition-all inline-flex items-center gap-1 ${
+                        className={`overflow-hidden transition-all duration-200 ease-out inline-flex items-center ${
                           isSectionOpen
-                            ? 'bg-white/20 text-white opacity-100'
-                            : 'opacity-0 group-hover:opacity-100 bg-sky-100 text-sky-800'
+                            ? 'max-w-28 opacity-100 ml-1.5'
+                            : 'max-w-0 opacity-0 group-hover:max-w-28 group-hover:opacity-100 group-hover:ml-1.5'
                         }`}
                       >
-                        <Quote className="w-2.5 h-2.5" />
-                        <span>{isSectionOpen ? 'close' : 'quote section'}</span>
+                        <span
+                          className={`text-[10px] font-bold lowercase px-1.5 py-0.5 rounded-md inline-flex items-center gap-1 whitespace-nowrap ${
+                            isSectionOpen
+                              ? 'bg-white/20 text-white'
+                              : 'bg-sky-100 text-sky-800'
+                          }`}
+                        >
+                          <Quote className="w-2.5 h-2.5 shrink-0" />
+                          <span>{isSectionOpen ? 'close' : 'quote section'}</span>
+                        </span>
                       </span>
                     )}
                   </button>
@@ -262,9 +265,9 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
                     </div>
 
                     {/* Preview of the entire section */}
-                    <div className="bg-white p-3 rounded-xl border border-sky-100 border-l-4 border-l-[#0284c7] font-serif text-xs sm:text-sm text-stone-800 leading-relaxed max-h-48 overflow-y-auto space-y-1">
+                    <div className="bg-white p-3 rounded-xl border border-sky-100 border-l-4 border-l-[#0284c7] font-serif text-xs sm:text-sm text-stone-800 leading-relaxed space-y-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                       <div className="text-[11px] font-sans font-bold text-[#0284c7] uppercase tracking-wider mb-1">
-                        {trimmed} Content:
+                        {trimmed} Content ({sectionLines.length} lines):
                       </div>
                       {sectionLines.map((sLine, sIdx) => (
                         <div key={sIdx} className={sLine.trim() ? '' : 'h-2'}>
@@ -322,7 +325,7 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
           const wasJustQuoted = recentlyQuotedIndex === idx;
 
           return (
-            <div key={idx} className="group relative rounded-xl px-2.5 py-1 -mx-2.5 transition-colors hover:bg-sky-50/50">
+            <div key={idx} className="group relative rounded-xl px-2 py-1 transition-colors hover:bg-sky-50/50">
               <div className="flex items-start justify-between gap-2">
                 <div
                   className={`leading-relaxed text-stone-800 font-serif tracking-normal flex-1 select-text ${
@@ -558,7 +561,7 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
 
       {/* Main Content Body */}
       {hasContent ? (
-        <div className="flex-1 overflow-y-auto space-y-4 pt-4 pr-1">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden space-y-4 pt-4 pr-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {/* Metadata Badges (Alias & Discord) */}
           <div className="flex flex-wrap items-center gap-2">
             {submission.alias && (
@@ -573,17 +576,12 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
               <DiscordHandleReveal username={submission.discordUsername} size="sm" />
             )}
 
-            {canQuote ? (
-              <span className="text-[11px] text-[#0284c7] font-semibold bg-sky-50 px-2.5 py-1 rounded-lg border border-sky-200/80 hidden sm:inline-flex items-center gap-1">
-                <Quote className="w-3 h-3" />
-                Click section titles (like [Verse]) or 'Note / Quote' to quote to your opinion
-              </span>
-            ) : isAlreadySubmitted ? (
+            {isAlreadySubmitted && (
               <span className="text-[11px] text-emerald-800 font-semibold bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200 hidden sm:inline-flex items-center gap-1.5">
                 <Check className="w-3 h-3 text-emerald-600" />
                 Score Submitted · Lyric Notes & Quotes Locked
               </span>
-            ) : null}
+            )}
           </div>
 
           {/* Optional Story / Concept Callout */}
