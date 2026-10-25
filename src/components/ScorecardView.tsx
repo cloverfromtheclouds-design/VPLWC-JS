@@ -606,8 +606,8 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
             })}
           </div>
 
-          {/* Live Score Summary Banner: Vibrant Sea Blue Theme */}
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-[#0284c7] via-[#0369a1] to-[#075985] text-white shadow-xl border border-sky-400/30">
+          {/* Live Score Summary Banner: Vibrant Sea Blue with gentle Cyan gradient */}
+          <div className="p-6 rounded-2xl bg-gradient-to-br from-[#0284c7] via-[#0284c7] to-[#0891b2] text-white shadow-xl border border-sky-400/30">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
                 <div className="text-xs font-extrabold text-sky-200 tracking-wider uppercase">
@@ -725,7 +725,7 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
               <button
                 type="submit"
                 disabled={isSubmitting || (!parsedSubmission.songTitle && !entrantName)}
-                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#0284c7] hover:bg-[#0369a1] text-white font-bold text-sm shadow-md transition-all hover:shadow-lg disabled:opacity-60 cursor-pointer"
+                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#0284c7] to-[#0891b2] hover:from-[#0369a1] hover:to-[#0e7490] text-white font-bold text-sm shadow-md transition-all hover:shadow-lg disabled:opacity-60 cursor-pointer"
               >
                 <Send className="w-4 h-4" />
                 <span>

@@ -202,7 +202,7 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
                     }}
                     className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all shadow-2xs border ${
                       isSectionOpen
-                        ? 'bg-[#0284c7] text-white border-[#0284c7] shadow-sm ring-2 ring-[#0284c7]/20'
+                        ? 'bg-gradient-to-r from-[#0284c7] to-[#0891b2] text-white border-[#0284c7] shadow-sm ring-2 ring-[#0284c7]/20'
                         : canQuote
                         ? 'bg-sky-50/90 hover:bg-sky-100 text-[#0284c7] border-sky-200/80 hover:border-sky-300 cursor-pointer group'
                         : 'bg-sky-50 text-[#0284c7] border-sky-200/60 cursor-default'
@@ -223,10 +223,10 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
                     <span>{trimmed}</span>
                     {canQuote && hasSectionLines && (
                       <span
-                        className={`text-[10px] font-bold lowercase px-1.5 py-0.5 rounded-md transition-colors inline-flex items-center gap-1 ${
+                        className={`text-[10px] font-bold lowercase px-1.5 py-0.5 rounded-md transition-all inline-flex items-center gap-1 ${
                           isSectionOpen
-                            ? 'bg-white/20 text-white'
-                            : 'bg-sky-100 text-sky-800 group-hover:bg-sky-200/80'
+                            ? 'bg-white/20 text-white opacity-100'
+                            : 'opacity-0 group-hover:opacity-100 bg-sky-100 text-sky-800'
                         }`}
                       >
                         <Quote className="w-2.5 h-2.5" />
@@ -301,7 +301,7 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
                         <button
                           type="button"
                           onClick={() => handleSendSectionQuote(trimmed, sectionLines, sectionNoteText)}
-                          className="px-4 py-1.5 bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold rounded-xl transition-colors cursor-pointer shadow-2xs flex items-center gap-1.5"
+                          className="px-4 py-1.5 bg-gradient-to-r from-[#0284c7] to-[#0891b2] hover:from-[#0369a1] hover:to-[#0e7490] text-white text-xs font-bold rounded-xl transition-all cursor-pointer shadow-2xs flex items-center gap-1.5"
                         >
                           <CornerDownRight className="w-3.5 h-3.5" />
                           <span>Insert Section & Note into Opinion</span>
@@ -357,7 +357,7 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
                         }}
                         className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-semibold transition-all cursor-pointer font-sans shadow-2xs ${
                           isEditorOpen
-                            ? 'bg-[#0284c7] text-white opacity-100'
+                            ? 'bg-gradient-to-r from-[#0284c7] to-[#0891b2] text-white opacity-100'
                             : 'opacity-0 group-hover:opacity-100 bg-white/90 hover:bg-sky-100 text-[#0284c7] border border-sky-200/70'
                         }`}
                         title="Add note next to this lyric and quote to your opinion"
@@ -419,7 +419,7 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
                       <button
                         type="button"
                         onClick={() => handleSendLineQuote(trimmed, lineNoteText)}
-                        className="px-3.5 py-1.5 bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold rounded-lg transition-colors cursor-pointer shadow-2xs flex items-center gap-1.5"
+                        className="px-3.5 py-1.5 bg-gradient-to-r from-[#0284c7] to-[#0891b2] hover:from-[#0369a1] hover:to-[#0e7490] text-white text-xs font-bold rounded-lg transition-all cursor-pointer shadow-2xs flex items-center gap-1.5"
                       >
                         <CornerDownRight className="w-3.5 h-3.5" />
                         <span>Insert into Opinion</span>
@@ -457,9 +457,9 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
           <button
             type="button"
             onClick={handleQuoteSelection}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-stone-900 text-white text-xs font-bold shadow-lg hover:bg-[#0284c7] transition-all cursor-pointer whitespace-nowrap"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-[#0284c7] to-[#0891b2] hover:from-[#0369a1] hover:to-[#0e7490] text-white text-xs font-bold shadow-lg transition-all cursor-pointer whitespace-nowrap"
           >
-            <Quote className="w-3 h-3 text-sky-300" />
+            <Quote className="w-3 h-3 text-cyan-200" />
             <span>Quote Selection to Opinion</span>
           </button>
         </div>

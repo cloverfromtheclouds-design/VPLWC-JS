@@ -942,7 +942,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <button
                 type="submit"
                 disabled={newAdminPinInput.trim().length < 4}
-                className="px-4 py-2 bg-[#0284c7] hover:bg-[#0369a1] text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
+                className="px-4 py-2 bg-gradient-to-r from-[#0284c7] to-[#0891b2] hover:from-[#0369a1] hover:to-[#0e7490] text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-all disabled:opacity-50 cursor-pointer"
               >
                 Update Admin PIN
               </button>

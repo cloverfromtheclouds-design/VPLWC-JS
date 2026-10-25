@@ -136,7 +136,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => setActiveTab('songs')}
             className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold rounded-lg transition-all border shrink-0 cursor-pointer ${
               activeTab === 'songs'
-                ? 'bg-[#0284c7] text-white border-[#0284c7] shadow-xs hover:bg-[#0369a1]'
+                ? 'bg-gradient-to-r from-[#0284c7] to-[#0891b2] text-white border-[#0284c7]/80 shadow-xs hover:from-[#0369a1] hover:to-[#0e7490]'
                 : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100 border-transparent'
             }`}
           >
@@ -160,7 +160,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => setActiveTab('scorecard')}
             className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold rounded-lg transition-all border shrink-0 cursor-pointer ${
               activeTab === 'scorecard'
-                ? 'bg-[#0284c7] text-white border-[#0284c7] shadow-xs hover:bg-[#0369a1]'
+                ? 'bg-gradient-to-r from-[#0284c7] to-[#0891b2] text-white border-[#0284c7]/80 shadow-xs hover:from-[#0369a1] hover:to-[#0e7490]'
                 : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100 border-transparent'
             }`}
           >
@@ -175,7 +175,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={() => setActiveTab('rankings')}
                 className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold rounded-lg transition-all border shrink-0 cursor-pointer ${
                   activeTab === 'rankings'
-                    ? 'bg-[#0284c7] text-white border-[#0284c7] shadow-xs hover:bg-[#0369a1]'
+                    ? 'bg-gradient-to-r from-[#0284c7] to-[#0891b2] text-white border-[#0284c7]/80 shadow-xs hover:from-[#0369a1] hover:to-[#0e7490]'
                     : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100 border-transparent'
                 }`}
               >
@@ -187,7 +187,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={() => setActiveTab('scores')}
                 className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold rounded-lg transition-all border shrink-0 cursor-pointer ${
                   activeTab === 'scores'
-                    ? 'bg-[#0284c7] text-white border-[#0284c7] shadow-xs hover:bg-[#0369a1]'
+                    ? 'bg-gradient-to-r from-[#0284c7] to-[#0891b2] text-white border-[#0284c7]/80 shadow-xs hover:from-[#0369a1] hover:to-[#0e7490]'
                     : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100 border-transparent'
                 }`}
               >
@@ -199,7 +199,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={() => setActiveTab('admin')}
                 className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold rounded-lg transition-all border shrink-0 cursor-pointer ${
                   activeTab === 'admin'
-                    ? 'bg-[#0284c7] text-white border-[#0284c7] shadow-xs hover:bg-[#0369a1]'
+                    ? 'bg-gradient-to-r from-[#0284c7] to-[#0891b2] text-white border-[#0284c7]/80 shadow-xs hover:from-[#0369a1] hover:to-[#0e7490]'
                     : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100 border-transparent'
                 }`}
               >

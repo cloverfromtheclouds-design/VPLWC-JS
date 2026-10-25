@@ -410,7 +410,7 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
 
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold shadow-2xs transition-colors cursor-pointer shrink-0"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#0284c7] to-[#0891b2] hover:from-[#0369a1] hover:to-[#0e7490] text-white text-xs font-bold shadow-2xs transition-all cursor-pointer shrink-0"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Add Entry</span>
@@ -450,7 +450,7 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
             <div className="mt-6 flex justify-center gap-3">
               <button
                 onClick={() => setIsAddModalOpen(true)}
-                className="px-4 py-2.5 bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold rounded-xl shadow-xs transition-colors"
+                className="px-4 py-2.5 bg-gradient-to-r from-[#0284c7] to-[#0891b2] hover:from-[#0369a1] hover:to-[#0e7490] text-white text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer"
               >
                 Add First Contest Entry
               </button>
@@ -591,7 +591,7 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
                         ? 'bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-300'
                         : isGraded
                         ? 'bg-sky-50 text-[#0284c7] hover:bg-sky-100 border border-sky-200'
-                        : 'bg-[#0284c7] hover:bg-[#0369a1] text-white'
+                        : 'bg-gradient-to-r from-[#0284c7] to-[#0891b2] hover:from-[#0369a1] hover:to-[#0e7490] text-white'
                     }`}
                   >
                     <Sliders className="w-3.5 h-3.5" />
@@ -716,7 +716,7 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2.5 bg-[#0284c7] hover:bg-[#0369a1] text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer"
+                  className="flex-1 py-2.5 bg-gradient-to-r from-[#0284c7] to-[#0891b2] hover:from-[#0369a1] hover:to-[#0e7490] text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer transition-all"
                 >
                   Add Contest Entry
                 </button>
@@ -781,7 +781,7 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
                   setViewingLyricsSong(null);
                   onSelectSongToGrade(s);
                 }}
-                className="px-5 py-2 bg-[#0284c7] hover:bg-[#0369a1] text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer inline-flex items-center gap-1.5"
+                className="px-5 py-2 bg-gradient-to-r from-[#0284c7] to-[#0891b2] hover:from-[#0369a1] hover:to-[#0e7490] text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer inline-flex items-center gap-1.5 transition-all"
               >
                 <Sliders className="w-3.5 h-3.5" />
                 <span>Score This Song</span>
