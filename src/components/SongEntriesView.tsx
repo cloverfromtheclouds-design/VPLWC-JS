@@ -258,9 +258,6 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
                 className="bg-transparent font-bold text-stone-900 text-xs focus:outline-hidden w-36 sm:w-44"
               />
             </div>
-            <span className="text-[11px] text-stone-400">
-              (Updates your grading progress meter)
-            </span>
           </div>
         </div>
 

@@ -529,29 +529,7 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
             </div>
           )}
 
-          {/* QUICK SCALE REFERENCE */}
-          <div className="pt-1">
-            <div className="flex items-center justify-between mb-2">
-              <h4 className="text-xs font-bold text-stone-700 uppercase tracking-wider flex items-center gap-1.5">
-                <HelpCircle className="w-3.5 h-3.5 text-[#0284c7]" />
-                <span>Quick Scale Reference</span>
-              </h4>
-              <span className="text-[11px] text-[#0284c7] font-semibold bg-sky-50 border border-sky-200 px-2 py-0.5 rounded-md">
-                1–25 Allowed (25 Max)
-              </span>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
-              {TIER_DESCRIPTIONS.map((t) => (
-                <div key={t.range} className="p-2.5 rounded-xl border border-sky-100 bg-sky-50/50">
-                  <div className="font-extrabold text-[#0284c7]">{t.range}</div>
-                  <div className="text-stone-700 font-semibold text-[11px] mt-0.5">{t.label}</div>
-                </div>
-              ))}
-            </div>
-            <div className="mt-2 text-[11px] text-sky-900 bg-sky-50 border border-sky-200/80 rounded-xl p-2.5">
-              <strong>Scoring standard:</strong> Each criterion is evaluated from 1 to 25, allowing a full potential total score of 100 points.
-            </div>
-          </div>
+
 
           {/* Section Heading: Scoring Criteria */}
           <div className="pt-2 border-t border-stone-200">

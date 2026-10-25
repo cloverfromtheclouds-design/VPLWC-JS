@@ -12,6 +12,8 @@ import {
   MessageSquare,
   CheckCircle2,
   AlertCircle,
+  Copy,
+  Check,
 } from 'lucide-react';
 import { SummertideFlowerLogo } from './SummertideFlowerLogo';
 import { EntrantRanking, ContestSummaryStats, getTier } from '../types/contest';
@@ -33,6 +35,8 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedEntrants, setExpandedEntrants] = useState<{ [key: string]: boolean }>({});
+  const [expandedOpinions, setExpandedOpinions] = useState<{ [key: string]: boolean }>({});
+  const [copiedOpinionKey, setCopiedOpinionKey] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'rank' | 'score' | 'judges' | 'name'>('rank');
 
   const toggleExpand = (name: string) => {
@@ -40,6 +44,21 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
       ...prev,
       [name]: !prev[name],
     }));
+  };
+
+  const toggleOpinionExpand = (key: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setExpandedOpinions((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+
+  const handleCopyOpinion = (text: string, key: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    navigator.clipboard.writeText(text);
+    setCopiedOpinionKey(key);
+    setTimeout(() => setCopiedOpinionKey(null), 2000);
   };
 
   const filteredRankings = rankings
@@ -292,10 +311,51 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
                   </div>
                 </div>
 
-                {/* Recent Judge Comment Snippet */}
+                {/* Recent Judge Comment Snippet - Click to expand / extract */}
                 {entrant.judgeBreakdowns[0]?.comments && (
-                  <div className="mt-3 text-xs text-stone-600 italic bg-white/80 p-2.5 rounded-lg border border-stone-200/60 line-clamp-2">
-                    “{entrant.judgeBreakdowns[0].comments}”
+                  <div
+                    onClick={(e) => toggleOpinionExpand(`podium-${entrant.entrantName}`, e)}
+                    className="mt-3 text-xs bg-white/90 p-2.5 rounded-xl border border-stone-200/80 cursor-pointer hover:border-sky-300 transition-all group"
+                    title="Click to expand or collapse opinion"
+                  >
+                    <div className="flex items-center justify-between text-[10px] text-stone-400 group-hover:text-[#0284c7] font-semibold mb-1">
+                      <span className="flex items-center gap-1 uppercase tracking-wider font-bold">
+                        <MessageSquare className="w-3 h-3 text-[#0284c7]" />
+                        Judge Opinion
+                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={(e) =>
+                            handleCopyOpinion(
+                              entrant.judgeBreakdowns[0].comments,
+                              `podium-${entrant.entrantName}`,
+                              e
+                            )
+                          }
+                          className="px-1.5 py-0.5 rounded hover:bg-stone-100 text-stone-500 hover:text-stone-800 transition-colors"
+                          title="Copy opinion to clipboard"
+                        >
+                          {copiedOpinionKey === `podium-${entrant.entrantName}` ? (
+                            <span className="text-emerald-700 font-bold flex items-center gap-0.5">
+                              <Check className="w-3 h-3 text-emerald-600" /> Copied
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-0.5">
+                              <Copy className="w-3 h-3" /> Copy
+                            </span>
+                          )}
+                        </button>
+                        <span>{expandedOpinions[`podium-${entrant.entrantName}`] ? '▲' : '▼'}</span>
+                      </div>
+                    </div>
+                    <div
+                      className={`text-stone-700 font-serif italic leading-relaxed whitespace-pre-wrap ${
+                        expandedOpinions[`podium-${entrant.entrantName}`] ? '' : 'line-clamp-2'
+                      }`}
+                    >
+                      “{entrant.judgeBreakdowns[0].comments}”
+                    </div>
                   </div>
                 )}
               </div>
@@ -559,8 +619,62 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
                                     </div>
 
                                     {jb.comments ? (
-                                      <div className="text-xs text-stone-600 bg-stone-50/70 p-2 rounded-lg border border-stone-100 italic">
-                                        “{jb.comments}”
+                                      <div
+                                        onClick={(e) =>
+                                          toggleOpinionExpand(`jb-${entrant.entrantName}-${jIdx}`, e)
+                                        }
+                                        className={`relative rounded-xl border transition-all cursor-pointer group text-xs ${
+                                          expandedOpinions[`jb-${entrant.entrantName}-${jIdx}`]
+                                            ? 'bg-sky-50/70 border-sky-200 p-3 shadow-xs'
+                                            : 'bg-stone-50/80 hover:bg-sky-50/50 border-stone-200/70 p-2.5'
+                                        }`}
+                                        title="Click to expand or collapse opinion"
+                                      >
+                                        <div className="flex items-center justify-between gap-2 mb-1">
+                                          <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 group-hover:text-[#0284c7] transition-colors flex items-center gap-1">
+                                            <MessageSquare className="w-3 h-3 text-[#0284c7]" />
+                                            Judge Opinion
+                                          </span>
+                                          <div className="flex items-center gap-1.5">
+                                            <button
+                                              type="button"
+                                              onClick={(e) =>
+                                                handleCopyOpinion(
+                                                  jb.comments,
+                                                  `jb-${entrant.entrantName}-${jIdx}`,
+                                                  e
+                                                )
+                                              }
+                                              className="p-1 rounded-md hover:bg-white text-stone-400 hover:text-stone-700 transition-colors inline-flex items-center gap-1 text-[10px] font-semibold"
+                                              title="Copy / Extract opinion text"
+                                            >
+                                              {copiedOpinionKey === `jb-${entrant.entrantName}-${jIdx}` ? (
+                                                <span className="text-emerald-700 font-bold flex items-center gap-0.5">
+                                                  <Check className="w-3 h-3 text-emerald-600" /> Copied
+                                                </span>
+                                              ) : (
+                                                <span className="flex items-center gap-0.5">
+                                                  <Copy className="w-3 h-3" /> Copy
+                                                </span>
+                                              )}
+                                            </button>
+                                            <span className="text-[10px] text-stone-400 group-hover:text-[#0284c7] font-semibold">
+                                              {expandedOpinions[`jb-${entrant.entrantName}-${jIdx}`]
+                                                ? '▲'
+                                                : '▼'}
+                                            </span>
+                                          </div>
+                                        </div>
+
+                                        <div
+                                          className={`font-serif italic text-stone-800 leading-relaxed whitespace-pre-wrap ${
+                                            expandedOpinions[`jb-${entrant.entrantName}-${jIdx}`]
+                                              ? ''
+                                              : 'line-clamp-2'
+                                          }`}
+                                        >
+                                          “{jb.comments}”
+                                        </div>
                                       </div>
                                     ) : (
                                       <div className="text-[11px] text-stone-400 italic">
@@ -581,22 +695,6 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
             </table>
           </div>
         )}
-      </div>
-
-      {/* Footer Info Box */}
-      <div className="bg-[#202b31] text-white p-5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div>
-          <div className="text-xs font-bold uppercase tracking-wider text-[#9ec6b9]">
-            Summertide Producer Ranking Standard
-          </div>
-          <div className="text-sm text-stone-300 mt-0.5">
-            Rankings are determined by average judge total across Writing, Originality, Emotional Impact,
-            and Structure (max awardable 25 each, 100 total).
-          </div>
-        </div>
-        <div className="text-xs text-stone-400 shrink-0 font-medium">
-          Automated tie-breakers applied · Zero manual tallying
-        </div>
       </div>
     </div>
   );

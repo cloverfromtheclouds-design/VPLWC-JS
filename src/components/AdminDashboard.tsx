@@ -95,6 +95,22 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [selectedJudge, setSelectedJudge] = useState<string>('all');
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedPortalPin, setCopiedPortalPin] = useState(false);
+  const [expandedComments, setExpandedComments] = useState<{ [key: string]: boolean }>({});
+  const [copiedCommentKey, setCopiedCommentKey] = useState<string | null>(null);
+
+  const toggleCommentExpand = (key: string) => {
+    setExpandedComments((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+
+  const handleCopyComment = (text: string, key: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(text);
+    setCopiedCommentKey(key);
+    setTimeout(() => setCopiedCommentKey(null), 2000);
+  };
 
   // Rename modal state
   const [renamingTarget, setRenamingTarget] = useState<string | null>(null);
@@ -604,8 +620,60 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         {score.totalScore}
                         <span className="text-[9px] text-stone-400 font-normal"> / 100</span>
                       </td>
-                      <td className="py-2 px-2 text-stone-500 italic text-[11px] max-w-xs truncate">
-                        {score.comments ? `“${score.comments}”` : '—'}
+                      <td className="py-2 px-2 text-stone-700 text-xs max-w-sm">
+                        {score.comments ? (
+                          <div
+                            onClick={() => toggleCommentExpand(`admin-score-${score.id || idx}`)}
+                            className={`rounded-lg border transition-all cursor-pointer group ${
+                              expandedComments[`admin-score-${score.id || idx}`]
+                                ? 'bg-sky-50/70 border-sky-200 p-2 shadow-xs'
+                                : 'bg-stone-50/80 hover:bg-sky-50/50 border-stone-200/70 p-1.5'
+                            }`}
+                            title="Click to expand or collapse opinion"
+                          >
+                            <div className="flex items-center justify-between gap-1 text-[9px] text-stone-400 group-hover:text-[#0284c7] font-semibold mb-0.5">
+                              <span className="font-bold">Opinion</span>
+                              <div className="flex items-center gap-1">
+                                <button
+                                  type="button"
+                                  onClick={(e) =>
+                                    handleCopyComment(
+                                      score.comments,
+                                      `admin-score-${score.id || idx}`,
+                                      e
+                                    )
+                                  }
+                                  className="px-1 py-0.5 rounded hover:bg-white text-stone-500 hover:text-stone-800 transition-colors inline-flex items-center gap-0.5 text-[9px]"
+                                  title="Copy opinion"
+                                >
+                                  {copiedCommentKey === `admin-score-${score.id || idx}` ? (
+                                    <span className="text-emerald-700 font-bold flex items-center gap-0.5">
+                                      <Check className="w-3 h-3 text-emerald-600" /> Copied
+                                    </span>
+                                  ) : (
+                                    <span className="flex items-center gap-0.5">
+                                      <Copy className="w-2.5 h-2.5" /> Copy
+                                    </span>
+                                  )}
+                                </button>
+                                <span>
+                                  {expandedComments[`admin-score-${score.id || idx}`] ? '▲' : '▼'}
+                                </span>
+                              </div>
+                            </div>
+                            <div
+                              className={`font-serif italic text-stone-800 leading-relaxed whitespace-pre-wrap text-[11px] ${
+                                expandedComments[`admin-score-${score.id || idx}`]
+                                  ? ''
+                                  : 'line-clamp-2'
+                              }`}
+                            >
+                              “{score.comments}”
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-stone-300 italic text-[11px]">—</span>
+                        )}
                       </td>
                       <td className="py-2 pr-3 sm:pr-4 pl-1 text-right">
                         <button

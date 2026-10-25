@@ -40,6 +40,11 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
   const [lineNoteText, setLineNoteText] = useState('');
   const [recentlyQuotedIndex, setRecentlyQuotedIndex] = useState<number | null>(null);
 
+  // Section Quote Box State (e.g. [Verse], [Chorus])
+  const [activeSectionHeaderIndex, setActiveSectionHeaderIndex] = useState<number | null>(null);
+  const [sectionNoteText, setSectionNoteText] = useState('');
+  const [recentlyQuotedSectionIndex, setRecentlyQuotedSectionIndex] = useState<number | null>(null);
+
   // Floating text selection state
   const [selectedText, setSelectedText] = useState('');
   const [selectionPos, setSelectionPos] = useState<{ top: number; left: number } | null>(null);
@@ -60,6 +65,43 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
     navigator.clipboard.writeText(submission.lyrics);
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
+  };
+
+  // Helper to extract all lyric lines belonging to a section header
+  const getSectionLines = (headerIdx: number, allLines: string[]): string[] => {
+    const secLines: string[] = [];
+    for (let i = headerIdx + 1; i < allLines.length; i++) {
+      const lineStr = allLines[i];
+      if (/^\[[^\]]+\]/i.test(lineStr.trim())) {
+        break;
+      }
+      secLines.push(lineStr);
+    }
+    // Trim leading/trailing blank lines
+    while (secLines.length > 0 && !secLines[0].trim()) {
+      secLines.shift();
+    }
+    while (secLines.length > 0 && !secLines[secLines.length - 1].trim()) {
+      secLines.pop();
+    }
+    return secLines;
+  };
+
+  // Handle section quote submission
+  const handleSendSectionQuote = (sectionHeader: string, secLines: string[], note?: string) => {
+    if (!canQuote) return;
+    const cleanLines = secLines.filter((l) => l.trim());
+    if (cleanLines.length === 0) return;
+
+    const fullSectionText = `${sectionHeader}\n${cleanLines.join('\n')}`;
+    onQuoteLyric(fullSectionText, note);
+    setRecentlyQuotedSectionIndex(activeSectionHeaderIndex);
+    setActiveSectionHeaderIndex(null);
+    setSectionNoteText('');
+
+    setTimeout(() => {
+      setRecentlyQuotedSectionIndex(null);
+    }, 2500);
   };
 
   // Handle line quote submission
@@ -137,12 +179,137 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
           const isSectionHeader = /^\[[^\]]+\]/i.test(trimmed);
 
           if (isSectionHeader) {
+            const sectionLines = getSectionLines(idx, lines);
+            const hasSectionLines = sectionLines.length > 0;
+            const isSectionOpen = activeSectionHeaderIndex === idx;
+            const wasSectionJustQuoted = recentlyQuotedSectionIndex === idx;
+
             return (
               <div key={idx} className="pt-4 pb-1">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-sky-50 text-[#0284c7] font-extrabold text-xs uppercase tracking-wider shadow-2xs border border-sky-200/60">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#0284c7]" />
-                  {trimmed}
-                </span>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <button
+                    type="button"
+                    disabled={!canQuote}
+                    onClick={() => {
+                      if (!canQuote) return;
+                      if (isSectionOpen) {
+                        setActiveSectionHeaderIndex(null);
+                      } else {
+                        setActiveSectionHeaderIndex(idx);
+                        setActiveNoteLineIndex(null);
+                        setSectionNoteText('');
+                      }
+                    }}
+                    className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all shadow-2xs border ${
+                      isSectionOpen
+                        ? 'bg-[#0284c7] text-white border-[#0284c7] shadow-sm ring-2 ring-[#0284c7]/20'
+                        : canQuote
+                        ? 'bg-sky-50/90 hover:bg-sky-100 text-[#0284c7] border-sky-200/80 hover:border-sky-300 cursor-pointer group'
+                        : 'bg-sky-50 text-[#0284c7] border-sky-200/60 cursor-default'
+                    }`}
+                    title={
+                      canQuote
+                        ? isSectionOpen
+                          ? `Close quote box for ${trimmed}`
+                          : `Click to quote the entire ${trimmed} (${sectionLines.length} lines) to your opinion`
+                        : trimmed
+                    }
+                  >
+                    <span
+                      className={`w-2 h-2 rounded-full transition-colors ${
+                        isSectionOpen ? 'bg-white' : 'bg-[#0284c7]'
+                      }`}
+                    />
+                    <span>{trimmed}</span>
+                    {canQuote && hasSectionLines && (
+                      <span
+                        className={`text-[10px] font-bold lowercase px-1.5 py-0.5 rounded-md transition-colors inline-flex items-center gap-1 ${
+                          isSectionOpen
+                            ? 'bg-white/20 text-white'
+                            : 'bg-sky-100 text-sky-800 group-hover:bg-sky-200/80'
+                        }`}
+                      >
+                        <Quote className="w-2.5 h-2.5" />
+                        <span>{isSectionOpen ? 'close' : 'quote section'}</span>
+                      </span>
+                    )}
+                  </button>
+
+                  {wasSectionJustQuoted && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200 animate-in fade-in duration-150">
+                      <Check className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Quoted Entire Section!</span>
+                    </span>
+                  )}
+                </div>
+
+                {/* Expandable Section Quote Box */}
+                {canQuote && isSectionOpen && (
+                  <div className="mt-2.5 mb-3 p-4 bg-gradient-to-r from-sky-50 via-white to-pink-50/60 rounded-2xl border-2 border-sky-200 shadow-md space-y-3 font-sans animate-in fade-in slide-in-from-top-1 duration-150">
+                    <div className="flex items-center justify-between text-xs font-bold text-sky-900 border-b border-sky-100 pb-2">
+                      <span className="flex items-center gap-1.5 text-xs sm:text-sm font-extrabold text-[#0284c7]">
+                        <Quote className="w-4 h-4 text-[#0284c7]" />
+                        <span>Quote Entire {trimmed} ({sectionLines.length} lines) to Opinion</span>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setActiveSectionHeaderIndex(null)}
+                        className="p-1 rounded-lg text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors cursor-pointer"
+                        title="Cancel"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {/* Preview of the entire section */}
+                    <div className="bg-white p-3 rounded-xl border border-sky-100 border-l-4 border-l-[#0284c7] font-serif text-xs sm:text-sm text-stone-800 leading-relaxed max-h-48 overflow-y-auto space-y-1">
+                      <div className="text-[11px] font-sans font-bold text-[#0284c7] uppercase tracking-wider mb-1">
+                        {trimmed} Content:
+                      </div>
+                      {sectionLines.map((sLine, sIdx) => (
+                        <div key={sIdx} className={sLine.trim() ? '' : 'h-2'}>
+                          {sLine}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Note input and actions */}
+                    <div className="space-y-2">
+                      <input
+                        type="text"
+                        value={sectionNoteText}
+                        onChange={(e) => setSectionNoteText(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleSendSectionQuote(trimmed, sectionLines, sectionNoteText);
+                          }
+                        }}
+                        placeholder={`Write your opinion or critique on this entire ${trimmed}...`}
+                        className="w-full px-3.5 py-2 text-xs sm:text-sm bg-white rounded-xl border border-stone-200 text-stone-900 placeholder-stone-400 focus:outline-hidden focus:ring-2 focus:ring-[#0284c7] shadow-2xs"
+                        autoFocus
+                      />
+                      <div className="flex items-center justify-end gap-2 pt-1">
+                        <button
+                          type="button"
+                          onClick={() => handleSendSectionQuote(trimmed, sectionLines, '')}
+                          className="px-3 py-1.5 bg-white hover:bg-stone-50 border border-stone-200 text-stone-700 text-xs font-semibold rounded-xl transition-colors cursor-pointer shadow-2xs"
+                          title="Quote this section without extra commentary"
+                        >
+                          Quote Section Only
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleSendSectionQuote(trimmed, sectionLines, sectionNoteText)}
+                          className="px-4 py-1.5 bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold rounded-xl transition-colors cursor-pointer shadow-2xs flex items-center gap-1.5"
+                        >
+                          <CornerDownRight className="w-3.5 h-3.5" />
+                          <span>Insert Section & Note into Opinion</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             );
           }
@@ -409,7 +576,7 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
             {canQuote ? (
               <span className="text-[11px] text-[#0284c7] font-semibold bg-sky-50 px-2.5 py-1 rounded-lg border border-sky-200/80 hidden sm:inline-flex items-center gap-1">
                 <Quote className="w-3 h-3" />
-                Click 'Note / Quote' next to any line or select text to quote to your opinion
+                Click section titles (like [Verse]) or 'Note / Quote' to quote to your opinion
               </span>
             ) : isAlreadySubmitted ? (
               <span className="text-[11px] text-emerald-800 font-semibold bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200 hidden sm:inline-flex items-center gap-1.5">

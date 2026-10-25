@@ -51,29 +51,14 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-pink-50 to-pink-100/90 border border-pink-200/90 flex items-center justify-center p-1 shadow-[0_4px_12px_rgba(255,20,147,0.18)] shrink-0">
               <SummertideFlowerLogo size="lg" glow />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-pink-600">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-pink-600 block">
                   Summertide Studio
                 </span>
-                <span
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                    isAdmin
-                      ? 'bg-amber-100 text-amber-900 border border-amber-200'
-                      : 'bg-sky-100 text-[#0284c7] border border-sky-200'
-                  }`}
-                >
-                  {isAdmin ? 'Producer / Admin Panel' : 'Judge Portal (Blind)'}
-                </span>
-                <span className="hidden md:inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  <span>Live Online Sync</span>
-                </span>
+                <h1 className="text-base sm:text-lg font-bold text-stone-900 tracking-tight leading-none mt-1">
+                  Lyric Contest Judging Portal
+                </h1>
               </div>
-              <h1 className="text-base sm:text-lg font-bold text-stone-900 tracking-tight leading-none mt-0.5">
-                Lyric Contest Judging Portal
-              </h1>
-            </div>
           </div>
 
           {/* Right Action Area */}

@@ -13,6 +13,8 @@ import {
   Eye,
   Sliders,
   FileSpreadsheet,
+  Copy,
+  Check,
 } from 'lucide-react';
 import { JudgeScoreSubmission, getTier } from '../types/contest';
 
@@ -32,6 +34,22 @@ export const AllScoresMatrix: React.FC<AllScoresMatrixProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedJudge, setSelectedJudge] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'matrix' | 'table'>('matrix');
+  const [expandedComments, setExpandedComments] = useState<{ [key: string]: boolean }>({});
+  const [copiedCommentKey, setCopiedCommentKey] = useState<string | null>(null);
+
+  const toggleCommentExpand = (key: string) => {
+    setExpandedComments((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+
+  const handleCopyComment = (text: string, key: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(text);
+    setCopiedCommentKey(key);
+    setTimeout(() => setCopiedCommentKey(null), 2000);
+  };
 
   // Extract unique judges and entrants
   const judges = Array.from(new Set(scores.map((s) => s.judgeName))).filter(Boolean);
@@ -361,8 +379,55 @@ export const AllScoresMatrix: React.FC<AllScoresMatrixProps> = ({
                       {score.totalScore}
                       <span className="text-[10px] text-stone-400 font-normal"> / 100</span>
                     </td>
-                    <td className="py-3.5 pr-4 sm:pr-6 pl-3 text-stone-600 italic text-xs max-w-xs truncate">
-                      {score.comments ? `“${score.comments}”` : '—'}
+                    <td className="py-3.5 pr-4 sm:pr-6 pl-3 text-stone-700 text-xs max-w-sm">
+                      {score.comments ? (
+                        <div
+                          onClick={() => toggleCommentExpand(`matrix-${score.id || idx}`)}
+                          className={`rounded-xl border transition-all cursor-pointer group ${
+                            expandedComments[`matrix-${score.id || idx}`]
+                              ? 'bg-sky-50/70 border-sky-200 p-2.5 shadow-xs'
+                              : 'bg-stone-50/80 hover:bg-sky-50/50 border-stone-200/70 p-2'
+                          }`}
+                          title="Click to expand or collapse opinion"
+                        >
+                          <div className="flex items-center justify-between gap-1 text-[10px] text-stone-400 group-hover:text-[#0284c7] font-semibold mb-0.5">
+                            <span className="flex items-center gap-1 font-bold">
+                              <MessageSquare className="w-3 h-3 text-[#0284c7]" />
+                              Opinion
+                            </span>
+                            <div className="flex items-center gap-1">
+                              <button
+                                type="button"
+                                onClick={(e) =>
+                                  handleCopyComment(score.comments, `matrix-${score.id || idx}`, e)
+                                }
+                                className="px-1 py-0.5 rounded hover:bg-white text-stone-500 hover:text-stone-800 transition-colors inline-flex items-center gap-0.5"
+                                title="Copy opinion"
+                              >
+                                {copiedCommentKey === `matrix-${score.id || idx}` ? (
+                                  <span className="text-emerald-700 font-bold flex items-center gap-0.5">
+                                    <Check className="w-3 h-3 text-emerald-600" /> Copied
+                                  </span>
+                                ) : (
+                                  <span className="flex items-center gap-0.5">
+                                    <Copy className="w-3 h-3" /> Copy
+                                  </span>
+                                )}
+                              </button>
+                              <span>{expandedComments[`matrix-${score.id || idx}`] ? '▲' : '▼'}</span>
+                            </div>
+                          </div>
+                          <div
+                            className={`font-serif italic text-stone-800 leading-relaxed whitespace-pre-wrap ${
+                              expandedComments[`matrix-${score.id || idx}`] ? '' : 'line-clamp-2'
+                            }`}
+                          >
+                            “{score.comments}”
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-stone-300 italic">—</span>
+                      )}
                     </td>
                   </tr>
                 ))}
