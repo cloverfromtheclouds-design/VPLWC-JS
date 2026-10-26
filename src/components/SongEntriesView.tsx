@@ -231,7 +231,8 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Top Banner with Circular Progress Bar */}
-      <div className="bg-gradient-to-b from-white/80 via-white/70 to-white/60 backdrop-blur-2xl rounded-3xl border border-white/90 shadow-[0_20px_50px_rgba(255,20,147,0.08),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="relative overflow-hidden bg-gradient-to-b from-white/85 via-white/75 to-white/65 backdrop-blur-2xl rounded-3xl border border-white/95 shadow-[0_20px_50px_rgba(2,132,199,0.07),0_1px_2px_rgba(255,255,255,1)_inset,0_-1px_1px_rgba(8,145,178,0.08)_inset] ring-1 ring-white/70 p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-white to-transparent opacity-90 pointer-events-none" />
         <div className="flex-1 text-center md:text-left">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-pink-50/90 text-pink-700 border border-pink-200/90 mb-2 shadow-2xs">
             <SummertideFlowerLogo size="xs" />
@@ -477,12 +478,13 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
             return (
               <div
                 key={song.id}
-                className={`bg-white/65 backdrop-blur-2xl rounded-3xl border shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 hover:shadow-xl transition-all duration-200 p-5 flex flex-col justify-between group ${
+                className={`relative overflow-hidden bg-white/70 backdrop-blur-2xl rounded-3xl border shadow-[0_10px_30px_rgba(2,132,199,0.06),0_1px_1.5px_rgba(255,255,255,0.95)_inset,0_-1px_1px_rgba(8,145,178,0.08)_inset] ring-1 hover:shadow-xl transition-all duration-200 p-5 flex flex-col justify-between group ${
                   songFlag
                     ? 'border-rose-300 ring-rose-200'
-                    : 'border-white/90 ring-white/60 hover:border-pink-300/80'
+                    : 'border-white/90 ring-white/60 hover:border-sky-300/80'
                 }`}
               >
+                <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
                 <div>
                   {/* Status Badge & Actions */}
                   <div className="flex items-center justify-between gap-2 mb-3">
@@ -591,7 +593,7 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
                         ? 'bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-300'
                         : isGraded
                         ? 'bg-sky-50 text-[#0284c7] hover:bg-sky-100 border border-sky-200'
-                        : 'bg-gradient-to-r from-[#0284c7] to-[#0891b2] hover:from-[#0369a1] hover:to-[#0e7490] text-white'
+                        : 'aero-btn-primary text-white'
                     }`}
                   >
                     <Sliders className="w-3.5 h-3.5" />

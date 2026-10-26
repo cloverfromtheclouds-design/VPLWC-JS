@@ -182,7 +182,7 @@ export const JudgeOpinionModal: React.FC<JudgeOpinionModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2 bg-gradient-to-r from-[#0284c7] to-[#0891b2] hover:from-[#0369a1] hover:to-[#0e7490] text-white rounded-xl text-xs font-bold shadow-xs transition-all cursor-pointer"
+              className="px-5 py-2 aero-btn-primary text-white rounded-xl text-xs font-bold shadow-xs transition-all cursor-pointer"
             >
               Close
             </button>

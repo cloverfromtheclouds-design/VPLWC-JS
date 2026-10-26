@@ -1091,6 +1091,12 @@ export default function App() {
         {/* Enhanced Summertide Pink Gradient Overlays (Increased intensity while keeping art visible) */}
         <div className="absolute inset-0 bg-gradient-to-b from-pink-100/40 via-pink-200/50 to-pink-300/65 pointer-events-none" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-pink-300/30 via-transparent to-rose-200/25 pointer-events-none" />
+
+        {/* Subtle Frutiger Aero Atmospheric Sky/Cyan Glow & Floating Glass Bubbles */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[850px] h-[340px] bg-gradient-to-b from-cyan-300/20 via-sky-200/12 to-transparent blur-3xl rounded-full pointer-events-none" />
+        <div className="absolute top-[18%] left-[7%] w-28 h-28 rounded-full border border-white/60 bg-gradient-to-tr from-white/10 via-cyan-100/25 to-white/40 shadow-[inset_0_2px_4px_rgba(255,255,255,0.8),0_10px_25px_rgba(2,132,199,0.08)] pointer-events-none animate-aero-float" />
+        <div className="absolute top-[52%] right-[8%] w-20 h-20 rounded-full border border-white/50 bg-gradient-to-tr from-white/10 via-sky-100/20 to-white/35 shadow-[inset_0_2px_3px_rgba(255,255,255,0.7),0_8px_20px_rgba(2,132,199,0.06)] pointer-events-none animate-aero-float-slow" />
+        <div className="absolute top-[78%] left-[14%] w-14 h-14 rounded-full border border-white/50 bg-gradient-to-tr from-white/15 via-pink-100/20 to-white/30 shadow-[inset_0_1px_2px_rgba(255,255,255,0.7)] pointer-events-none animate-aero-float" />
       </div>
 
       {/* Top Navbar */}

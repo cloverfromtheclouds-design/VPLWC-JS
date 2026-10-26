@@ -579,10 +579,10 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
                       disabled={isAlreadySubmitted || isFlagged}
                       onChange={(e) => handleScoreChange(c.key, Number(e.target.value))}
                       aria-label={`${c.name} score`}
-                      className={`w-full h-2 rounded-lg appearance-none transition-all accent-[#0284c7] ${
+                      className={`w-full h-2 rounded-lg transition-all aero-slider ${
                         isAlreadySubmitted || isFlagged
-                          ? 'bg-stone-300 opacity-60 cursor-not-allowed'
-                          : 'bg-stone-200 cursor-pointer'
+                          ? 'opacity-60 cursor-not-allowed'
+                          : 'cursor-pointer'
                       }`}
                     />
                     <div className="flex justify-between text-[11px] text-stone-400 mt-1 font-medium">
@@ -606,8 +606,10 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
             })}
           </div>
 
-          {/* Live Score Summary Banner: Vibrant Sea Blue with gentle Cyan gradient */}
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-[#0284c7] via-[#0284c7] to-[#0891b2] text-white shadow-xl border border-sky-400/30">
+          {/* Live Score Summary Banner: Vibrant Sea Blue with gentle Cyan gradient & Aero gloss */}
+          <div className="relative overflow-hidden p-6 rounded-2xl bg-gradient-to-br from-[#0284c7] via-[#0284c7] to-[#0891b2] text-white shadow-xl border border-sky-400/40">
+            {/* Subtle top curved specular reflection */}
+            <div className="absolute top-0 inset-x-0 h-1/2 bg-gradient-to-b from-white/20 via-white/5 to-transparent rounded-t-2xl pointer-events-none" />
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
                 <div className="text-xs font-extrabold text-sky-200 tracking-wider uppercase">
@@ -725,7 +727,7 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
               <button
                 type="submit"
                 disabled={isSubmitting || (!parsedSubmission.songTitle && !entrantName)}
-                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#0284c7] to-[#0891b2] hover:from-[#0369a1] hover:to-[#0e7490] text-white font-bold text-sm shadow-md transition-all hover:shadow-lg disabled:opacity-60 cursor-pointer"
+                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl aero-btn-primary text-white font-bold text-sm shadow-md transition-all hover:shadow-lg disabled:opacity-60 cursor-pointer"
               >
                 <Send className="w-4 h-4" />
                 <span>

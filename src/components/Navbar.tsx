@@ -42,7 +42,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onLockScreen,
 }) => {
   return (
-    <header className="bg-white/65 backdrop-blur-2xl border-b border-white/80 sticky top-0 z-40 shadow-[0_4px_20px_rgba(255,20,147,0.06),0_1px_0_rgba(255,255,255,0.9)_inset]">
+    <header className="bg-white/70 backdrop-blur-2xl border-b border-white/80 sticky top-0 z-40 shadow-[0_4px_24px_rgba(2,132,199,0.06),inset_0_1px_0_rgba(255,255,255,0.95)]">
       {/* Top Banner with Studio Brand & Actions */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
@@ -133,9 +133,9 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Song Entries Tab */}
           <button
             onClick={() => setActiveTab('songs')}
-            className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold rounded-lg transition-all border shrink-0 cursor-pointer ${
+            className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition-all border shrink-0 cursor-pointer ${
               activeTab === 'songs'
-                ? 'bg-gradient-to-r from-[#0284c7] to-[#0891b2] text-white border-[#0284c7]/80 shadow-xs hover:from-[#0369a1] hover:to-[#0e7490]'
+                ? 'aero-btn-primary text-white border-sky-400/80 shadow-xs'
                 : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100 border-transparent'
             }`}
           >
@@ -157,9 +157,9 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Scorecard */}
           <button
             onClick={() => setActiveTab('scorecard')}
-            className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold rounded-lg transition-all border shrink-0 cursor-pointer ${
+            className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition-all border shrink-0 cursor-pointer ${
               activeTab === 'scorecard'
-                ? 'bg-gradient-to-r from-[#0284c7] to-[#0891b2] text-white border-[#0284c7]/80 shadow-xs hover:from-[#0369a1] hover:to-[#0e7490]'
+                ? 'aero-btn-primary text-white border-sky-400/80 shadow-xs'
                 : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100 border-transparent'
             }`}
           >
@@ -172,9 +172,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             <>
               <button
                 onClick={() => setActiveTab('rankings')}
-                className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold rounded-lg transition-all border shrink-0 cursor-pointer ${
+                className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition-all border shrink-0 cursor-pointer ${
                   activeTab === 'rankings'
-                    ? 'bg-gradient-to-r from-[#0284c7] to-[#0891b2] text-white border-[#0284c7]/80 shadow-xs hover:from-[#0369a1] hover:to-[#0e7490]'
+                    ? 'aero-btn-primary text-white border-sky-400/80 shadow-xs'
                     : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100 border-transparent'
                 }`}
               >
@@ -184,9 +184,9 @@ export const Navbar: React.FC<NavbarProps> = ({
 
               <button
                 onClick={() => setActiveTab('admin')}
-                className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold rounded-lg transition-all border shrink-0 cursor-pointer ${
+                className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold rounded-xl transition-all border shrink-0 cursor-pointer ${
                   activeTab === 'admin'
-                    ? 'bg-gradient-to-r from-[#0284c7] to-[#0891b2] text-white border-[#0284c7]/80 shadow-xs hover:from-[#0369a1] hover:to-[#0e7490]'
+                    ? 'aero-btn-primary text-white border-sky-400/80 shadow-xs'
                     : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100 border-transparent'
                 }`}
               >
