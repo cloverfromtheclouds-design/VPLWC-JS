@@ -420,7 +420,7 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
               <button
                 type="button"
                 onClick={onGoToSongEntries}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-sky-200 bg-sky-50 hover:bg-sky-100 text-[#0284c7] text-xs font-bold transition-colors shadow-2xs cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl aero-btn-secondary text-[#0284c7] text-xs font-bold transition-all cursor-pointer"
               >
                 <Music className="w-3.5 h-3.5" />
                 <span>Browse All Songs</span>
@@ -488,7 +488,7 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
                 <button
                   type="button"
                   onClick={onGoToSongEntries}
-                  className="px-4 py-2 bg-rose-700 hover:bg-rose-800 text-white font-bold text-xs rounded-xl shadow-xs transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                  className="px-4 py-2 aero-btn-rose text-white font-bold text-xs rounded-xl cursor-pointer whitespace-nowrap shrink-0"
                 >
                   Select Another Song →
                 </button>
@@ -521,7 +521,7 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
                 <button
                   type="button"
                   onClick={onGoToSongEntries}
-                  className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl shadow-xs transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                  className="px-4 py-2 aero-btn-emerald text-white font-bold text-xs rounded-xl cursor-pointer whitespace-nowrap shrink-0"
                 >
                   Score Another Song →
                 </button>
@@ -743,10 +743,10 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsFlagModalOpen(true)}
-                  className="p-2.5 rounded-xl border border-rose-300 bg-rose-50/80 hover:bg-rose-100 text-rose-700 text-xs font-bold inline-flex items-center gap-1.5 transition-colors cursor-pointer"
+                  className="px-3 py-2 rounded-xl aero-btn-rose text-white text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer"
                   title="Flag / Abort entry for rule violations"
                 >
-                  <Flag className="w-3.5 h-3.5 text-rose-600" />
+                  <Flag className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">Flag / Abort</span>
                 </button>
               )}
@@ -755,7 +755,7 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
                 <button
                   type="button"
                   onClick={onGoToSongEntries}
-                  className="p-2.5 rounded-xl border border-sky-200 bg-sky-50 hover:bg-sky-100 text-[#0284c7] text-xs font-bold inline-flex items-center gap-1.5 transition-colors cursor-pointer"
+                  className="px-3 py-2 rounded-xl aero-btn-secondary text-[#0284c7] text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer"
                 >
                   <Music className="w-3.5 h-3.5" />
                   <span>Other Songs</span>
@@ -765,20 +765,20 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
               <button
                 type="button"
                 onClick={handleExportText}
-                className="p-2.5 rounded-xl border border-stone-200 hover:bg-stone-50 text-stone-700 text-xs font-semibold inline-flex items-center gap-1.5 transition-colors cursor-pointer"
+                className="px-3 py-2 rounded-xl aero-btn-secondary text-stone-700 text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer"
                 title="Export scorecard (.txt)"
               >
-                <Download className="w-4 h-4" />
+                <Download className="w-4 h-4 text-stone-500" />
                 <span className="hidden sm:inline">Export .txt</span>
               </button>
 
               <button
                 type="button"
                 onClick={handlePrint}
-                className="p-2.5 rounded-xl border border-stone-200 hover:bg-stone-50 text-stone-700 text-xs font-semibold inline-flex items-center gap-1.5 transition-colors cursor-pointer"
+                className="px-3 py-2 rounded-xl aero-btn-secondary text-stone-700 text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer"
                 title="Print Scorecard"
               >
-                <Printer className="w-4 h-4" />
+                <Printer className="w-4 h-4 text-stone-500" />
                 <span className="hidden sm:inline">Print</span>
               </button>
 
@@ -786,10 +786,10 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="p-2.5 rounded-xl border border-stone-200 hover:bg-stone-50 text-stone-500 hover:text-stone-800 text-xs font-semibold inline-flex items-center gap-1.5 transition-colors cursor-pointer"
+                  className="px-3 py-2 rounded-xl aero-btn-secondary text-stone-600 text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer"
                   title="Reset scores to default 18"
                 >
-                  <RotateCcw className="w-4 h-4" />
+                  <RotateCcw className="w-4 h-4 text-stone-400" />
                   <span className="hidden sm:inline">Reset</span>
                 </button>
               )}

@@ -350,8 +350,8 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
             onClick={() => setFilterMode('all')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
               filterMode === 'all'
-                ? 'bg-gradient-to-r from-[#ff1493] to-[#ff2d78] text-white shadow-xs'
-                : 'bg-white/70 hover:bg-white text-stone-700 border border-white/80 shadow-2xs'
+                ? 'aero-btn-pink text-white shadow-xs'
+                : 'aero-btn-secondary text-stone-700'
             }`}
           >
             All Songs ({totalSongs})
@@ -360,8 +360,8 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
             onClick={() => setFilterMode('pending')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
               filterMode === 'pending'
-                ? 'bg-gradient-to-r from-[#ff1493] to-[#ff2d78] text-white shadow-xs'
-                : 'bg-white/70 hover:bg-white text-stone-700 border border-white/80 shadow-2xs'
+                ? 'aero-btn-pink text-white shadow-xs'
+                : 'aero-btn-secondary text-stone-700'
             }`}
           >
             Needs Grading ({totalSongs - gradedSongsCount})
@@ -370,8 +370,8 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
             onClick={() => setFilterMode('graded')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
               filterMode === 'graded'
-                ? 'bg-gradient-to-r from-[#ff1493] to-[#ff2d78] text-white shadow-xs'
-                : 'bg-white/70 hover:bg-white text-stone-700 border border-white/80 shadow-2xs'
+                ? 'aero-btn-pink text-white shadow-xs'
+                : 'aero-btn-secondary text-stone-700'
             }`}
           >
             Graded by You ({gradedSongsCount})
@@ -381,8 +381,8 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
               onClick={() => setFilterMode('flagged')}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 inline-flex items-center gap-1 cursor-pointer ${
                 filterMode === 'flagged'
-                  ? 'bg-rose-600 text-white shadow-2xs'
-                  : 'bg-rose-50/80 text-rose-700 hover:bg-rose-100 border border-rose-200'
+                  ? 'aero-btn-rose text-white shadow-2xs'
+                  : 'aero-btn-secondary text-rose-700'
               }`}
             >
               <ShieldAlert className="w-3.5 h-3.5" />
@@ -394,7 +394,7 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
         {/* Admin Only Actions: Upload .txt & Add Entry */}
         {isAdmin && (
           <div className="flex items-center gap-2">
-            <label className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-sky-50/90 hover:bg-sky-100 text-[#0284c7] border border-sky-300 text-xs font-bold shadow-2xs transition-colors cursor-pointer shrink-0">
+            <label className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl aero-btn-secondary text-sky-800 text-xs font-bold transition-colors cursor-pointer shrink-0">
               <Upload className="w-3.5 h-3.5" />
               <span>Upload .txt Song</span>
               <input
@@ -410,7 +410,7 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
 
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#0284c7] to-[#0891b2] hover:from-[#0369a1] hover:to-[#0e7490] text-white text-xs font-bold shadow-2xs transition-all cursor-pointer shrink-0"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl aero-btn-primary text-white text-xs font-bold transition-all cursor-pointer shrink-0"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Add Entry</span>
@@ -574,9 +574,9 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
                     <button
                       type="button"
                       onClick={() => setViewingLyricsSong(song)}
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-stone-500 hover:text-stone-900 transition-colors"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl aero-btn-secondary text-xs font-bold text-stone-700 cursor-pointer"
                     >
-                      <BookOpen className="w-3.5 h-3.5" />
+                      <BookOpen className="w-3.5 h-3.5 text-stone-500" />
                       <span>Read Lyrics</span>
                     </button>
                   ) : (
@@ -586,11 +586,11 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
                   <button
                     type="button"
                     onClick={() => onSelectSongToGrade(song)}
-                    className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold shadow-xs transition-all cursor-pointer ${
+                    className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                       songFlag
-                        ? 'bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-300'
+                        ? 'aero-btn-rose text-white'
                         : isGraded
-                        ? 'bg-sky-50 text-[#0284c7] hover:bg-sky-100 border border-sky-200'
+                        ? 'aero-btn-secondary text-[#0284c7]'
                         : 'aero-btn-primary text-white'
                     }`}
                   >

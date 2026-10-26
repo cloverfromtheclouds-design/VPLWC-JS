@@ -213,7 +213,7 @@ export const PortalPinModal: React.FC<PortalPinModalProps> = ({
               <button
                 type="submit"
                 disabled={pin.length < 4}
-                className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-pink-500 via-rose-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-extrabold text-sm shadow-[0_8px_22px_rgba(255,20,147,0.3)] transition-all hover:shadow-lg disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2 border border-pink-400/30"
+                className="w-full py-3.5 px-4 rounded-2xl aero-btn-pink text-white font-extrabold text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
               >
                 <KeyRound className="w-4 h-4" />
                 <span>{isScreenLocked ? 'Unlock Session' : 'Verify & Enter Portal'}</span>

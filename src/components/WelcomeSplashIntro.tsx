@@ -70,7 +70,7 @@ export const WelcomeSplashIntro: React.FC<WelcomeSplashIntroProps> = ({
             <button
               type="button"
               onClick={handleDismiss}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-pink-500 hover:bg-pink-600 text-white font-bold text-xs sm:text-sm shadow-[0_8px_25px_rgba(255,20,147,0.5)] transition-all cursor-pointer animate-pulse border border-pink-400/40"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full aero-btn-pink text-white font-bold text-xs sm:text-sm transition-all cursor-pointer"
             >
               <span>Click anywhere to continue</span>
               <ArrowRight className="w-4 h-4 text-pink-200" />

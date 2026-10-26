@@ -159,10 +159,10 @@ export const JudgeOpinionModal: React.FC<JudgeOpinionModalProps> = ({
             <button
               type="button"
               onClick={handleCopy}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-xs inline-flex items-center gap-1.5 cursor-pointer ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all inline-flex items-center gap-1.5 cursor-pointer ${
                 copied
-                  ? 'bg-emerald-600 text-white'
-                  : 'bg-white hover:bg-stone-50 text-stone-700 border border-stone-300'
+                  ? 'aero-btn-emerald text-white'
+                  : 'aero-btn-secondary text-stone-700'
               }`}
               title="Copy opinion to clipboard"
             >

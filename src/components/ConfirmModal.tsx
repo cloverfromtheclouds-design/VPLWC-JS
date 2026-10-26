@@ -98,7 +98,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             type="button"
             onClick={onCancel}
             disabled={isLoading}
-            className="px-4 py-2.5 rounded-2xl bg-white/70 hover:bg-white border border-stone-200 text-xs sm:text-sm font-bold text-stone-700 hover:text-stone-900 transition-colors disabled:opacity-50 cursor-pointer shadow-xs"
+            className="px-4 py-2.5 rounded-2xl aero-btn-secondary text-xs sm:text-sm font-bold text-stone-700 transition-colors disabled:opacity-50 cursor-pointer"
           >
             {cancelLabel}
           </button>
@@ -106,10 +106,10 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             type="button"
             onClick={onConfirm}
             disabled={isLoading}
-            className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold text-white shadow-md transition-all disabled:opacity-50 cursor-pointer ${
+            className={`px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold text-white transition-all disabled:opacity-50 cursor-pointer ${
               isDestructive
-                ? 'bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-700 hover:to-rose-800 shadow-[0_4px_16px_rgba(225,29,72,0.3)]'
-                : 'bg-gradient-to-r from-pink-500 via-rose-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 shadow-[0_4px_16px_rgba(255,20,147,0.3)]'
+                ? 'aero-btn-rose'
+                : 'aero-btn-pink'
             }`}
           >
             {isLoading ? 'Updating...' : confirmLabel}

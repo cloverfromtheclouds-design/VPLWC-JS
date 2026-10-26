@@ -143,29 +143,29 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
           {onExportExcel && (
             <button
               onClick={onExportExcel}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm bg-emerald-700 hover:bg-emerald-800 text-white shadow-sm transition-all hover:shadow-md cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm aero-btn-emerald text-white cursor-pointer"
               title="Download full contest results in Excel (.xlsx) format"
             >
-              <FileSpreadsheet className="w-4 h-4 text-emerald-200" />
+              <FileSpreadsheet className="w-4 h-4 text-emerald-100" />
               <span>Export to Excel (.xlsx)</span>
             </button>
           )}
 
           <button
             onClick={handleExportCSV}
-            className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 text-xs sm:text-sm font-semibold shadow-2xs transition-colors"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl aero-btn-secondary text-stone-700 text-xs sm:text-sm font-bold cursor-pointer"
             title="Download CSV report"
           >
-            <Download className="w-4 h-4" />
+            <Download className="w-4 h-4 text-stone-500" />
             <span className="hidden sm:inline">CSV</span>
           </button>
 
           <button
             onClick={handlePrint}
-            className="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 text-xs sm:text-sm font-semibold shadow-2xs transition-colors"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl aero-btn-secondary text-stone-700 text-xs sm:text-sm font-bold cursor-pointer"
             title="Print or save as PDF"
           >
-            <Printer className="w-4 h-4" />
+            <Printer className="w-4 h-4 text-stone-500" />
             <span className="hidden sm:inline">Print / PDF</span>
           </button>
         </div>
@@ -538,7 +538,7 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
                         <td className="py-4 pr-4 sm:pr-6 pl-2 text-right">
                           <button
                             onClick={() => toggleExpand(entrant.entrantName)}
-                            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-stone-200 bg-white text-stone-700 hover:bg-stone-100 text-xs font-semibold transition-colors"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl aero-btn-secondary text-stone-700 text-xs font-bold cursor-pointer"
                           >
                             <span>{isExpanded ? 'Hide' : 'Scores'}</span>
                             {isExpanded ? (

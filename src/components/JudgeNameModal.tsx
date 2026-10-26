@@ -241,7 +241,7 @@ export const JudgeNameModal: React.FC<JudgeNameModalProps> = ({
               <button
                 type="button"
                 onClick={handleConfirmExistingJudgeLogin}
-                className="w-full py-3.5 px-4 bg-gradient-to-r from-pink-500 via-rose-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-extrabold text-xs sm:text-sm rounded-2xl shadow-[0_8px_20px_rgba(255,20,147,0.3)] hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer border border-pink-400/30"
+                className="w-full py-3.5 px-4 aero-btn-pink text-white font-extrabold text-xs sm:text-sm rounded-2xl transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Check className="w-4 h-4" />
                 <span>Yes, Log In as {matchedExistingJudge.canonicalName}</span>
@@ -251,7 +251,7 @@ export const JudgeNameModal: React.FC<JudgeNameModalProps> = ({
               <button
                 type="button"
                 onClick={handleRejectExistingJudgeLogin}
-                className="w-full py-2.5 px-4 bg-white/70 hover:bg-white border border-stone-200/90 text-stone-600 hover:text-stone-900 font-bold text-xs rounded-2xl transition-all cursor-pointer shadow-xs"
+                className="w-full py-2.5 px-4 aero-btn-secondary text-stone-700 font-bold text-xs rounded-2xl transition-all cursor-pointer"
               >
                 No, that&apos;s a different person (Enter another name)
               </button>
@@ -417,7 +417,7 @@ export const JudgeNameModal: React.FC<JudgeNameModalProps> = ({
                   <button
                     type="button"
                     onClick={onClose}
-                    className="flex-1 py-3 px-4 bg-white/70 hover:bg-white border border-stone-200 text-stone-600 hover:text-stone-900 font-bold text-xs rounded-2xl transition-colors cursor-pointer shadow-xs"
+                    className="flex-1 py-3 px-4 aero-btn-secondary text-stone-700 font-bold text-xs rounded-2xl cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -425,7 +425,7 @@ export const JudgeNameModal: React.FC<JudgeNameModalProps> = ({
                 <button
                   type="submit"
                   disabled={!nameInput.trim()}
-                  className="flex-1 py-3 px-4 bg-gradient-to-r from-pink-500 via-rose-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-extrabold text-xs sm:text-sm rounded-2xl shadow-[0_6px_20px_rgba(255,20,147,0.28)] hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed border border-pink-400/30"
+                  className="flex-1 py-3 px-4 aero-btn-pink text-white font-extrabold text-xs sm:text-sm rounded-2xl transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   <Check className="w-4 h-4" />
                   <span>{isInitialRequired ? 'Continue to Judging' : 'Save Changes'}</span>

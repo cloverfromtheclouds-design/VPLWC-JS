@@ -197,14 +197,14 @@ export const FlagSongModal: React.FC<FlagSongModalProps> = ({
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="px-3 py-1.5 bg-white/70 hover:bg-white border border-stone-200 text-xs font-bold text-stone-700 rounded-xl transition-colors cursor-pointer shadow-xs"
+              className="px-3.5 py-2 aero-btn-secondary text-xs font-bold text-stone-700 rounded-xl cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-4 py-1.5 bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-700 hover:to-rose-800 text-white text-xs font-bold rounded-xl shadow-[0_4px_12px_rgba(225,29,72,0.3)] transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              className="px-4 py-2 aero-btn-rose text-white text-xs font-bold rounded-xl flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
             >
               <Flag className="w-3.5 h-3.5" />
               <span>{isSubmitting ? 'Flagging...' : 'Confirm Flag & Abort'}</span>

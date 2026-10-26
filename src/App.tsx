@@ -1255,13 +1255,13 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => setIsPinModalOpen(false)}
-                  className="flex-1 py-2.5 border border-stone-300 rounded-xl text-xs font-bold text-stone-700 hover:bg-stone-50 cursor-pointer"
+                  className="flex-1 py-2.5 aero-btn-secondary rounded-xl text-xs font-bold text-stone-700 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2.5 bg-[#0284c7] hover:bg-[#0369a1] text-white rounded-xl text-xs font-bold shadow-xs transition-colors cursor-pointer"
+                  className="flex-1 py-2.5 aero-btn-primary text-white rounded-xl text-xs font-bold cursor-pointer"
                 >
                   Unlock
                 </button>

@@ -66,7 +66,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {onEditJudgeName && (
               <button
                 onClick={onEditJudgeName}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-pink-200 bg-pink-50/90 hover:bg-pink-100 text-pink-900 text-xs font-bold transition-all shadow-2xs cursor-pointer group"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl aero-btn-secondary text-stone-800 text-xs font-bold cursor-pointer group"
                 title="Click to edit your Judge Name"
               >
                 <User className="w-3.5 h-3.5 text-pink-600 group-hover:scale-110 transition-transform shrink-0" />
@@ -82,7 +82,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {onLockScreen && (
               <button
                 onClick={onLockScreen}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-stone-200/90 bg-white/80 hover:bg-stone-100 text-stone-700 text-xs font-bold transition-all shadow-2xs cursor-pointer group"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl aero-btn-secondary text-stone-700 text-xs font-bold cursor-pointer group"
                 title="Lock your screen immediately for privacy. Re-enter PIN to unlock."
               >
                 <Lock className="w-3.5 h-3.5 text-stone-500 group-hover:text-stone-900 transition-colors shrink-0" />
@@ -95,10 +95,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             {isAdmin && onExportExcel && (
               <button
                 onClick={onExportExcel}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold transition-all shadow-2xs cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl aero-btn-emerald text-white text-xs font-bold cursor-pointer"
                 title="Export all contest rankings, scores, and songs to Excel (.xlsx)"
               >
-                <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
+                <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-100" />
                 <span className="hidden sm:inline">Export to Excel</span>
                 <span className="sm:hidden">Excel</span>
               </button>
@@ -108,17 +108,17 @@ export const Navbar: React.FC<NavbarProps> = ({
             {isAdmin ? (
               <button
                 onClick={onLockAdmin}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100 text-xs font-bold transition-all shadow-2xs cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl aero-btn-secondary text-amber-900 text-xs font-bold cursor-pointer"
                 title="Lock Producer view and switch back to Judge mode"
               >
-                <Unlock className="w-3.5 h-3.5 text-amber-700" />
+                <Unlock className="w-3.5 h-3.5 text-amber-600" />
                 <span className="hidden sm:inline">Admin Mode</span>
                 <span className="text-[10px] text-amber-700 underline ml-0.5">Lock</span>
               </button>
             ) : (
               <button
                 onClick={onRequestAdminUnlock}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-700 text-xs font-bold transition-all shadow-2xs cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl aero-btn-secondary text-stone-700 text-xs font-bold cursor-pointer"
                 title="Enter Producer PIN to view leaderboard, all scores, and manage entries"
               >
                 <Lock className="w-3.5 h-3.5 text-stone-500" />

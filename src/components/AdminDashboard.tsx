@@ -318,9 +318,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           {onExportExcel && (
             <button
               onClick={onExportExcel}
-              className="mt-2 inline-flex items-center justify-center gap-1.5 py-1 px-2.5 rounded-lg bg-emerald-50/90 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 text-[11px] font-bold transition-colors cursor-pointer w-full"
+              className="mt-2 inline-flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl aero-btn-emerald text-white text-[11px] font-bold cursor-pointer w-full"
             >
-              <Download className="w-3 h-3" />
+              <Download className="w-3.5 h-3.5 text-emerald-100" />
               <span>Download Excel</span>
             </button>
           )}
