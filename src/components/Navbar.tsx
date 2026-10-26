@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Trophy,
   Sliders,
-  Table,
   FileSpreadsheet,
   Shield,
   Lock,
@@ -16,8 +15,8 @@ import {
 import { SummertideFlowerLogo } from './SummertideFlowerLogo';
 
 interface NavbarProps {
-  activeTab: 'songs' | 'scorecard' | 'rankings' | 'scores' | 'admin';
-  setActiveTab: (tab: 'songs' | 'scorecard' | 'rankings' | 'scores' | 'admin') => void;
+  activeTab: 'songs' | 'scorecard' | 'rankings' | 'admin';
+  setActiveTab: (tab: 'songs' | 'scorecard' | 'rankings' | 'admin') => void;
   isAdmin: boolean;
   onRequestAdminUnlock: () => void;
   onLockAdmin: () => void;
@@ -181,18 +180,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               >
                 <Trophy className="w-4 h-4 text-amber-300" />
                 <span>Final Rankings & Podium</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('scores')}
-                className={`flex items-center gap-2 px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold rounded-lg transition-all border shrink-0 cursor-pointer ${
-                  activeTab === 'scores'
-                    ? 'bg-gradient-to-r from-[#0284c7] to-[#0891b2] text-white border-[#0284c7]/80 shadow-xs hover:from-[#0369a1] hover:to-[#0e7490]'
-                    : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100 border-transparent'
-                }`}
-              >
-                <Table className="w-4 h-4" />
-                <span>All Judges' Scores</span>
               </button>
 
               <button

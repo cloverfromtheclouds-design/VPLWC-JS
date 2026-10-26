@@ -22,7 +22,6 @@ import { Navbar } from './components/Navbar';
 import { SongEntriesView } from './components/SongEntriesView';
 import { LeaderboardView } from './components/LeaderboardView';
 import { ScorecardView } from './components/ScorecardView';
-import { AllScoresMatrix } from './components/AllScoresMatrix';
 import { AdminDashboard } from './components/AdminDashboard';
 import { ConfirmModal } from './components/ConfirmModal';
 import { DuplicateUploadModal } from './components/DuplicateUploadModal';
@@ -40,7 +39,7 @@ function apiFetch(urlPath: string, init?: RequestInit) {
 }
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'songs' | 'scorecard' | 'rankings' | 'scores' | 'admin'>(
+  const [activeTab, setActiveTab] = useState<'songs' | 'scorecard' | 'rankings' | 'admin'>(
     'songs'
   );
 
@@ -1156,16 +1155,6 @@ export default function App() {
             onExportExcel={handleExportExcel}
             onOpenScorecardForEntrant={handleOpenScorecardForEntrant}
             onGoToScorecard={() => setActiveTab('scorecard')}
-          />
-        )}
-
-        {/* All Scores Matrix (Admin Only) */}
-        {isAdmin && activeTab === 'scores' && (
-          <AllScoresMatrix
-            scores={scores}
-            onOpenScorecardForEntrant={handleOpenScorecardForEntrant}
-            onGoToScorecard={() => setActiveTab('scorecard')}
-            onExportExcel={handleExportExcel}
           />
         )}
 
