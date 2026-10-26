@@ -173,7 +173,7 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
 
       {/* KPI Stats Bar */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div className="bg-white/60 backdrop-blur-2xl p-4 sm:p-5 rounded-2xl border border-white/90 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60">
+        <div className="aero-glass p-4 sm:p-5 rounded-2xl">
           <div className="text-xs font-bold text-stone-500 uppercase tracking-wide">
             Submissions Ranked
           </div>
@@ -183,7 +183,7 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
           <div className="text-xs text-stone-500 mt-1 font-medium">Eligible contest entries</div>
         </div>
 
-        <div className="bg-white/60 backdrop-blur-2xl p-4 sm:p-5 rounded-2xl border border-white/90 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60">
+        <div className="aero-glass p-4 sm:p-5 rounded-2xl">
           <div className="text-xs font-bold text-stone-500 uppercase tracking-wide">
             Participating Judges
           </div>
@@ -195,7 +195,7 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
           </div>
         </div>
 
-        <div className="bg-white/60 backdrop-blur-2xl p-4 sm:p-5 rounded-2xl border border-white/90 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60">
+        <div className="aero-glass p-4 sm:p-5 rounded-2xl">
           <div className="text-xs font-bold text-stone-500 uppercase tracking-wide">
             Contest Score Average
           </div>
@@ -210,7 +210,7 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
           </div>
         </div>
 
-        <div className="bg-white/60 backdrop-blur-2xl p-4 sm:p-5 rounded-2xl border border-white/90 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60">
+        <div className="aero-glass p-4 sm:p-5 rounded-2xl">
           <div className="text-xs font-bold text-amber-700 uppercase tracking-wide flex items-center gap-1">
             <Trophy className="w-3.5 h-3.5" />
             Top Contender
@@ -368,7 +368,7 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
       )}
 
       {/* Main Rankings Table Container */}
-      <div className="bg-white/65 backdrop-blur-2xl rounded-3xl border border-white/90 shadow-[0_15px_40px_rgba(255,20,147,0.08),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 overflow-hidden">
+      <div className="aero-glass rounded-3xl overflow-hidden">
         {/* Table Search & Controls Bar */}
         <div className="p-4 sm:p-5 border-b border-stone-200/80 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white/40">
           <div className="relative flex-1 max-w-md">

@@ -231,8 +231,7 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Top Banner with Circular Progress Bar */}
-      <div className="relative overflow-hidden bg-gradient-to-b from-white/85 via-white/75 to-white/65 backdrop-blur-2xl rounded-3xl border border-white/95 shadow-[0_20px_50px_rgba(2,132,199,0.07),0_1px_2px_rgba(255,255,255,1)_inset,0_-1px_1px_rgba(8,145,178,0.08)_inset] ring-1 ring-white/70 p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
-        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-white to-transparent opacity-90 pointer-events-none" />
+      <div className="aero-glass rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
         <div className="flex-1 text-center md:text-left">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-pink-50/90 text-pink-700 border border-pink-200/90 mb-2 shadow-2xs">
             <SummertideFlowerLogo size="xs" />
@@ -324,7 +323,7 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
       </div>
 
       {/* Control Bar: Filter, Search, and Admin Actions */}
-      <div className="bg-white/60 backdrop-blur-2xl rounded-2xl border border-white/90 p-4 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      <div className="aero-glass rounded-2xl p-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         {/* Search */}
         <div className="relative flex-1 max-w-md">
           <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -478,13 +477,12 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
             return (
               <div
                 key={song.id}
-                className={`relative overflow-hidden bg-white/70 backdrop-blur-2xl rounded-3xl border shadow-[0_10px_30px_rgba(2,132,199,0.06),0_1px_1.5px_rgba(255,255,255,0.95)_inset,0_-1px_1px_rgba(8,145,178,0.08)_inset] ring-1 hover:shadow-xl transition-all duration-200 p-5 flex flex-col justify-between group ${
+                className={`aero-glass-card rounded-3xl p-5 flex flex-col justify-between group transition-all duration-200 hover:-translate-y-0.5 hover:shadow-2xl ${
                   songFlag
                     ? 'border-rose-300 ring-rose-200'
-                    : 'border-white/90 ring-white/60 hover:border-sky-300/80'
+                    : 'hover:border-sky-300'
                 }`}
               >
-                <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
                 <div>
                   {/* Status Badge & Actions */}
                   <div className="flex items-center justify-between gap-2 mb-3">

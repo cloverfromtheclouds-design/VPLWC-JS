@@ -255,7 +255,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div
           onClick={() => setActiveAdminTab('monitoring')}
-          className="bg-white/60 backdrop-blur-2xl p-3.5 sm:p-4 rounded-2xl border border-white/90 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 cursor-pointer hover:border-pink-400/60 transition-all"
+          className="aero-glass p-3.5 sm:p-4 rounded-2xl cursor-pointer hover:border-sky-400/80 transition-all"
         >
           <div className="text-[11px] font-bold text-stone-500 uppercase tracking-wide flex items-center gap-1.5">
             <Users className="w-3.5 h-3.5 text-[#0284c7]" />
@@ -271,7 +271,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
         <div
           onClick={() => setActiveAdminTab('entrants')}
-          className="bg-white/60 backdrop-blur-2xl p-3.5 sm:p-4 rounded-2xl border border-white/90 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 cursor-pointer hover:border-pink-400/60 transition-all"
+          className="aero-glass p-3.5 sm:p-4 rounded-2xl cursor-pointer hover:border-sky-400/80 transition-all"
         >
           <div className="text-[11px] font-bold text-stone-500 uppercase tracking-wide flex items-center gap-1.5">
             <Music className="w-3.5 h-3.5 text-[#0284c7]" />

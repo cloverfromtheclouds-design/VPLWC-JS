@@ -391,8 +391,8 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
 
   return (
     <div className="max-w-7xl mx-auto py-2 sm:py-6 animate-in fade-in duration-200">
-      {/* Header Info Banner - Translucent Frosted Glass with iOS Edge Highlight */}
-      <div className="relative overflow-hidden rounded-3xl bg-white/65 backdrop-blur-2xl border border-white/90 shadow-[0_12px_40px_rgba(255,20,147,0.1),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 p-5 sm:p-6 mb-6">
+      {/* Header Info Banner - Translucent Aero Glass */}
+      <div className="aero-glass rounded-3xl p-5 sm:p-6 mb-6 relative overflow-hidden">
         <div className="absolute top-0 right-0 -mt-6 -mr-6 w-36 h-36 bg-gradient-to-br from-pink-300/25 to-sky-200/20 rounded-full blur-2xl pointer-events-none" />
         
         {/* Hibiscus Inlay Debossed Watermark */}
@@ -447,7 +447,7 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
         {/* Right Column: Scorecard Form */}
         <form
           onSubmit={handleSubmit}
-          className="bg-white/60 backdrop-blur-2xl rounded-3xl border border-white/90 shadow-[0_20px_60px_rgba(255,20,147,0.1),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 p-5 sm:p-8 space-y-6 relative overflow-hidden"
+          className="aero-glass rounded-3xl p-5 sm:p-8 space-y-6 relative overflow-hidden"
         >
           {/* Hibiscus Inlay Debossed Watermark */}
           <HibiscusInlay size="xl" position="bottom-right" opacity="opacity-[0.05] sm:opacity-[0.065]" />

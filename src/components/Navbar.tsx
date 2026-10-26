@@ -42,7 +42,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onLockScreen,
 }) => {
   return (
-    <header className="bg-white/70 backdrop-blur-2xl border-b border-white/80 sticky top-0 z-40 shadow-[0_4px_24px_rgba(2,132,199,0.06),inset_0_1px_0_rgba(255,255,255,0.95)]">
+    <header className="aero-glass border-b border-white/90 sticky top-0 z-40">
       {/* Top Banner with Studio Brand & Actions */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">

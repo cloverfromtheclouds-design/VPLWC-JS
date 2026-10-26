@@ -449,7 +449,7 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
     <div
       ref={panelRef}
       onMouseUp={handleMouseUp}
-      className="bg-white/60 backdrop-blur-2xl rounded-3xl border border-white/90 shadow-[0_20px_50px_rgba(255,20,147,0.08),0_1px_1px_rgba(255,255,255,0.95)_inset] p-5 sm:p-7 flex flex-col h-full ring-1 ring-white/60 relative animate-in fade-in duration-200"
+      className="aero-glass rounded-3xl p-5 sm:p-7 flex flex-col h-full relative animate-in fade-in duration-200"
     >
       {/* Floating Selection Tooltip - only available before submission */}
       {canQuote && selectedText && selectionPos && (
