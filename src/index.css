@@ -77,6 +77,21 @@
   animation: aeroFloatSlow 10s ease-in-out infinite;
 }
 
+@keyframes glassFlareDrift {
+  0%, 100% {
+    transform: rotate(-14deg) translateY(0px) scaleX(1);
+    opacity: 0.92;
+  }
+  50% {
+    transform: rotate(-13deg) translateY(8px) scaleX(1.06);
+    opacity: 1;
+  }
+}
+
+.animate-glass-flare {
+  animation: glassFlareDrift 12s ease-in-out infinite;
+}
+
 /* Subtle Frutiger Aero Glass & Gloss Component Classes */
 .aero-glass {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.65) 100%);

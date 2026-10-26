@@ -1092,11 +1092,29 @@ export default function App() {
         <div className="absolute inset-0 bg-gradient-to-b from-pink-100/40 via-pink-200/50 to-pink-300/65 pointer-events-none" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-pink-300/30 via-transparent to-rose-200/25 pointer-events-none" />
 
-        {/* Subtle Frutiger Aero Atmospheric Sky/Cyan Glow & Floating Glass Bubbles */}
+        {/* Subtle Frutiger Aero Atmospheric Sky/Cyan Glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[850px] h-[340px] bg-gradient-to-b from-cyan-300/20 via-sky-200/12 to-transparent blur-3xl rounded-full pointer-events-none" />
-        <div className="absolute top-[18%] left-[7%] w-28 h-28 rounded-full border border-white/60 bg-gradient-to-tr from-white/10 via-cyan-100/25 to-white/40 shadow-[inset_0_2px_4px_rgba(255,255,255,0.8),0_10px_25px_rgba(2,132,199,0.08)] pointer-events-none animate-aero-float" />
-        <div className="absolute top-[52%] right-[8%] w-20 h-20 rounded-full border border-white/50 bg-gradient-to-tr from-white/10 via-sky-100/20 to-white/35 shadow-[inset_0_2px_3px_rgba(255,255,255,0.7),0_8px_20px_rgba(2,132,199,0.06)] pointer-events-none animate-aero-float-slow" />
-        <div className="absolute top-[78%] left-[14%] w-14 h-14 rounded-full border border-white/50 bg-gradient-to-tr from-white/15 via-pink-100/20 to-white/30 shadow-[inset_0_1px_2px_rgba(255,255,255,0.7)] pointer-events-none animate-aero-float" />
+
+        {/* Distinct Frutiger Aero Glass Flare Layer (Luminous Anamorphic Ray, Chromatic Glass Arc & Optical Glint) */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden mix-blend-screen">
+          {/* Crisp Anamorphic Glass Light Needle / Streak */}
+          <div className="absolute top-[14%] -left-[15%] w-[140%] h-[3px] bg-gradient-to-r from-transparent via-cyan-200 via-white via-pink-200 to-transparent shadow-[0_0_14px_rgba(56,189,248,0.9),0_0_28px_rgba(255,255,255,0.95)] -rotate-14 transform-gpu pointer-events-none" />
+
+          {/* Wide Anamorphic Glass Light Halo Beam */}
+          <div className="absolute -top-[4%] -left-[20%] w-[150%] h-48 bg-gradient-to-r from-transparent via-cyan-300/45 via-white/70 via-sky-300/40 to-transparent blur-xl -rotate-14 transform-gpu animate-glass-flare pointer-events-none" />
+
+          {/* Luminous Starburst Optical Core */}
+          <div className="absolute top-[4%] left-[22%] w-[460px] h-[200px] bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.92)_0%,_rgba(125,211,252,0.65)_28%,_rgba(56,189,248,0.35)_52%,_transparent_75%)] blur-lg pointer-events-none" />
+
+          {/* Chromatic Iridescent Glass Halo Ring */}
+          <div className="absolute top-[2%] left-[14%] w-80 h-80 rounded-full border border-white/65 bg-gradient-to-br from-cyan-300/35 via-white/10 to-pink-300/25 blur-xs shadow-[inset_0_0_24px_rgba(56,189,248,0.35),0_0_30px_rgba(255,255,255,0.45)] pointer-events-none" />
+
+          {/* Secondary Soft Specular Horizon Flare Wash */}
+          <div className="absolute top-[16%] left-[5%] w-[90%] h-24 bg-gradient-to-r from-transparent via-sky-300/30 via-white/45 to-transparent blur-2xl transform-gpu pointer-events-none" />
+
+          {/* Lower Right Secondary Prismatic Angle Reflection */}
+          <div className="absolute top-[44%] -right-[10%] w-[65%] h-24 bg-gradient-to-r from-transparent via-cyan-300/35 via-white/40 to-transparent blur-xl rotate-12 transform-gpu pointer-events-none" />
+        </div>
       </div>
 
       {/* Top Navbar */}
