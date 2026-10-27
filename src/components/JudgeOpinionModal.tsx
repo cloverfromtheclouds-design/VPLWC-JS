@@ -57,7 +57,7 @@ export const JudgeOpinionModal: React.FC<JudgeOpinionModalProps> = ({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-2xl bg-gradient-to-b from-white/95 via-white/90 to-white/85 backdrop-blur-2xl rounded-3xl border border-white/90 shadow-[0_25px_65px_rgba(255,20,147,0.22),0_1px_2px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 p-5 sm:p-7 text-stone-900 relative overflow-hidden flex flex-col max-h-[88vh] animate-in zoom-in-95 duration-150"
+        className="w-full max-w-2xl aero-glass-card rounded-3xl p-5 sm:p-7 text-stone-900 relative overflow-hidden flex flex-col max-h-[88vh] animate-in zoom-in-95 duration-150"
       >
         {/* Top iOS Specular Edge Highlight & Accent Bar */}
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-pink-500 via-rose-500 to-cyan-500 shadow-sm" />
@@ -115,7 +115,7 @@ export const JudgeOpinionModal: React.FC<JudgeOpinionModalProps> = ({
 
         {/* Optional Criteria Score Breakdown Strip */}
         {data.scores && (
-          <div className="mt-3.5 grid grid-cols-4 gap-2 bg-stone-50/90 p-2.5 rounded-2xl border border-stone-200/80 text-center text-xs">
+          <div className="mt-3.5 grid grid-cols-4 gap-2 aero-glass p-2.5 rounded-2xl text-center text-xs">
             <div>
               <span className="text-stone-400 text-[10px] block uppercase font-bold">Writing</span>
               <strong className="text-stone-900 font-extrabold text-sm">{data.scores.writing ?? '—'}</strong>
@@ -141,7 +141,7 @@ export const JudgeOpinionModal: React.FC<JudgeOpinionModalProps> = ({
 
         {/* Main Opinion Body in Spacious Scrollable Pop-up Reader */}
         <div className="flex-1 overflow-y-auto my-3.5 pr-1 space-y-3">
-          <div className="bg-white/90 p-5 sm:p-6 rounded-2xl border border-stone-200 shadow-inner select-text">
+          <div className="aero-glass p-5 sm:p-6 rounded-2xl select-text">
             <div className="font-serif text-sm sm:text-base text-stone-900 leading-relaxed whitespace-pre-wrap">
               {data.comments}
             </div>

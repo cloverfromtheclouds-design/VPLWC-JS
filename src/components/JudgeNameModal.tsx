@@ -163,7 +163,7 @@ export const JudgeNameModal: React.FC<JudgeNameModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="w-full max-w-md bg-gradient-to-b from-white/85 via-white/75 to-white/65 backdrop-blur-2xl rounded-3xl border border-white/90 shadow-[0_20px_50px_rgba(255,20,147,0.16),0_1px_2px_rgba(255,255,255,0.95)_inset] p-5 sm:p-7 text-stone-900 relative overflow-hidden ring-1 ring-white/60">
+      <div className="w-full max-w-md aero-glass-card rounded-3xl p-5 sm:p-7 text-stone-900 relative overflow-hidden">
         {/* Top iOS Specular Edge Highlight & Accent Bar */}
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-pink-500 via-rose-500 to-pink-500 shadow-sm" />
 

@@ -118,7 +118,7 @@ export const PortalPinModal: React.FC<PortalPinModalProps> = ({
       {stage === 'card' && (
         <div
           onClick={(e) => e.stopPropagation()}
-          className="w-full max-w-md bg-white rounded-3xl border border-pink-100 shadow-[0_25px_65px_rgba(255,20,147,0.35),0_1px_2px_rgba(255,255,255,0.95)_inset] p-6 sm:p-8 text-stone-900 relative overflow-hidden animate-in fade-in zoom-in-95 duration-200 cursor-auto z-10"
+          className="w-full max-w-md aero-glass-card rounded-3xl p-6 sm:p-8 text-stone-900 relative overflow-hidden animate-in fade-in zoom-in-95 duration-200 cursor-auto z-10"
         >
           {/* Top Specular Edge Highlight & Accent Bar */}
           <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-pink-500 via-rose-500 to-pink-500 shadow-sm" />

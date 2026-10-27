@@ -586,7 +586,7 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
 
           {/* Optional Story / Concept Callout */}
           {submission.storyConcept && (
-            <div className="p-4 rounded-2xl bg-amber-50/70 backdrop-blur-xs border border-amber-200/80 shadow-2xs text-stone-800 space-y-1">
+            <div className="p-4 rounded-2xl aero-glass border border-amber-300/80 shadow-2xs text-stone-800 space-y-1">
               <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#91621f]">
                 <BookOpen className="w-3.5 h-3.5" />
                 Story & Concept Inspiration
@@ -597,8 +597,10 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
             </div>
           )}
 
-          {/* Formatted Lyrics Body */}
-          <div className="pt-2">{renderFormattedLyrics()}</div>
+          {/* Formatted Lyrics Body with Vertical Scrollbar */}
+          <div className="pt-2 max-h-[480px] sm:max-h-[560px] overflow-y-auto pr-2 sm:pr-3 [scrollbar-width:thin] [scrollbar-color:#0284c7_rgba(224,242,254,0.7)] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-sky-100/50 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-sky-300 [&::-webkit-scrollbar-thumb]:via-[#0284c7] [&::-webkit-scrollbar-thumb]:to-[#0369a1] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border [&::-webkit-scrollbar-thumb]:border-white/90">
+            {renderFormattedLyrics()}
+          </div>
         </div>
       ) : (
         /* Empty State */

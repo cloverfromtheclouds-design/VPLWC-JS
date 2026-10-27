@@ -211,16 +211,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   return (
     <div className="space-y-4 animate-in fade-in duration-200">
       {/* Top Banner */}
-      <div className="bg-gradient-to-r from-stone-900 via-[#1c242b] to-[#202b31] rounded-2xl p-4 sm:p-5 text-white shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="aero-glass-card rounded-3xl p-5 sm:p-6 text-stone-900 shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border border-sky-300/60">
         <div>
-          <div className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[#9ec6b9] bg-stone-800/90 px-2.5 py-0.5 rounded-full mb-1">
-            <Shield className="w-3 h-3" />
+          <div className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[#0284c7] bg-sky-50/90 px-2.5 py-0.5 rounded-full mb-1 border border-sky-200/90 shadow-2xs">
+            <Shield className="w-3 h-3 text-[#0284c7]" />
             Contest Administration & Supervision
           </div>
-          <h2 className="text-xl sm:text-2xl font-black tracking-tight">
+          <h2 className="text-xl sm:text-2xl font-black tracking-tight text-[#000000] drop-shadow-xs">
             Contest Control Center
           </h2>
-          <p className="text-xs text-stone-300 mt-0.5 max-w-2xl leading-relaxed">
+          <p className="text-xs text-[#090909] mt-0.5 max-w-2xl leading-relaxed">
             Monitor judge progress, review rule violations and flagged entries, update portal and admin PINs,
             and export official contest standings to Excel.
           </p>
@@ -230,10 +230,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           {onLockPortal && (
             <button
               onClick={() => setShowLockConfirmModal(true)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-rose-600/90 hover:bg-rose-600 text-white text-xs font-bold shadow-xs transition-all cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl aero-btn-rose text-white text-xs font-bold transition-all cursor-pointer"
               title="Lock judging portal immediately and require PIN re-entry"
             >
-              <Lock className="w-3.5 h-3.5 text-rose-200" />
+              <Lock className="w-3.5 h-3.5 text-rose-100" />
               <span>Lock Portal</span>
             </button>
           )}
@@ -241,10 +241,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           {onExportExcel && (
             <button
               onClick={onExportExcel}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl aero-btn-emerald text-white text-xs font-bold transition-all cursor-pointer"
               title="Download full contest results in Excel (.xlsx) format"
             >
-              <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-200" />
+              <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-100" />
               <span>Export to Excel (.xlsx)</span>
             </button>
           )}
@@ -255,7 +255,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div
           onClick={() => setActiveAdminTab('monitoring')}
-          className="aero-glass p-3.5 sm:p-4 rounded-2xl cursor-pointer hover:border-sky-400/80 transition-all"
+          className="aero-glass-card p-3.5 sm:p-4 rounded-2xl cursor-pointer hover:border-sky-400/80 transition-all"
         >
           <div className="text-[11px] font-bold text-stone-500 uppercase tracking-wide flex items-center gap-1.5">
             <Users className="w-3.5 h-3.5 text-[#0284c7]" />
@@ -271,7 +271,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
         <div
           onClick={() => setActiveAdminTab('entrants')}
-          className="aero-glass p-3.5 sm:p-4 rounded-2xl cursor-pointer hover:border-sky-400/80 transition-all"
+          className="aero-glass-card p-3.5 sm:p-4 rounded-2xl cursor-pointer hover:border-sky-400/80 transition-all"
         >
           <div className="text-[11px] font-bold text-stone-500 uppercase tracking-wide flex items-center gap-1.5">
             <Music className="w-3.5 h-3.5 text-[#0284c7]" />
@@ -285,10 +285,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
         <div
           onClick={() => setActiveAdminTab('flags')}
-          className={`backdrop-blur-2xl p-3.5 sm:p-4 rounded-2xl border shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 cursor-pointer transition-all ${
+          className={`aero-glass-card p-3.5 sm:p-4 rounded-2xl cursor-pointer transition-all ${
             activeFlagsCount > 0
-              ? 'bg-rose-50/70 border-rose-300 hover:border-rose-400'
-              : 'bg-white/60 border-white/90 hover:border-pink-300'
+              ? 'border-rose-400 bg-rose-50/60'
+              : 'hover:border-pink-300'
           }`}
         >
           <div className="text-[11px] font-bold uppercase tracking-wide flex items-center gap-1.5 text-rose-700">
@@ -305,7 +305,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
         </div>
 
-        <div className="bg-white/60 backdrop-blur-2xl p-3.5 sm:p-4 rounded-2xl border border-white/90 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 flex flex-col justify-between">
+        <div className="aero-glass-card p-3.5 sm:p-4 rounded-2xl flex flex-col justify-between">
           <div>
             <div className="text-[11px] font-bold text-stone-500 uppercase tracking-wide flex items-center gap-1.5">
               <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
@@ -409,7 +409,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
       {/* Tab: Flags & Rule Violations Management */}
       {activeAdminTab === 'flags' && (
-        <div className="bg-white/70 backdrop-blur-md rounded-2xl border border-white/60 shadow-md overflow-hidden space-y-4">
+        <div className="aero-glass-card rounded-2xl overflow-hidden space-y-4">
           <div className="p-4 border-b border-stone-200/80 bg-white/40 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <div className="text-[11px] font-bold text-rose-700 uppercase tracking-wider flex items-center gap-1.5 mb-0.5">
@@ -505,7 +505,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       </div>
 
                       {flag.notes && (
-                        <div className="text-xs bg-white/90 p-2.5 rounded-xl border border-stone-200 text-stone-800 italic max-w-2xl">
+                        <div className="text-xs bg-white/90 p-2.5 rounded-xl border border-stone-200 text-stone-800 italic max-w-2xl shadow-2xs">
                           Judge's Observation: “{flag.notes}”
                         </div>
                       )}
@@ -516,10 +516,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       {!isDisqualified && onUpdateFlagStatus && (
                         <button
                           onClick={() => onUpdateFlagStatus(flag.id, 'disqualified')}
-                          className="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-2xs transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+                          className="px-3.5 py-2 rounded-xl aero-btn-rose text-white text-xs font-bold transition-all inline-flex items-center gap-1.5 cursor-pointer"
                           title="Officially disqualify this submission from standings"
                         >
-                          <Ban className="w-3.5 h-3.5" />
+                          <Ban className="w-3.5 h-3.5 text-rose-100" />
                           <span>Disqualify Entry</span>
                         </button>
                       )}
@@ -527,10 +527,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       {!isCleared && onUpdateFlagStatus && (
                         <button
                           onClick={() => onUpdateFlagStatus(flag.id, 'cleared')}
-                          className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-2xs transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+                          className="px-3.5 py-2 rounded-xl aero-btn-emerald text-white text-xs font-bold transition-all inline-flex items-center gap-1.5 cursor-pointer"
                           title="Dismiss report as false alarm and restore entry for judging"
                         >
-                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-100" />
                           <span>Clear / Restore Entry</span>
                         </button>
                       )}
@@ -555,7 +555,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
       {/* Tab: Scores Management */}
       {activeAdminTab === 'scores' && (
-        <div className="bg-white/70 backdrop-blur-md rounded-2xl border border-white/60 shadow-md overflow-hidden space-y-3">
+        <div className="aero-glass-card rounded-2xl overflow-hidden space-y-3">
           {/* Filter Bar */}
           <div className="p-3 sm:p-3.5 border-b border-stone-200/80 bg-white/40 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
             <div className="relative flex-1 max-w-md">
@@ -661,7 +661,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                       e
                                     )
                                   }
-                                  className="px-1.5 py-0.5 rounded bg-white hover:bg-stone-100 text-stone-600 hover:text-stone-900 border border-stone-200 transition-colors inline-flex items-center gap-0.5 text-[9px] font-semibold"
+                                  className="px-1.5 py-0.5 rounded aero-btn-secondary text-stone-600 hover:text-stone-900 transition-colors inline-flex items-center gap-0.5 text-[9px] font-semibold"
                                   title="Copy opinion text"
                                 >
                                   {copiedCommentKey === `admin-score-${score.id || idx}` ? (
@@ -688,7 +688,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       <td className="py-2 pr-3 sm:pr-4 pl-1 text-right">
                         <button
                           onClick={() => onDeleteScore(score.id || `idx-${idx}`)}
-                          className="p-1 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors inline-flex items-center gap-1 text-[11px] font-semibold cursor-pointer"
+                          className="px-2 py-1 text-rose-700 hover:text-white hover:bg-rose-600 border border-rose-200 rounded-lg transition-colors inline-flex items-center gap-1 text-[11px] font-semibold cursor-pointer"
                           title="Delete this judge's score"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -706,7 +706,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
       {/* Tab: Contest Songs Management & Rename */}
       {activeAdminTab === 'entrants' && (
-        <div className="bg-white/70 backdrop-blur-md rounded-2xl border border-white/60 shadow-md overflow-hidden space-y-4">
+        <div className="aero-glass-card rounded-2xl overflow-hidden space-y-4">
           <div className="p-4 border-b border-stone-200/80 bg-white/40 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <h3 className="font-bold text-stone-800 text-sm">Contest Songs & Entrant Roster</h3>
@@ -823,7 +823,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <div className="flex items-center gap-2 shrink-0">
                       <button
                         onClick={() => handleStartRename(song.songTitle)}
-                        className="px-3 py-1.5 rounded-xl border border-stone-300 hover:bg-stone-100 text-stone-700 text-xs font-bold transition-colors inline-flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                        className="px-3.5 py-1.5 rounded-xl aero-btn-secondary text-stone-700 text-xs font-bold transition-all inline-flex items-center gap-1.5 cursor-pointer shadow-xs"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                         <span>Rename</span>
@@ -836,7 +836,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                             onDeleteEntrant(song.songTitle);
                           }
                         }}
-                        className="px-3 py-1.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold transition-colors inline-flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                        className="px-3.5 py-1.5 rounded-xl aero-btn-rose text-white text-xs font-bold transition-all inline-flex items-center gap-1.5 cursor-pointer shadow-xs"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                         <span>Delete Song</span>
@@ -854,7 +854,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {activeAdminTab === 'settings' && (
         <div className="space-y-4">
           {/* Share Links */}
-          <div className="bg-white/70 backdrop-blur-md rounded-2xl border border-white/60 p-5 sm:p-6 shadow-sm space-y-3">
+          <div className="aero-glass-card rounded-2xl p-5 sm:p-6 shadow-sm space-y-3">
             <h3 className="text-base font-bold text-stone-900 flex items-center gap-2">
               <Users className="w-4 h-4 text-[#0284c7]" />
               Shareable Judge Link
@@ -869,7 +869,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <span>{window.location.origin + window.location.pathname}?role=judge</span>
               <button
                 onClick={handleCopyJudgeLink}
-                className="shrink-0 p-2 bg-white/80 rounded-lg border border-stone-300 hover:bg-white transition-colors cursor-pointer"
+                className="shrink-0 p-2 aero-btn-secondary rounded-lg transition-all cursor-pointer"
                 title="Copy link"
               >
                 {copiedLink ? (
@@ -882,7 +882,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
 
           {/* 1. Update Portal Access Security PIN */}
-          <div className="bg-white/70 backdrop-blur-md rounded-2xl border border-white/60 p-5 sm:p-6 shadow-sm space-y-3">
+          <div className="aero-glass-card rounded-2xl p-5 sm:p-6 shadow-sm space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="text-base font-bold text-stone-900 flex items-center gap-2">
                 <KeyRound className="w-4 h-4 text-pink-600" />
@@ -905,12 +905,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 value={newPortalPinInput}
                 onChange={(e) => setNewPortalPinInput(e.target.value.replace(/\D/g, ''))}
                 placeholder="New 4-8 digit Portal PIN"
-                className="px-3.5 py-2 bg-white/70 border border-stone-300/80 rounded-xl text-xs sm:text-sm text-stone-900 font-mono w-52 focus:ring-2 focus:ring-pink-500 focus:outline-hidden"
+                className="px-3.5 py-2 bg-white/80 border border-stone-300 rounded-xl text-xs sm:text-sm text-stone-900 font-mono w-52 focus:ring-2 focus:ring-pink-500 focus:outline-hidden"
               />
               <button
                 type="submit"
                 disabled={newPortalPinInput.trim().length < 4}
-                className="px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
+                className="px-4 py-2 aero-btn-pink text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-all disabled:opacity-50 cursor-pointer"
               >
                 Update Portal PIN
               </button>
@@ -925,7 +925,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
 
           {/* 2. Update Producer / Admin PIN */}
-          <div className="bg-white/70 backdrop-blur-md rounded-2xl border border-white/60 p-5 sm:p-6 shadow-sm space-y-3">
+          <div className="aero-glass-card rounded-2xl p-5 sm:p-6 shadow-sm space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="text-base font-bold text-stone-900 flex items-center gap-2">
                 <Lock className="w-4 h-4 text-[#0284c7]" />
@@ -952,7 +952,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <button
                 type="submit"
                 disabled={newAdminPinInput.trim().length < 4}
-                className="px-4 py-2 bg-gradient-to-r from-[#0284c7] to-[#0891b2] hover:from-[#0369a1] hover:to-[#0e7490] text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-all disabled:opacity-50 cursor-pointer"
+                className="px-4 py-2 aero-btn-primary text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-all disabled:opacity-50 cursor-pointer"
               >
                 Update Admin PIN
               </button>
@@ -967,7 +967,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
 
           {/* 3. Remote Portal Lock Feature */}
-          <div className="bg-white/70 backdrop-blur-md rounded-2xl border border-white/60 p-5 sm:p-6 shadow-sm space-y-3">
+          <div className="aero-glass-card rounded-2xl p-5 sm:p-6 shadow-sm space-y-3">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <h3 className="text-base font-bold text-stone-900 flex items-center gap-2">
                 <Lock className="w-4 h-4 text-rose-600" />
@@ -988,9 +988,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 type="button"
                 onClick={() => setShowLockConfirmModal(true)}
                 disabled={isLockingPortal}
-                className="px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-colors flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                className="px-4 py-2.5 aero-btn-rose text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
               >
-                <Lock className="w-4 h-4" />
+                <Lock className="w-4 h-4 text-rose-100" />
                 <span>{isLockingPortal ? 'Locking Portal...' : 'Lock Portal for All Judges Now'}</span>
               </button>
 
@@ -1008,7 +1008,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* Remote Portal Lock Confirmation Modal */}
       {showLockConfirmModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-150">
-          <div className="w-full max-w-md bg-white/80 backdrop-blur-xl rounded-2xl border border-white/60 shadow-2xl p-6 text-stone-900">
+          <div className="w-full max-w-md aero-glass-card rounded-3xl p-6 text-stone-900">
             <div className="flex items-center gap-3 mb-3">
               <div className="p-2.5 rounded-xl bg-rose-100 text-rose-700">
                 <Lock className="w-5 h-5" />
@@ -1024,7 +1024,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <button
                 type="button"
                 onClick={() => setShowLockConfirmModal(false)}
-                className="px-4 py-2 rounded-xl border border-stone-300 text-xs font-bold text-stone-700 hover:bg-white/60 cursor-pointer"
+                className="px-4 py-2 rounded-xl aero-btn-secondary text-xs font-bold text-stone-700 cursor-pointer"
               >
                 Cancel
               </button>
@@ -1040,9 +1040,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     setTimeout(() => setLockConfirmedSuccess(false), 4000);
                   }
                 }}
-                className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-xs cursor-pointer flex items-center gap-1.5"
+                className="px-4 py-2 rounded-xl aero-btn-rose text-white text-xs font-bold cursor-pointer flex items-center gap-1.5"
               >
-                <Lock className="w-3.5 h-3.5" />
+                <Lock className="w-3.5 h-3.5 text-rose-100" />
                 <span>Confirm & Lock Portal</span>
               </button>
             </div>
@@ -1053,7 +1053,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* Rename Modal */}
       {renamingTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-150">
-          <div className="w-full max-w-md bg-white/75 backdrop-blur-xl rounded-2xl border border-white/60 shadow-2xl p-6 text-stone-900">
+          <div className="w-full max-w-md aero-glass-card rounded-3xl p-6 text-stone-900">
             <h3 className="text-base font-bold text-stone-900">Rename Contest Entry</h3>
             <p className="text-xs text-stone-500 mt-1">
               Updating this title will automatically update all previous judges' scorecards linked to
@@ -1077,14 +1077,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <button
                 type="button"
                 onClick={() => setRenamingTarget(null)}
-                className="px-4 py-2 rounded-xl border border-stone-300 text-xs font-bold text-stone-700 hover:bg-stone-50 cursor-pointer"
+                className="px-4 py-2 rounded-xl aero-btn-secondary text-xs font-bold text-stone-700 cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleConfirmRename}
-                className="px-4 py-2 rounded-xl bg-[#0284c7] text-white text-xs font-bold hover:bg-[#0369a1] shadow-xs cursor-pointer"
+                className="px-4 py-2 rounded-xl aero-btn-primary text-white text-xs font-bold cursor-pointer"
               >
                 Save New Title
               </button>

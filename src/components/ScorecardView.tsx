@@ -547,13 +547,13 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
           </div>
 
           {/* The 4 Criteria Sliders */}
-          <div className="space-y-6 divide-y divide-stone-100">
+          <div className="space-y-4">
             {CRITERIA_CONFIG.map((c, idx) => {
               const currentScore = scores[c.key] || 18;
               const tier = getTier(currentScore);
 
               return (
-                <div key={c.key} className={idx > 0 ? 'pt-5' : ''}>
+                <div key={c.key} className="aero-glass-card p-4 sm:p-4.5 rounded-2xl">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <h4 className="text-sm font-bold text-stone-900">
@@ -570,7 +570,7 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
                   </div>
 
                   {/* Slider */}
-                  <div className="mt-4">
+                  <div className="mt-3.5">
                     <input
                       type="range"
                       min="1"

@@ -235,12 +235,12 @@ export const LeaderboardView: React.FC<LeaderboardViewProps> = ({
             return (
               <div
                 key={entrant.entrantName}
-                className={`relative rounded-2xl p-5 border transition-all ${
+                className={`relative rounded-2xl p-5 border transition-all aero-glass-card ${
                   isWinner
-                    ? 'bg-gradient-to-b from-amber-50/80 to-white border-amber-300 shadow-md ring-2 ring-amber-400/30'
+                    ? 'border-amber-300 ring-2 ring-amber-400/40'
                     : isSecond
-                    ? 'bg-gradient-to-b from-slate-50/90 to-white border-slate-300 shadow-xs'
-                    : 'bg-gradient-to-b from-orange-50/60 to-white border-amber-200/80 shadow-xs'
+                    ? 'border-slate-300 ring-1 ring-slate-300/40'
+                    : 'border-amber-300/70 ring-1 ring-amber-300/40'
                 }`}
               >
                 <div className="flex items-center justify-between mb-3">

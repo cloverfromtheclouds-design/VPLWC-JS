@@ -212,17 +212,17 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
   return (
     <div className="space-y-5 animate-in fade-in duration-200">
       {/* Top Banner */}
-      <div className="bg-gradient-to-r from-sky-950 via-[#0c2e42] to-[#14425d] text-white rounded-3xl p-5 sm:p-6 shadow-md border border-sky-800/40">
+      <div className="aero-glass-card rounded-3xl p-5 sm:p-6 text-stone-900 shadow-xl border border-sky-300/60">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-500/20 text-sky-200 border border-sky-400/30 text-xs font-bold uppercase tracking-wider mb-2">
-              <Users className="w-3.5 h-3.5 text-sky-300" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-50 text-[#0284c7] border border-sky-200/90 text-xs font-bold uppercase tracking-wider mb-2 shadow-2xs">
+              <Users className="w-3.5 h-3.5 text-[#0284c7]" />
               <span>Real-Time Judge Roster & Progress</span>
             </div>
-            <h2 className="text-xl sm:text-3xl font-black tracking-tight">
+            <h2 className="text-xl sm:text-3xl font-black tracking-tight text-stone-900 drop-shadow-xs">
               Judge Monitoring Board
             </h2>
-            <p className="text-xs sm:text-sm text-sky-200/80 mt-1 max-w-2xl leading-relaxed">
+            <p className="text-xs sm:text-sm text-stone-600 mt-1 max-w-2xl leading-relaxed">
               Track live evaluation progress for all judges scoring the contest, see remaining songs left to
               score, inspect individual grading tendencies, and copy judge invite links.
             </p>
@@ -230,16 +230,16 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
         </div>
 
         {/* Contest-Wide Progress Bar */}
-        <div className="mt-6 pt-5 border-t border-sky-800/60">
+        <div className="mt-6 pt-5 border-t border-stone-200/80">
           <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold mb-2">
-            <span className="text-sky-200">Overall Contest Evaluation Completion</span>
-            <span className="text-white font-extrabold tabular-nums">
+            <span className="text-stone-700 font-bold">Overall Contest Evaluation Completion</span>
+            <span className="text-stone-900 font-black tabular-nums">
               {contestStats.actualScorecards} of {contestStats.expectedScorecards} Scorecards Recorded ({contestStats.overallProgress}%)
             </span>
           </div>
-          <div className="w-full h-3 bg-black/40 rounded-full overflow-hidden p-0.5">
+          <div className="w-full h-3.5 bg-stone-100 rounded-full overflow-hidden p-0.5 border border-stone-200/80 shadow-inner">
             <div
-              className="h-full bg-gradient-to-r from-sky-400 via-teal-300 to-emerald-400 rounded-full transition-all duration-300 shadow-xs"
+              className="h-full bg-gradient-to-r from-sky-400 via-teal-400 to-emerald-400 rounded-full transition-all duration-300 shadow-xs"
               style={{ width: `${contestStats.overallProgress}%` }}
             />
           </div>
@@ -248,7 +248,7 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
 
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="bg-white/60 backdrop-blur-2xl p-4 rounded-2xl border border-white/90 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60">
+        <div className="aero-glass-card p-4 rounded-2xl">
           <div className="text-[11px] font-bold text-stone-500 uppercase tracking-wide flex items-center gap-1.5">
             <Users className="w-3.5 h-3.5 text-[#0284c7]" />
             Registered Judges
@@ -259,7 +259,7 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
           <div className="text-[11px] text-stone-500 mt-0.5 font-medium">Active evaluating panel</div>
         </div>
 
-        <div className="bg-white/60 backdrop-blur-2xl p-4 rounded-2xl border border-white/90 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60">
+        <div className="aero-glass-card p-4 rounded-2xl">
           <div className="text-[11px] font-bold text-emerald-700 uppercase tracking-wide flex items-center gap-1.5">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
             100% Completed
@@ -270,7 +270,7 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
           <div className="text-[11px] text-stone-500 mt-0.5 font-medium">Finished all {totalSongs} entries</div>
         </div>
 
-        <div className="bg-white/60 backdrop-blur-2xl p-4 rounded-2xl border border-white/90 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60">
+        <div className="aero-glass-card p-4 rounded-2xl">
           <div className="text-[11px] font-bold text-amber-700 uppercase tracking-wide flex items-center gap-1.5">
             <Clock className="w-3.5 h-3.5 text-amber-600" />
             In Progress
@@ -281,7 +281,7 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
           <div className="text-[11px] text-stone-500 mt-0.5 font-medium">Currently grading songs</div>
         </div>
 
-        <div className="bg-white/60 backdrop-blur-2xl p-4 rounded-2xl border border-white/90 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60">
+        <div className="aero-glass-card p-4 rounded-2xl">
           <div className="text-[11px] font-bold text-stone-600 uppercase tracking-wide flex items-center gap-1.5">
             <AlertCircle className="w-3.5 h-3.5 text-stone-500" />
             Not Started
@@ -294,7 +294,7 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-white/60 backdrop-blur-2xl rounded-2xl border border-white/90 p-3 sm:p-4 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      <div className="aero-glass rounded-2xl p-3 sm:p-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div className="relative flex-1 max-w-md">
           <Search className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
@@ -302,7 +302,7 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
             placeholder="Search judges by name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-white/80 border border-stone-200/90 rounded-xl text-xs sm:text-sm text-stone-900 focus:outline-hidden focus:ring-2 focus:ring-pink-500/50 shadow-inner"
+            className="w-full pl-10 pr-4 py-2 bg-white/80 border border-stone-200/90 rounded-xl text-xs sm:text-sm text-stone-900 focus:outline-hidden focus:ring-2 focus:ring-sky-500/50 shadow-inner"
           />
         </div>
 
@@ -323,8 +323,8 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
                 onClick={() => setStatusFilter(filterKey)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                   statusFilter === filterKey
-                    ? 'bg-gradient-to-r from-[#ff1493] to-[#ff2d78] text-white shadow-sm'
-                    : 'bg-white/80 border border-white/90 text-stone-600 hover:bg-white shadow-2xs'
+                    ? 'aero-btn-pink text-white shadow-xs'
+                    : 'aero-btn-secondary text-stone-600'
                 }`}
               >
                 {labels[filterKey]}
@@ -336,7 +336,7 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
 
       {/* Judges Cards Grid / Roster */}
       {filteredJudges.length === 0 ? (
-        <div className="bg-white/60 backdrop-blur-2xl rounded-2xl border border-white/90 p-12 text-center text-stone-400 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60">
+        <div className="aero-glass rounded-2xl p-12 text-center text-stone-400">
           <Users className="w-8 h-8 mx-auto mb-2 opacity-40 text-stone-500" />
           <p className="text-sm font-semibold">
             {searchQuery
@@ -358,7 +358,7 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
             return (
               <div
                 key={judge.name}
-                className="bg-white/65 backdrop-blur-2xl rounded-2xl border border-white/90 shadow-[0_10px_30px_rgba(255,20,147,0.06),0_1px_1px_rgba(255,255,255,0.95)_inset] ring-1 ring-white/60 hover:shadow-lg hover:border-pink-300/60 transition-all overflow-hidden"
+                className="aero-glass-card rounded-2xl hover:shadow-lg transition-all overflow-hidden"
               >
                 {/* Main Judge Summary Row */}
                 <div className="p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -455,13 +455,13 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
                   <div className="flex items-center gap-2 self-start md:self-auto shrink-0">
                     <button
                       onClick={() => handleCopyPersonalLink(judge.name)}
-                      className="p-2 rounded-xl border border-stone-200 hover:bg-stone-100 text-stone-700 text-xs font-semibold inline-flex items-center gap-1 transition-colors cursor-pointer"
+                      className="p-2 rounded-xl aero-btn-secondary text-stone-700 text-xs font-semibold inline-flex items-center gap-1 transition-all cursor-pointer shadow-xs"
                       title="Copy direct judging link for this judge"
                     >
                       {copiedLinkFor === judge.name ? (
                         <>
                           <Check className="w-3.5 h-3.5 text-emerald-600" />
-                          <span className="text-emerald-700">Copied</span>
+                          <span className="text-emerald-700 font-bold">Copied</span>
                         </>
                       ) : (
                         <>
@@ -474,7 +474,7 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
                     {onViewJudgeScores && judge.judgeScoresCount > 0 && (
                       <button
                         onClick={() => onViewJudgeScores(judge.name)}
-                        className="px-3 py-2 rounded-xl bg-sky-50 hover:bg-sky-100 border border-sky-200 text-[#0284c7] text-xs font-bold transition-colors cursor-pointer"
+                        className="px-3 py-2 rounded-xl aero-btn-primary text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
                         title="View all scorecards submitted by this judge"
                       >
                         Scorecards ({judge.judgeScoresCount})
@@ -483,9 +483,9 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
 
                     <button
                       onClick={() => toggleExpand(judge.name)}
-                      className="p-2 rounded-xl border border-stone-200 hover:bg-stone-100 text-stone-600 text-xs font-semibold cursor-pointer transition-colors inline-flex items-center gap-1"
+                      className="p-2 rounded-xl aero-btn-secondary text-stone-700 text-xs font-semibold cursor-pointer transition-all inline-flex items-center gap-1 shadow-xs"
                     >
-                      <span>{isExpanded ? 'Details' : 'Details'}</span>
+                      <span>Details</span>
                       {isExpanded ? (
                         <ChevronUp className="w-3.5 h-3.5" />
                       ) : (
@@ -496,7 +496,7 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
                     {onDeleteJudge && (
                       <button
                         onClick={() => onDeleteJudge(judge.name)}
-                        className="p-2 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
+                        className="p-2 text-rose-700 hover:text-white hover:bg-rose-600 border border-rose-200 rounded-xl transition-all cursor-pointer shadow-xs"
                         title={`Delete Judge "${judge.name}" and remove all their scorecards`}
                       >
                         <Trash2 className="w-4 h-4" />
@@ -507,7 +507,7 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
 
                 {/* Expanded Details: Stats & Remaining Songs Checklist */}
                 {isExpanded && (
-                  <div className="px-5 pb-5 pt-2 border-t border-stone-100 bg-stone-50/60 animate-in fade-in duration-150 space-y-4">
+                  <div className="px-5 pb-5 pt-3 border-t border-stone-200/80 bg-white/40 animate-in fade-in duration-150 space-y-4">
                     {/* Scoring Breakdown Criteria */}
                     {judge.judgeScoresCount > 0 ? (
                       <div>
@@ -516,7 +516,7 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
                           <span>Judging Tendencies & Averages Awarded</span>
                         </div>
                         <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
-                          <div className="p-3 bg-white rounded-xl border border-stone-200 shadow-2xs">
+                          <div className="p-3 aero-glass rounded-xl shadow-2xs">
                             <span className="text-stone-400 block text-[10px]">Average Total</span>
                             <span className="text-base font-black text-stone-900 mt-0.5 block">
                               {judge.avgTotal.toFixed(1)}{' '}
@@ -526,28 +526,28 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
                               Range: {judge.minScore} – {judge.maxScore}
                             </span>
                           </div>
-                          <div className="p-3 bg-white rounded-xl border border-stone-200 shadow-2xs">
+                          <div className="p-3 aero-glass rounded-xl shadow-2xs">
                             <span className="text-stone-400 block text-[10px]">Writing Quality</span>
                             <span className="text-base font-black text-stone-900 mt-0.5 block">
                               {judge.avgWriting.toFixed(1)}{' '}
                               <span className="text-xs font-normal text-stone-400">/ 25</span>
                             </span>
                           </div>
-                          <div className="p-3 bg-white rounded-xl border border-stone-200 shadow-2xs">
+                          <div className="p-3 aero-glass rounded-xl shadow-2xs">
                             <span className="text-stone-400 block text-[10px]">Originality</span>
                             <span className="text-base font-black text-stone-900 mt-0.5 block">
                               {judge.avgOriginality.toFixed(1)}{' '}
                               <span className="text-xs font-normal text-stone-400">/ 25</span>
                             </span>
                           </div>
-                          <div className="p-3 bg-white rounded-xl border border-stone-200 shadow-2xs">
+                          <div className="p-3 aero-glass rounded-xl shadow-2xs">
                             <span className="text-stone-400 block text-[10px]">Emotional Impact</span>
                             <span className="text-base font-black text-stone-900 mt-0.5 block">
                               {judge.avgEmotion.toFixed(1)}{' '}
                               <span className="text-xs font-normal text-stone-400">/ 25</span>
                             </span>
                           </div>
-                          <div className="p-3 bg-white rounded-xl border border-stone-200 shadow-2xs">
+                          <div className="p-3 aero-glass rounded-xl shadow-2xs">
                             <span className="text-stone-400 block text-[10px]">Structure & Cohesion</span>
                             <span className="text-base font-black text-stone-900 mt-0.5 block">
                               {judge.avgStructure.toFixed(1)}{' '}
@@ -582,7 +582,7 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
                           {judge.remainingSongs.map((song) => (
                             <div
                               key={song.id}
-                              className="p-2.5 bg-white rounded-xl border border-stone-200 text-xs flex items-center justify-between gap-2 shadow-2xs"
+                              className="p-2.5 aero-glass rounded-xl text-xs flex items-center justify-between gap-2 shadow-2xs"
                             >
                               <div className="min-w-0">
                                 <div className="font-bold text-stone-900 truncate">

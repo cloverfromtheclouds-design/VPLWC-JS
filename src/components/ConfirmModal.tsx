@@ -33,7 +33,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-150">
       <div
-        className="w-full max-w-md bg-gradient-to-b from-white/85 via-white/75 to-white/65 backdrop-blur-2xl rounded-3xl border border-white/90 shadow-[0_20px_50px_rgba(255,20,147,0.16),0_1px_2px_rgba(255,255,255,0.95)_inset] p-5 sm:p-6 text-stone-900 relative ring-1 ring-white/60 overflow-hidden"
+        className="w-full max-w-md aero-glass-card rounded-3xl p-5 sm:p-6 text-stone-900 relative overflow-hidden"
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-headline"

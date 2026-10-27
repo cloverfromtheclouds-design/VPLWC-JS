@@ -22,14 +22,14 @@ export const DuplicateUploadModal: React.FC<DuplicateUploadModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-150">
-      <div className="w-full max-w-md bg-white/75 backdrop-blur-xl rounded-3xl border border-white/60 shadow-2xl p-6 text-stone-900">
+      <div className="w-full max-w-md aero-glass-card rounded-3xl p-6 text-stone-900">
         <div className="flex items-center justify-between mb-4">
           <div className="w-11 h-11 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center shadow-xs">
             <AlertCircle className="w-6 h-6" />
           </div>
           <button
             onClick={onClose}
-            className="text-stone-400 hover:text-stone-600 p-1 rounded-lg transition-colors"
+            className="text-stone-400 hover:text-stone-600 p-1 rounded-lg transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -48,7 +48,7 @@ export const DuplicateUploadModal: React.FC<DuplicateUploadModalProps> = ({
         </div>
 
         {/* Existing Song Card */}
-        <div className="mt-4 p-4 rounded-2xl bg-sky-50/80 border border-sky-200 text-left">
+        <div className="mt-4 p-4 rounded-2xl aero-glass text-left">
           <div className="flex items-start gap-3">
             <div className="w-9 h-9 rounded-xl bg-[#0284c7] text-white flex items-center justify-center shrink-0">
               <FileText className="w-5 h-5" />

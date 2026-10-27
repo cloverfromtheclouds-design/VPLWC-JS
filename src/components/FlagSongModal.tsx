@@ -87,7 +87,7 @@ export const FlagSongModal: React.FC<FlagSongModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/60 backdrop-blur-md animate-in fade-in duration-100">
-      <div className="w-full max-w-sm sm:max-w-md bg-gradient-to-b from-white/90 via-white/80 to-white/70 backdrop-blur-2xl rounded-3xl border border-white/95 shadow-[0_20px_50px_rgba(255,20,147,0.16),0_1px_2px_rgba(255,255,255,0.95)_inset] p-4 sm:p-5 text-stone-900 relative ring-1 ring-white/60 overflow-hidden">
+      <div className="w-full max-w-sm sm:max-w-md aero-glass-card rounded-3xl p-4 sm:p-5 text-stone-900 relative overflow-hidden">
         {/* Accent Top Border */}
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-rose-500 via-pink-500 to-amber-500 shadow-sm" />
 

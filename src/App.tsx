@@ -1211,7 +1211,7 @@ export default function App() {
       {/* Admin Unlock PIN Modal */}
       {isPinModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-150">
-          <div className="w-full max-w-sm bg-white/80 backdrop-blur-xl rounded-3xl border border-white/60 shadow-2xl p-6 text-stone-900">
+          <div className="w-full max-w-sm aero-glass-card rounded-3xl p-6 text-stone-900">
             <div className="flex items-center justify-between mb-4">
               <div className="w-10 h-10 rounded-2xl bg-amber-100 text-amber-800 flex items-center justify-center">
                 <KeyRound className="w-5 h-5" />
