@@ -361,7 +361,7 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
                 className="aero-glass-card rounded-2xl hover:shadow-lg transition-all overflow-hidden"
               >
                 {/* Main Judge Summary Row */}
-                <div className="p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="p-4 sm:p-5 grid grid-cols-1 md:grid-cols-[1fr_240px_auto] lg:grid-cols-[1fr_280px_auto] items-center gap-4">
                   {/* Left: Avatar & Identity */}
                   <div className="flex items-center gap-3.5 min-w-0">
                     <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-400 to-[#0284c7] text-white font-black text-sm flex items-center justify-center shrink-0 shadow-xs border border-white/80">
@@ -424,35 +424,38 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
                     </div>
                   </div>
 
-                  {/* Middle: Progress Meter */}
-                  <div className="w-full md:w-56 shrink-0 space-y-1">
+                  {/* Middle: Progress Meter (Strictly Aligned Column) */}
+                  <div className="w-full space-y-1">
                     <div className="flex items-center justify-between text-xs font-bold text-stone-700">
                       <span>Grading Progress</span>
-                      <span className="text-[#0284c7]">{judge.percent}%</span>
+                      <span className="text-[#0284c7] font-black tabular-nums">{judge.percent}%</span>
                     </div>
                     <div className="w-full h-2.5 bg-stone-100 rounded-full overflow-hidden p-0.5 border border-stone-200">
                       <div
                         className={`h-full rounded-full transition-all duration-300 ${
                           judge.percent === 100
-                            ? 'bg-emerald-500'
+                            ? 'bg-gradient-to-r from-emerald-400 to-emerald-500'
                             : judge.percent > 0
-                            ? 'bg-gradient-to-r from-sky-500 to-[#0284c7]'
+                            ? 'bg-gradient-to-r from-sky-400 via-[#0284c7] to-[#0369a1]'
                             : 'bg-stone-300'
                         }`}
                         style={{ width: `${judge.percent}%` }}
                       />
                     </div>
-                    <div className="text-[11px] text-stone-500 text-right">
+                    <div className="flex items-center justify-between text-[11px] text-stone-500">
+                      <span className="tabular-nums font-semibold text-stone-600">
+                        {judge.gradedCount} of {judge.totalSongs} graded
+                      </span>
                       {judge.remainingSongs.length === 0 ? (
-                        <span className="text-emerald-700 font-semibold">All songs graded</span>
+                        <span className="text-emerald-700 font-bold">Done</span>
                       ) : (
-                        <span>{judge.remainingSongs.length} songs remaining</span>
+                        <span className="tabular-nums">{judge.remainingSongs.length} left</span>
                       )}
                     </div>
                   </div>
 
                   {/* Right: Actions */}
-                  <div className="flex items-center gap-2 self-start md:self-auto shrink-0">
+                  <div className="flex items-center justify-start md:justify-end gap-2 shrink-0">
                     <button
                       onClick={() => handleCopyPersonalLink(judge.name)}
                       className="p-2 rounded-xl aero-btn-secondary text-stone-700 text-xs font-semibold inline-flex items-center gap-1 transition-all cursor-pointer shadow-xs"

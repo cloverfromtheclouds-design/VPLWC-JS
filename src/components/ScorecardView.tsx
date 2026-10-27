@@ -456,7 +456,7 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
           {activeFlag && (
             <div className="p-4 sm:p-5 rounded-2xl bg-rose-50 border-2 border-rose-400 text-rose-950 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm animate-in fade-in duration-150">
               <div className="flex items-start gap-3.5">
-                <div className="w-10 h-10 rounded-2xl bg-rose-600 text-white flex items-center justify-center shrink-0 shadow-2xs mt-0.5">
+                <div className="w-10 h-10 rounded-2xl aero-btn-rose text-white flex items-center justify-center shrink-0 shadow-2xs mt-0.5">
                   <ShieldAlert className="w-5 h-5" />
                 </div>
                 <div>
@@ -500,7 +500,7 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
           {isAlreadySubmitted && alreadySubmittedScore && (
             <div className="p-4 sm:p-5 rounded-2xl bg-emerald-50 border-2 border-emerald-400 text-emerald-950 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm animate-in fade-in duration-150">
               <div className="flex items-center gap-3.5">
-                <div className="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-2xs">
+                <div className="w-10 h-10 rounded-2xl aero-btn-emerald text-white flex items-center justify-center shrink-0 shadow-2xs">
                   <CheckCircle2 className="w-5 h-5" />
                 </div>
                 <div>
@@ -714,13 +714,13 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
           {/* Submission & Action Buttons in Sea Blue */}
           <div className="flex flex-wrap items-center justify-between gap-3 pt-3">
             {isFlagged ? (
-              <div className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-rose-600 text-white font-bold text-sm shadow-md">
-                <ShieldAlert className="w-5 h-5 text-rose-200" />
+              <div className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl aero-btn-rose text-white font-bold text-sm shadow-md cursor-default">
+                <ShieldAlert className="w-5 h-5 text-rose-100" />
                 <span>Scoring Aborted · {activeFlag?.reasonLabel}</span>
               </div>
             ) : isAlreadySubmitted ? (
-              <div className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-600 text-white font-bold text-sm shadow-md">
-                <CheckCircle2 className="w-5 h-5 text-emerald-200" />
+              <div className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl aero-btn-emerald text-white font-bold text-sm shadow-md cursor-default">
+                <CheckCircle2 className="w-5 h-5 text-emerald-100" />
                 <span>Score Has Been Submitted ({totalScore}/100)</span>
               </div>
             ) : (
