@@ -1133,7 +1133,7 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <main className="relative z-10 flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Song Entries Tab (Available to both judges and admin; uploads restricted to admin) */}
         {activeTab === 'songs' && (
           <SongEntriesView

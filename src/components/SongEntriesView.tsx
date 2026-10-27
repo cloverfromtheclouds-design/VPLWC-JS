@@ -634,7 +634,7 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
 
       {/* Admin Manual Add Entry Modal */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-150">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-150">
           <div className="w-full max-w-lg aero-glass-card rounded-3xl p-6 text-stone-900 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
@@ -750,7 +750,7 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
 
       {/* Lyrics Reading Modal */}
       {viewingLyricsSong && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-150">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-150">
           <div className="w-full max-w-2xl aero-glass-card rounded-3xl p-6 text-stone-900 max-h-[85vh] flex flex-col">
             <div className="flex items-start justify-between border-b border-stone-200 pb-4">
               <div>

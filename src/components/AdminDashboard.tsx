@@ -1007,7 +1007,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
       {/* Remote Portal Lock Confirmation Modal */}
       {showLockConfirmModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-150">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-150">
           <div className="w-full max-w-md aero-glass-card rounded-3xl p-6 text-stone-900">
             <div className="flex items-center gap-3 mb-3">
               <div className="p-2.5 rounded-xl bg-rose-100 text-rose-700">
@@ -1052,7 +1052,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
       {/* Rename Modal */}
       {renamingTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-150">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-150">
           <div className="w-full max-w-md aero-glass-card rounded-3xl p-6 text-stone-900">
             <h3 className="text-base font-bold text-stone-900">Rename Contest Entry</h3>
             <p className="text-xs text-stone-500 mt-1">
