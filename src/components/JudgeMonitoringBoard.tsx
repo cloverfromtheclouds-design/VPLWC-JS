@@ -360,8 +360,8 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
                 key={judge.name}
                 className="aero-glass-card rounded-2xl hover:shadow-lg transition-all overflow-hidden"
               >
-                {/* Main Judge Summary Row */}
-                <div className="p-4 sm:p-5 grid grid-cols-1 md:grid-cols-[1fr_240px_auto] lg:grid-cols-[1fr_280px_auto] items-center gap-4">
+                {/* Main Judge Summary Row with Fixed Column Grid to Guarantee Alignment */}
+                <div className="p-4 sm:p-5 grid grid-cols-1 md:grid-cols-[1fr_230px_315px] lg:grid-cols-[1fr_260px_325px] items-center gap-4">
                   {/* Left: Avatar & Identity */}
                   <div className="flex items-center gap-3.5 min-w-0">
                     <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-400 to-[#0284c7] text-white font-black text-sm flex items-center justify-center shrink-0 shadow-xs border border-white/80">
@@ -454,11 +454,11 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
                     </div>
                   </div>
 
-                  {/* Right: Actions */}
-                  <div className="flex items-center justify-start md:justify-end gap-2 shrink-0">
+                  {/* Right: Actions (Fixed-Width Container To Lock Grid Columns) */}
+                  <div className="flex items-center justify-start md:justify-end gap-2 shrink-0 md:w-[315px] lg:w-[325px]">
                     <button
                       onClick={() => handleCopyPersonalLink(judge.name)}
-                      className="p-2 rounded-xl aero-btn-secondary text-stone-700 text-xs font-semibold inline-flex items-center gap-1 transition-all cursor-pointer shadow-xs"
+                      className="p-2 rounded-xl aero-btn-secondary text-stone-700 text-xs font-semibold inline-flex items-center gap-1 transition-all cursor-pointer shadow-xs whitespace-nowrap"
                       title="Copy direct judging link for this judge"
                     >
                       {copiedLinkFor === judge.name ? (
@@ -474,14 +474,24 @@ export const JudgeMonitoringBoard: React.FC<JudgeMonitoringBoardProps> = ({
                       )}
                     </button>
 
-                    {onViewJudgeScores && judge.judgeScoresCount > 0 && (
-                      <button
-                        onClick={() => onViewJudgeScores(judge.name)}
-                        className="px-3 py-2 rounded-xl aero-btn-primary text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
-                        title="View all scorecards submitted by this judge"
-                      >
-                        Scorecards ({judge.judgeScoresCount})
-                      </button>
+                    {onViewJudgeScores && (
+                      judge.judgeScoresCount > 0 ? (
+                        <button
+                          onClick={() => onViewJudgeScores(judge.name)}
+                          className="px-3 py-2 rounded-xl aero-btn-primary text-white text-xs font-bold transition-all cursor-pointer shadow-xs whitespace-nowrap"
+                          title="View all scorecards submitted by this judge"
+                        >
+                          Scorecards ({judge.judgeScoresCount})
+                        </button>
+                      ) : (
+                        <button
+                          disabled
+                          className="px-3 py-2 rounded-xl bg-stone-100/90 border border-stone-200/90 text-stone-400 text-xs font-semibold cursor-not-allowed shadow-2xs whitespace-nowrap opacity-60"
+                          title="No scorecards submitted yet by this judge"
+                        >
+                          Scorecards (0)
+                        </button>
+                      )
                     )}
 
                     <button
