@@ -474,102 +474,102 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
         </div>
       )}
 
-      {/* Top Header */}
-      <div className={`flex items-start justify-between gap-3 ${embedded ? 'pb-2 border-b border-stone-200/70' : 'pb-4 border-b border-stone-200'}`}>
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#0284c7] bg-sky-50 px-2.5 py-0.5 rounded-full border border-sky-200">
-              Lyric Sheet Viewer
-            </span>
-            {hasContent && (
-              <span className="text-[11px] text-stone-500 font-medium">
-                {wordCount} words · {lineCount} lines
+      {/* Top Header - only rendered in standalone view, removed in embedded scorecard view */}
+      {!embedded && (
+        <div className="flex items-start justify-between pb-4 border-b border-stone-200 gap-3">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#0284c7] bg-sky-50 px-2.5 py-0.5 rounded-full border border-sky-200">
+                Lyric Sheet Viewer
               </span>
-            )}
-          </div>
-          {!embedded && (
+              {hasContent && (
+                <span className="text-[11px] text-stone-500 font-medium">
+                  {wordCount} words · {lineCount} lines
+                </span>
+              )}
+            </div>
             <h3 className="text-xl sm:text-2xl font-black text-stone-900 mt-1 leading-tight">
               {submission.songTitle || 'No Song Selected'}
             </h3>
-          )}
+          </div>
+
+          {/* Action icons */}
+          <div className="flex items-center gap-1.5 shrink-0">
+            {hasContent && (
+              <>
+                {/* Font Size Selector */}
+                <div className="hidden sm:flex items-center bg-stone-100 rounded-lg p-0.5 border border-stone-200 text-xs">
+                  <button
+                    type="button"
+                    onClick={() => setFontSize('sm')}
+                    className={`px-2 py-1 rounded font-bold ${
+                      fontSize === 'sm' ? 'bg-white text-stone-900 shadow-2xs' : 'text-stone-500'
+                    }`}
+                    title="Small text"
+                  >
+                    A-
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFontSize('base')}
+                    className={`px-2 py-1 rounded font-bold ${
+                      fontSize === 'base' ? 'bg-white text-stone-900 shadow-2xs' : 'text-stone-500'
+                    }`}
+                    title="Default text"
+                  >
+                    A
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFontSize('lg')}
+                    className={`px-2 py-1 rounded font-bold ${
+                      fontSize === 'lg' ? 'bg-white text-stone-900 shadow-2xs' : 'text-stone-500'
+                    }`}
+                    title="Large text"
+                  >
+                    A+
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleCopyLyrics}
+                  className="p-2 rounded-xl aero-btn-secondary text-stone-700 cursor-pointer"
+                  title="Copy raw lyrics"
+                >
+                  {isCopied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4 text-stone-500" />}
+                </button>
+
+                {onFlagSong && !isFlagged && !isAlreadySubmitted && (
+                  <button
+                    type="button"
+                    onClick={onFlagSong}
+                    className="p-2 rounded-xl aero-btn-rose text-white cursor-pointer"
+                    title="Flag / Abort entry for rule violations"
+                  >
+                    <Flag className="w-4 h-4" />
+                  </button>
+                )}
+
+                {onClear && (
+                  <button
+                    type="button"
+                    onClick={onClear}
+                    className="p-2 rounded-xl aero-btn-secondary text-stone-400 hover:text-rose-600 cursor-pointer"
+                    title="Clear lyric view"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </>
+            )}
+          </div>
         </div>
-
-        {/* Action icons */}
-        <div className="flex items-center gap-1.5 shrink-0">
-          {hasContent && (
-            <>
-              {/* Font Size Selector */}
-              <div className="hidden sm:flex items-center bg-stone-100 rounded-lg p-0.5 border border-stone-200 text-xs">
-                <button
-                  type="button"
-                  onClick={() => setFontSize('sm')}
-                  className={`px-2 py-1 rounded font-bold ${
-                    fontSize === 'sm' ? 'bg-white text-stone-900 shadow-2xs' : 'text-stone-500'
-                  }`}
-                  title="Small text"
-                >
-                  A-
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFontSize('base')}
-                  className={`px-2 py-1 rounded font-bold ${
-                    fontSize === 'base' ? 'bg-white text-stone-900 shadow-2xs' : 'text-stone-500'
-                  }`}
-                  title="Default text"
-                >
-                  A
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFontSize('lg')}
-                  className={`px-2 py-1 rounded font-bold ${
-                    fontSize === 'lg' ? 'bg-white text-stone-900 shadow-2xs' : 'text-stone-500'
-                  }`}
-                  title="Large text"
-                >
-                  A+
-                </button>
-              </div>
-
-              <button
-                type="button"
-                onClick={handleCopyLyrics}
-                className="p-2 rounded-xl aero-btn-secondary text-stone-700 cursor-pointer"
-                title="Copy raw lyrics"
-              >
-                {isCopied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4 text-stone-500" />}
-              </button>
-
-              {onFlagSong && !isFlagged && !isAlreadySubmitted && (
-                <button
-                  type="button"
-                  onClick={onFlagSong}
-                  className="p-2 rounded-xl aero-btn-rose text-white cursor-pointer"
-                  title="Flag / Abort entry for rule violations"
-                >
-                  <Flag className="w-4 h-4" />
-                </button>
-              )}
-
-              {onClear && (
-                <button
-                  type="button"
-                  onClick={onClear}
-                  className="p-2 rounded-xl aero-btn-secondary text-stone-400 hover:text-rose-600 cursor-pointer"
-                  title="Clear lyric view"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              )}
-            </>
-          )}
-        </div>
-      </div>
+      )}
 
       {/* Main Content Body */}
       {hasContent ? (
-        <div className="flex-1 overflow-y-auto overflow-x-hidden space-y-4 pt-4 pr-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+        <div className={`flex-1 overflow-y-auto overflow-x-hidden space-y-3 ${embedded ? 'pt-0' : 'pt-4'} pr-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden`}>
           {/* Metadata Badges (Alias & Discord) */}
           <div className="flex flex-wrap items-center gap-2">
             {submission.alias && (
@@ -584,7 +584,7 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
               <DiscordHandleReveal username={submission.discordUsername} size="sm" />
             )}
 
-            {isAlreadySubmitted && (
+            {!embedded && isAlreadySubmitted && (
               <span className="text-[11px] text-emerald-800 font-semibold bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200 hidden sm:inline-flex items-center gap-1.5">
                 <Check className="w-3 h-3 text-emerald-600" />
                 Score Submitted · Lyric Notes & Quotes Locked
@@ -607,8 +607,8 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
 
           {/* Formatted Lyrics Body with Vertical Scrollbar */}
           <div
-            className={`pt-2 ${
-              embedded ? 'max-h-[380px] sm:max-h-[440px]' : 'max-h-[480px] sm:max-h-[560px]'
+            className={`pt-1 ${
+              embedded ? 'max-h-[420px] sm:max-h-[480px]' : 'max-h-[480px] sm:max-h-[560px]'
             } overflow-y-auto pr-2 sm:pr-3 [scrollbar-width:thin] [scrollbar-color:#0284c7_rgba(224,242,254,0.7)] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-sky-100/50 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-sky-300 [&::-webkit-scrollbar-thumb]:via-[#0284c7] [&::-webkit-scrollbar-thumb]:to-[#0369a1] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border [&::-webkit-scrollbar-thumb]:border-white/90`}
           >
             {renderFormattedLyrics()}

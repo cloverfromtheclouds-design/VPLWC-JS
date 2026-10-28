@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Send,
   RotateCcw,
@@ -94,6 +94,34 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
     type: 'success' | 'info' | 'error';
     text: string;
   } | null>(null);
+
+  // Interactive Frutiger Aqua wave & ripple state for the Total Score box
+  const [scoreAquaHover, setScoreAquaHover] = useState(false);
+  const [scoreAquaMousePos, setScoreAquaMousePos] = useState({ x: 0, y: 0, normX: 0, normY: 0 });
+  const [scoreAquaRipples, setScoreAquaRipples] = useState<{ id: number; x: number; y: number }[]>([]);
+  const scoreAquaBoxRef = useRef<HTMLDivElement>(null);
+
+  const handleScoreAquaMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!scoreAquaBoxRef.current) return;
+    const rect = scoreAquaBoxRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const normX = (x / rect.width - 0.5) * 2;
+    const normY = (y / rect.height - 0.5) * 2;
+    setScoreAquaMousePos({ x, y, normX, normY });
+  };
+
+  const handleScoreAquaClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!scoreAquaBoxRef.current) return;
+    const rect = scoreAquaBoxRef.current.getBoundingClientRect();
+    const rippleX = e.clientX - rect.left;
+    const rippleY = e.clientY - rect.top;
+    const id = Date.now();
+    setScoreAquaRipples((prev) => [...prev.slice(-3), { id, x: rippleX, y: rippleY }]);
+    setTimeout(() => {
+      setScoreAquaRipples((prev) => prev.filter((r) => r.id !== id));
+    }, 750);
+  };
 
   // Sync judge name if defaultJudgeName prop updates
   useEffect(() => {
@@ -414,9 +442,6 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
             <h2 className="text-2xl sm:text-3xl font-black text-stone-900 tracking-tight leading-tight">
               {parsedSubmission.songTitle ? `Scoring: ${parsedSubmission.songTitle}` : 'Lyric Contest Judge Scorecard'}
             </h2>
-            <p className="text-xs sm:text-sm text-stone-600 font-medium mt-1">
-              Review lyrics, rate the 4 criteria side-by-side, and record your score and feedback in one unified scorecard.
-            </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5 shrink-0">
@@ -431,6 +456,17 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
               >
                 <Music className="w-3.5 h-3.5" />
                 <span>Browse All Songs</span>
+              </button>
+            )}
+            {onFlagSong && !activeFlag && !isAlreadySubmitted && (
+              <button
+                type="button"
+                onClick={() => setIsFlagModalOpen(true)}
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl aero-btn-rose text-white text-xs font-bold transition-all cursor-pointer"
+                title="Report rule violation or AI generation"
+              >
+                <Flag className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Report Entry</span>
               </button>
             )}
           </div>
@@ -516,7 +552,7 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
         {/* Upper Main Area: Lyrics on Left, Criteria on Right */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
           {/* Left Column: Embedded Lyric Sheet Viewer */}
-          <div className="lg:col-span-6 bg-white/70 backdrop-blur-xs rounded-2xl p-4 sm:p-5 border border-sky-100/90 shadow-2xs flex flex-col h-full">
+          <div className="lg:col-span-6 bg-white/70 backdrop-blur-xs rounded-2xl p-3.5 sm:p-4 -mt-1 sm:-mt-2 border border-sky-100/90 shadow-2xs flex flex-col h-full">
             <LyricReaderPanel
               submission={parsedSubmission}
               onClear={handleClearLyrics}
@@ -603,13 +639,26 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
         {/* 4. Total Score underneath, next to Opinion and Submit Button */}
         <div className="pt-2 border-t border-stone-200/80">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-            {/* Total Score Block (lg:col-span-5) with Frutiger Aqua Percent Box Visuals & Blue Theme */}
+            {/* Total Score Block (lg:col-span-5) with Frutiger Aqua Visuals, Blue Theme & Full Interactivity */}
             <div
-              className="lg:col-span-5 relative overflow-hidden rounded-3xl p-5 sm:p-6 shrink-0 border-2 border-cyan-200/90 shadow-[0_20px_48px_-6px_rgba(2,132,199,0.28),inset_0_2px_4px_rgba(255,255,255,1),inset_0_-4px_10px_rgba(6,182,212,0.25)] flex flex-col justify-between"
+              ref={scoreAquaBoxRef}
+              onMouseEnter={() => setScoreAquaHover(true)}
+              onMouseLeave={() => {
+                setScoreAquaHover(false);
+                setScoreAquaMousePos({ x: 0, y: 0, normX: 0, normY: 0 });
+              }}
+              onMouseMove={handleScoreAquaMouseMove}
+              onClick={handleScoreAquaClick}
+              className="lg:col-span-5 relative overflow-hidden rounded-3xl p-5 sm:p-6 shrink-0 border-2 border-cyan-200/90 shadow-[0_20px_48px_-6px_rgba(2,132,199,0.28),inset_0_2px_4px_rgba(255,255,255,1),inset_0_-4px_10px_rgba(6,182,212,0.25)] flex flex-col justify-between cursor-pointer select-none transition-all duration-300"
               style={{
                 background:
                   'linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(240, 249, 255, 0.88) 42%, rgba(186, 230, 253, 0.92) 100%)',
+                transform: scoreAquaHover
+                  ? `perspective(800px) rotateX(${-scoreAquaMousePos.normY * 4}deg) rotateY(${scoreAquaMousePos.normX * 4}deg) translateY(-2px)`
+                  : 'perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0px)',
+                transition: scoreAquaHover ? 'transform 0.1s ease-out' : 'transform 0.4s ease-out',
               }}
+              title="Click anywhere to splash and create water ripples!"
             >
               {/* Top Curved Glass Specular Highlight (Signature Apple Aqua / Aero Gloss) */}
               <div
@@ -617,10 +666,37 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
                 style={{ zIndex: 12 }}
               />
 
-              {/* Animated Aqua Waves Water Reservoir (Fills lower 50% of the box) */}
+              {/* Dynamic Specular Follow-Mouse Spotlight */}
+              {scoreAquaHover && (
+                <div
+                  className="pointer-events-none absolute inset-0 transition-opacity duration-200"
+                  style={{
+                    zIndex: 13,
+                    background: `radial-gradient(circle 120px at ${scoreAquaMousePos.x}px ${scoreAquaMousePos.y}px, rgba(255,255,255,0.65) 0%, rgba(125,211,252,0.18) 45%, transparent 70%)`,
+                  }}
+                />
+              )}
+
+              {/* Interactive Click Water Ripples */}
+              {scoreAquaRipples.map((ripple) => (
+                <div
+                  key={ripple.id}
+                  className="pointer-events-none absolute w-24 h-24 rounded-full border-2 border-cyan-300 bg-cyan-400/20 shadow-[0_0_15px_rgba(56,189,248,0.6)] animate-water-ripple"
+                  style={{
+                    left: `${ripple.x}px`,
+                    top: `${ripple.y}px`,
+                    zIndex: 14,
+                  }}
+                />
+              ))}
+
+              {/* Animated Aqua Waves Water Reservoir (Fills lower 50% of the box, reacts to mouse hover) */}
               <div
-                className="pointer-events-none absolute bottom-0 left-0 right-0 h-[50%] overflow-hidden"
-                style={{ zIndex: 5 }}
+                className="pointer-events-none absolute bottom-0 left-0 right-0 h-[50%] overflow-hidden transition-all duration-300"
+                style={{
+                  zIndex: 5,
+                  transform: `translateY(${scoreAquaHover ? -scoreAquaMousePos.normY * 6 : 0}px)`,
+                }}
               >
                 {/* Liquid Body Gradient with Caustic Water Shimmer */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0284c7]/50 via-cyan-400/35 to-cyan-200/15 backdrop-blur-[1px]" />
@@ -690,7 +766,7 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
                   className="absolute w-5 h-5 rounded-full bg-gradient-to-tr from-cyan-400/50 via-sky-100/80 to-white/95 border border-white shadow-[0_0_10px_rgba(255,255,255,0.9),inset_0_1.5px_2px_rgba(255,255,255,1)] animate-aqua-bubble pointer-events-none"
                   style={{ left: '68%', bottom: '2px', animationDelay: '0.6s', animationDuration: '3.2s' }}
                 >
-                  <div className="w-1.5 h-1.5 rounded-full bg-white absolute top-0.5 left-0.5 shadow-[0_0_2px_#ffffff]" />
+                  <div className="w-1 h-1 rounded-full bg-white absolute top-0.5 left-0.5 shadow-[0_0_2px_#ffffff]" />
                 </div>
                 <div
                   className="absolute w-3 h-3 rounded-full bg-gradient-to-tr from-sky-400/40 via-sky-100/70 to-white/95 border border-white shadow-[0_0_7px_rgba(255,255,255,0.8),inset_0_1px_2px_rgba(255,255,255,1)] animate-aqua-bubble pointer-events-none"
@@ -780,6 +856,18 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
                     </span>
                   </div>
                 </div>
+              </div>
+
+              {/* Interactive Hint Pill on Hover */}
+              <div
+                className={`absolute bottom-2 right-2 transition-all duration-300 pointer-events-none ${
+                  scoreAquaHover ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'
+                }`}
+                style={{ zIndex: 25 }}
+              >
+                <span className="text-[10px] font-bold text-cyan-900 bg-white/90 px-2 py-0.5 rounded-full border border-cyan-300/80 shadow-xs flex items-center gap-1">
+                  <span>💧</span> Click to splash
+                </span>
               </div>
             </div>
 
