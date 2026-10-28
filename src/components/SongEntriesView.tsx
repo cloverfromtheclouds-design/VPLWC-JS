@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import {
   Music,
   CheckCircle2,
@@ -64,6 +64,34 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
   const [newStory, setNewStory] = useState('');
   const [newLyrics, setNewLyrics] = useState('');
   const [manualError, setManualError] = useState<string | null>(null);
+
+  // Interactive Frutiger Aqua Wave Gauge Box state
+  const [aquaHover, setAquaHover] = useState(false);
+  const [aquaMousePos, setAquaMousePos] = useState({ x: 0, y: 0, normX: 0, normY: 0 });
+  const [aquaRipples, setAquaRipples] = useState<{ id: number; x: number; y: number }[]>([]);
+  const aquaBoxRef = useRef<HTMLDivElement>(null);
+
+  const handleAquaMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!aquaBoxRef.current) return;
+    const rect = aquaBoxRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const normX = (x / rect.width - 0.5) * 2;
+    const normY = (y / rect.height - 0.5) * 2;
+    setAquaMousePos({ x, y, normX, normY });
+  };
+
+  const handleAquaClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!aquaBoxRef.current) return;
+    const rect = aquaBoxRef.current.getBoundingClientRect();
+    const rippleX = e.clientX - rect.left;
+    const rippleY = e.clientY - rect.top;
+    const id = Date.now();
+    setAquaRipples((prev) => [...prev.slice(-3), { id, x: rippleX, y: rippleY }]);
+    setTimeout(() => {
+      setAquaRipples((prev) => prev.filter((r) => r.id !== id));
+    }, 750);
+  };
 
   // Identify scores submitted by the current judge
   const judgeScoresMap = useMemo(() => {
@@ -261,85 +289,254 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
           </div>
         </div>
 
-        {/* Circular Progress Gauge */}
-        <div className="flex flex-col sm:flex-row items-center gap-4 bg-white/65 backdrop-blur-xl p-4 sm:p-5 rounded-2xl border border-white/90 shadow-[0_8px_24px_rgba(255,20,147,0.06),0_1px_0_rgba(255,255,255,0.9)_inset] ring-1 ring-white/60 shrink-0">
-          <div className="relative w-28 h-28 flex items-center justify-center shrink-0">
-            <svg className="w-28 h-28 -rotate-90 transform drop-shadow-[0_4px_10px_rgba(2,132,199,0.25)]" viewBox="0 0 100 100">
-              <defs>
-                <linearGradient id="aeroProgressGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#38bdf8" />
-                  <stop offset="48%" stopColor="#0284c7" />
-                  <stop offset="52%" stopColor="#0369a1" />
-                  <stop offset="100%" stopColor="#0891b2" />
-                </linearGradient>
-                <linearGradient id="aeroTrackGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="#e0f2fe" />
-                  <stop offset="100%" stopColor="#bae6fd" />
-                </linearGradient>
-                <filter id="aeroProgressGlow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feDropShadow dx="0" dy="1.5" stdDeviation="2" floodColor="#0284c7" floodOpacity="0.45" />
-                </filter>
-              </defs>
-              {/* Background circle track */}
-              <circle
-                cx="50"
-                cy="50"
-                r={radius}
-                stroke="url(#aeroTrackGrad)"
-                strokeWidth="9"
-                fill="transparent"
-                className="opacity-70"
-              />
-              {/* Progress circle */}
-              <circle
-                cx="50"
-                cy="50"
-                r={radius}
-                stroke="url(#aeroProgressGrad)"
-                filter="url(#aeroProgressGlow)"
-                className="transition-all duration-700 ease-out"
-                strokeWidth="9.5"
-                strokeDasharray={circumference}
-                strokeDashoffset={strokeDashoffset}
-                strokeLinecap="round"
-                fill="transparent"
-              />
-            </svg>
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
-              <div className="w-[72px] h-[72px] rounded-full bg-gradient-to-b from-white/95 via-sky-50/90 to-sky-100/70 shadow-[inset_0_2px_3px_rgba(255,255,255,1),inset_0_-2px_4px_rgba(2,132,199,0.2),0_2px_8px_rgba(2,132,199,0.12)] border border-white/90 flex flex-col items-center justify-center relative overflow-hidden">
-                {/* Upper specular reflection gloss */}
-                <div className="absolute top-0 left-1 right-1 h-[45%] rounded-t-full bg-gradient-to-b from-white/90 via-white/40 to-transparent pointer-events-none" />
-                <span className="text-xl sm:text-2xl font-black bg-gradient-to-b from-[#0284c7] via-[#0369a1] to-[#0891b2] bg-clip-text text-transparent tracking-tight tabular-nums relative z-10 drop-shadow-xs">
-                  {percentComplete}%
-                </span>
-                <span className="text-[9px] font-extrabold text-sky-800 uppercase tracking-wider relative z-10 -mt-0.5">
-                  Progress
-                </span>
-              </div>
+        {/* Interactive Frutiger Aqua Wave Progress Box */}
+        <div
+          ref={aquaBoxRef}
+          onMouseEnter={() => setAquaHover(true)}
+          onMouseLeave={() => {
+            setAquaHover(false);
+            setAquaMousePos({ x: 0, y: 0, normX: 0, normY: 0 });
+          }}
+          onMouseMove={handleAquaMouseMove}
+          onClick={handleAquaClick}
+          className="relative overflow-hidden rounded-3xl p-5 sm:p-6 shrink-0 transition-all duration-300 cursor-pointer select-none border-2 border-cyan-200/90 shadow-[0_20px_48px_-6px_rgba(2,132,199,0.28),inset_0_2px_4px_rgba(255,255,255,1),inset_0_-4px_10px_rgba(6,182,212,0.25)]"
+          style={{
+            background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(240, 249, 255, 0.88) 42%, rgba(186, 230, 253, 0.92) 100%)',
+            transform: aquaHover
+              ? `perspective(800px) rotateX(${-aquaMousePos.normY * 4}deg) rotateY(${aquaMousePos.normX * 4}deg) translateY(-2px)`
+              : 'perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0px)',
+            transition: aquaHover ? 'transform 0.1s ease-out' : 'transform 0.4s ease-out',
+          }}
+          title="Click anywhere to splash and create water ripples!"
+        >
+          {/* Top Curved Glass Specular Highlight (Signature Apple Aqua / Aero Gloss) */}
+          <div
+            className="pointer-events-none absolute top-0 left-0 right-0 h-1/2 rounded-t-3xl bg-gradient-to-b from-white/90 via-white/30 to-transparent"
+            style={{ zIndex: 12 }}
+          />
+
+          {/* Dynamic Specular Follow-Mouse Spotlight */}
+          {aquaHover && (
+            <div
+              className="pointer-events-none absolute inset-0 transition-opacity duration-200"
+              style={{
+                zIndex: 13,
+                background: `radial-gradient(circle 120px at ${aquaMousePos.x}px ${aquaMousePos.y}px, rgba(255,255,255,0.65) 0%, rgba(125,211,252,0.18) 45%, transparent 70%)`,
+              }}
+            />
+          )}
+
+          {/* Interactive Click Water Ripples */}
+          {aquaRipples.map((ripple) => (
+            <div
+              key={ripple.id}
+              className="pointer-events-none absolute w-24 h-24 rounded-full border-2 border-cyan-300 bg-cyan-400/20 shadow-[0_0_15px_rgba(56,189,248,0.6)] animate-water-ripple"
+              style={{
+                left: `${ripple.x}px`,
+                top: `${ripple.y}px`,
+                zIndex: 14,
+              }}
+            />
+          ))}
+
+          {/* Animated Aqua Waves Water Reservoir (Fills lower 52% of the box) */}
+          <div
+            className="pointer-events-none absolute bottom-0 left-0 right-0 h-[52%] overflow-hidden transition-all duration-300"
+            style={{
+              zIndex: 5,
+              transform: `translateY(${aquaHover ? -aquaMousePos.normY * 6 : 0}px)`,
+            }}
+          >
+            {/* Liquid Body Gradient with Caustic Water Shimmer */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0284c7]/50 via-cyan-400/35 to-cyan-200/15 backdrop-blur-[1px]" />
+            <div
+              className="absolute inset-0 pointer-events-none opacity-60"
+              style={{
+                background:
+                  'radial-gradient(ellipse at 50% 120%, rgba(2, 132, 199, 0.45) 0%, transparent 75%), radial-gradient(circle at 25% 40%, rgba(103, 232, 249, 0.35) 0%, transparent 60%), radial-gradient(circle at 75% 50%, rgba(56, 189, 248, 0.35) 0%, transparent 60%)',
+              }}
+            />
+
+            {/* Deep Underwave Layer */}
+            <div className="absolute -top-9 left-0 w-[240%] h-16 animate-aqua-wave-slow opacity-60">
+              <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="w-full h-full">
+                <defs>
+                  <linearGradient id="aquaBackWaveGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.8" />
+                    <stop offset="60%" stopColor="#0284c7" stopOpacity="0.9" />
+                    <stop offset="100%" stopColor="#0369a1" stopOpacity="0.98" />
+                  </linearGradient>
+                </defs>
+                <path
+                  d="M0,45 C150,90 350,10 500,50 C650,90 850,10 1000,50 C1150,90 1350,10 1500,50 L1500,120 L0,120 Z"
+                  fill="url(#aquaBackWaveGrad)"
+                />
+              </svg>
+            </div>
+
+            {/* Front Wave Layer (Vibrant Cyan Wave with Froth Crest) */}
+            <div className="absolute -top-6 left-0 w-[240%] h-14 animate-aqua-wave opacity-90">
+              <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="w-full h-full">
+                <defs>
+                  <linearGradient id="aquaFrontWaveGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#67e8f9" stopOpacity="0.95" />
+                    <stop offset="50%" stopColor="#06b6d4" stopOpacity="0.85" />
+                    <stop offset="100%" stopColor="#0284c7" stopOpacity="0.95" />
+                  </linearGradient>
+                </defs>
+                <path
+                  d="M0,35 C180,5 320,70 500,30 C680,-5 820,70 1000,30 C1180,-5 1320,70 1500,30 L1500,120 L0,120 Z"
+                  fill="url(#aquaFrontWaveGrad)"
+                />
+                {/* Froth highlight crest line */}
+                <path
+                  d="M0,35 C180,5 320,70 500,30 C680,-5 820,70 1000,30 C1180,-5 1320,70 1500,30"
+                  fill="none"
+                  stroke="rgba(255,255,255,0.95)"
+                  strokeWidth="3"
+                />
+              </svg>
+            </div>
+
+            {/* Ambient Floating 3D Aqua Bubbles with Realistic Specular Highlights */}
+            <div
+              className="absolute w-4 h-4 rounded-full bg-gradient-to-tr from-cyan-400/40 via-sky-100/70 to-white/90 border border-white/90 shadow-[0_0_8px_rgba(255,255,255,0.9),inset_0_1px_2px_rgba(255,255,255,1)] animate-aqua-bubble pointer-events-none"
+              style={{ left: '14%', bottom: '4px', animationDelay: '0s', animationDuration: '3.6s' }}
+            >
+              <div className="w-1 h-1 rounded-full bg-white absolute top-0.5 left-0.5 shadow-[0_0_2px_#ffffff]" />
+            </div>
+            <div
+              className="absolute w-3 h-3 rounded-full bg-gradient-to-tr from-cyan-300/30 via-sky-100/70 to-white/90 border border-white/80 shadow-[0_0_6px_rgba(255,255,255,0.8),inset_0_1px_2px_rgba(255,255,255,1)] animate-aqua-bubble pointer-events-none"
+              style={{ left: '36%', bottom: '6px', animationDelay: '1.5s', animationDuration: '4.2s' }}
+            >
+              <div className="w-0.5 h-0.5 rounded-full bg-white absolute top-0.5 left-0.5" />
+            </div>
+            <div
+              className="absolute w-5 h-5 rounded-full bg-gradient-to-tr from-cyan-400/50 via-sky-100/80 to-white/95 border border-white shadow-[0_0_10px_rgba(255,255,255,0.9),inset_0_1.5px_2px_rgba(255,255,255,1)] animate-aqua-bubble pointer-events-none"
+              style={{ left: '60%', bottom: '2px', animationDelay: '0.6s', animationDuration: '3.2s' }}
+            >
+              <div className="w-1.5 h-1.5 rounded-full bg-white absolute top-0.5 left-0.5 shadow-[0_0_2px_#ffffff]" />
+            </div>
+            <div
+              className="absolute w-2.5 h-2.5 rounded-full bg-gradient-to-tr from-cyan-200/40 via-sky-100/80 to-white/95 border border-white shadow-[0_0_5px_rgba(255,255,255,0.8)] animate-aqua-bubble pointer-events-none"
+              style={{ left: '80%', bottom: '10px', animationDelay: '2.2s', animationDuration: '3.9s' }}
+            >
+              <div className="w-0.5 h-0.5 rounded-full bg-white absolute top-0.5 left-0.5" />
+            </div>
+            <div
+              className="absolute w-3.5 h-3.5 rounded-full bg-gradient-to-tr from-sky-400/40 via-sky-100/70 to-white/95 border border-white shadow-[0_0_7px_rgba(255,255,255,0.8),inset_0_1px_2px_rgba(255,255,255,1)] animate-aqua-bubble pointer-events-none"
+              style={{ left: '92%', bottom: '4px', animationDelay: '2.9s', animationDuration: '4.6s' }}
+            >
+              <div className="w-1 h-1 rounded-full bg-white absolute top-0.5 left-0.5" />
             </div>
           </div>
 
-          <div className="text-center sm:text-left">
-            <div className="text-xs font-bold uppercase tracking-wider text-[#0284c7]">
-              Grading Status
+          {/* Pristine Front Foreground Content (Z-Index 20 for High Contrast & Interactive Dials) */}
+          <div className="relative z-20 flex flex-col sm:flex-row items-center gap-4">
+            <div className="relative w-28 h-28 flex items-center justify-center shrink-0">
+              <svg className="w-28 h-28 -rotate-90 transform drop-shadow-[0_4px_10px_rgba(2,132,199,0.25)]" viewBox="0 0 100 100">
+                <defs>
+                  <linearGradient id="aeroProgressGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#38bdf8" />
+                    <stop offset="48%" stopColor="#0284c7" />
+                    <stop offset="52%" stopColor="#0369a1" />
+                    <stop offset="100%" stopColor="#0891b2" />
+                  </linearGradient>
+                  <linearGradient id="aeroTrackGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#e0f2fe" />
+                    <stop offset="100%" stopColor="#bae6fd" />
+                  </linearGradient>
+                  <filter id="aeroProgressGlow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="1.5" stdDeviation="2" floodColor="#0284c7" floodOpacity="0.45" />
+                  </filter>
+                </defs>
+                {/* Background circle track */}
+                <circle
+                  cx="50"
+                  cy="50"
+                  r={radius}
+                  stroke="url(#aeroTrackGrad)"
+                  strokeWidth="9"
+                  fill="transparent"
+                  className="opacity-70"
+                />
+                {/* Progress circle */}
+                <circle
+                  cx="50"
+                  cy="50"
+                  r={radius}
+                  stroke="url(#aeroProgressGrad)"
+                  filter="url(#aeroProgressGlow)"
+                  className="transition-all duration-700 ease-out"
+                  strokeWidth="9.5"
+                  strokeDasharray={circumference}
+                  strokeDashoffset={strokeDashoffset}
+                  strokeLinecap="round"
+                  fill="transparent"
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
+                <div className="w-[72px] h-[72px] rounded-full bg-gradient-to-b from-white/95 via-sky-50/90 to-sky-100/70 shadow-[inset_0_2px_3px_rgba(255,255,255,1),inset_0_-2px_4px_rgba(2,132,199,0.2),0_2px_8px_rgba(2,132,199,0.12)] border border-white/90 flex flex-col items-center justify-center relative overflow-hidden">
+                  {/* Upper specular reflection gloss */}
+                  <div className="absolute top-0 left-1 right-1 h-[45%] rounded-t-full bg-gradient-to-b from-white/90 via-white/40 to-transparent pointer-events-none" />
+                  <span className="text-xl sm:text-2xl font-black bg-gradient-to-b from-[#0284c7] via-[#0369a1] to-[#0891b2] bg-clip-text text-transparent tracking-tight tabular-nums relative z-10 drop-shadow-xs">
+                    {percentComplete}%
+                  </span>
+                  <span className="text-[9px] font-extrabold text-sky-800 uppercase tracking-wider relative z-10 -mt-0.5">
+                    Progress
+                  </span>
+                </div>
+              </div>
             </div>
-            <div className="text-base font-extrabold text-stone-900 mt-0.5">
-              {gradedSongsCount} of {totalSongs} Graded
+
+            <div className="text-center sm:text-left space-y-1.5">
+              <div className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-[#0284c7] bg-white/95 px-3 py-1 rounded-full border border-sky-200 shadow-2xs">
+                <span className="w-2 h-2 rounded-full bg-cyan-500 shadow-[0_0_6px_#06b6d4] animate-pulse shrink-0" />
+                <span>Grading Status</span>
+              </div>
+
+              {/* Selector 1: Graded Count - Crystal-Clear Frosted White Glass Capsule */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-white/95 backdrop-blur-md rounded-xl border border-white shadow-[0_4px_16px_rgba(2,132,199,0.18),inset_0_1.5px_1px_#ffffff] text-slate-950 font-black text-base sm:text-lg tracking-tight drop-shadow-2xs">
+                <span className="text-[#0284c7] font-black text-lg sm:text-xl tabular-nums">{gradedSongsCount}</span>
+                <span className="text-slate-400 font-bold text-xs uppercase tracking-wider">of</span>
+                <span className="text-slate-950 font-black text-lg sm:text-xl tabular-nums">{totalSongs}</span>
+                <span className="text-slate-800 font-extrabold text-sm ml-0.5">Graded</span>
+              </div>
+
+              {/* Selector 2: Remaining songs / Completion Status Badge */}
+              <p className="mt-1 flex items-center justify-center sm:justify-start">
+                {totalSongs === 0 ? (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 backdrop-blur-md border border-slate-200 text-xs font-bold text-slate-700 shadow-2xs">
+                    No songs uploaded yet.
+                  </span>
+                ) : gradedSongsCount === totalSongs ? (
+                  <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-100/95 backdrop-blur-md border border-emerald-400 text-xs font-black text-emerald-950 shadow-[0_2px_8px_rgba(16,185,129,0.2)]">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span>All songs completed!</span>
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/95 backdrop-blur-md border border-sky-300 shadow-[0_2px_10px_rgba(2,132,199,0.16),inset_0_1px_1px_#ffffff] text-xs font-bold text-slate-900">
+                    <span className="w-2 h-2 rounded-full bg-[#0284c7] shadow-[0_0_6px_rgba(2,132,199,0.8)] animate-pulse shrink-0" />
+                    <strong className="font-black text-[#0284c7] text-sm tabular-nums">
+                      {totalSongs - gradedSongsCount}
+                    </strong>
+                    <span className="text-slate-800 font-bold">remaining to score</span>
+                  </span>
+                )}
+              </p>
             </div>
-            <p className="text-xs text-stone-500 mt-1">
-              {totalSongs === 0 ? (
-                'No songs uploaded yet.'
-              ) : gradedSongsCount === totalSongs ? (
-                <span className="text-emerald-700 font-bold flex items-center gap-1 justify-center sm:justify-start">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  All songs completed!
-                </span>
-              ) : (
-                <span>
-                  <strong>{totalSongs - gradedSongsCount}</strong> remaining to score
-                </span>
-              )}
-            </p>
+          </div>
+
+          {/* Interactive Hint Pill on Hover */}
+          <div
+            className={`absolute bottom-2 right-2 transition-all duration-300 pointer-events-none ${
+              aquaHover ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'
+            }`}
+            style={{ zIndex: 25 }}
+          >
+            <span className="text-[10px] font-bold text-cyan-900 bg-white/90 px-2 py-0.5 rounded-full border border-cyan-300/80 shadow-xs flex items-center gap-1">
+              <span>💧</span> Click to splash
+            </span>
           </div>
         </div>
       </div>
