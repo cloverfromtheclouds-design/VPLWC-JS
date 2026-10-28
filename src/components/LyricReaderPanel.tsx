@@ -22,6 +22,7 @@ interface LyricReaderPanelProps {
   onFlagSong?: () => void;
   isFlagged?: boolean;
   isAlreadySubmitted?: boolean;
+  embedded?: boolean;
 }
 
 export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
@@ -31,6 +32,7 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
   onFlagSong,
   isFlagged = false,
   isAlreadySubmitted = false,
+  embedded = false,
 }) => {
   const [fontSize, setFontSize] = useState<'sm' | 'base' | 'lg'>('base');
   const [isCopied, setIsCopied] = useState(false);
@@ -449,7 +451,11 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
     <div
       ref={panelRef}
       onMouseUp={handleMouseUp}
-      className="aero-glass rounded-3xl p-5 sm:p-7 flex flex-col h-full relative animate-in fade-in duration-200"
+      className={
+        embedded
+          ? 'flex flex-col w-full h-full relative'
+          : 'aero-glass rounded-3xl p-5 sm:p-7 flex flex-col h-full relative animate-in fade-in duration-200'
+      }
     >
       {/* Floating Selection Tooltip - only available before submission */}
       {canQuote && selectedText && selectionPos && (
@@ -469,21 +475,23 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
       )}
 
       {/* Top Header */}
-      <div className="flex items-start justify-between gap-3 pb-4 border-b border-stone-200">
+      <div className={`flex items-start justify-between gap-3 ${embedded ? 'pb-2 border-b border-stone-200/70' : 'pb-4 border-b border-stone-200'}`}>
         <div>
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-bold uppercase tracking-wider text-[#0284c7] bg-sky-50 px-2.5 py-0.5 rounded-full border border-sky-200">
               Lyric Sheet Viewer
             </span>
             {hasContent && (
-              <span className="text-[11px] text-stone-400">
+              <span className="text-[11px] text-stone-500 font-medium">
                 {wordCount} words · {lineCount} lines
               </span>
             )}
           </div>
-          <h3 className="text-xl sm:text-2xl font-black text-stone-900 mt-1 leading-tight">
-            {submission.songTitle || 'No Song Selected'}
-          </h3>
+          {!embedded && (
+            <h3 className="text-xl sm:text-2xl font-black text-stone-900 mt-1 leading-tight">
+              {submission.songTitle || 'No Song Selected'}
+            </h3>
+          )}
         </div>
 
         {/* Action icons */}
@@ -598,7 +606,11 @@ export const LyricReaderPanel: React.FC<LyricReaderPanelProps> = ({
           )}
 
           {/* Formatted Lyrics Body with Vertical Scrollbar */}
-          <div className="pt-2 max-h-[480px] sm:max-h-[560px] overflow-y-auto pr-2 sm:pr-3 [scrollbar-width:thin] [scrollbar-color:#0284c7_rgba(224,242,254,0.7)] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-sky-100/50 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-sky-300 [&::-webkit-scrollbar-thumb]:via-[#0284c7] [&::-webkit-scrollbar-thumb]:to-[#0369a1] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border [&::-webkit-scrollbar-thumb]:border-white/90">
+          <div
+            className={`pt-2 ${
+              embedded ? 'max-h-[380px] sm:max-h-[440px]' : 'max-h-[480px] sm:max-h-[560px]'
+            } overflow-y-auto pr-2 sm:pr-3 [scrollbar-width:thin] [scrollbar-color:#0284c7_rgba(224,242,254,0.7)] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-sky-100/50 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gradient-to-b [&::-webkit-scrollbar-thumb]:from-sky-300 [&::-webkit-scrollbar-thumb]:via-[#0284c7] [&::-webkit-scrollbar-thumb]:to-[#0369a1] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:border [&::-webkit-scrollbar-thumb]:border-white/90`}
+          >
             {renderFormattedLyrics()}
           </div>
         </div>
