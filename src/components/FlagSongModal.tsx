@@ -6,7 +6,6 @@ import {
   Ban,
   CopyCheck,
   X,
-  ShieldAlert,
 } from 'lucide-react';
 import { SummertideFlowerLogo } from './SummertideFlowerLogo';
 import { HibiscusInlay } from './HibiscusInlay';
@@ -94,28 +93,28 @@ export const FlagSongModal: React.FC<FlagSongModalProps> = ({
         {/* Hibiscus Inlay Debossed Watermark */}
         <HibiscusInlay size="md" position="bottom-right" opacity="opacity-[0.06] sm:opacity-[0.075]" />
 
-        {/* Compact Header with Summertide Flower Logo */}
-        <div className="flex items-center justify-between gap-2 mb-2.5">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-pink-100/90 to-rose-100/90 border border-pink-200/90 flex items-center justify-center shrink-0 shadow-xs">
+        {/* Balanced Header */}
+        <div className="flex items-center justify-between gap-3 mb-3 pb-2.5 border-b border-stone-200/60">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-pink-100 via-rose-50 to-pink-200/80 border border-pink-200 flex items-center justify-center shrink-0 shadow-xs">
               <SummertideFlowerLogo size="sm" />
             </div>
             <div>
-              <div className="flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider text-pink-600">
-                <ShieldAlert className="w-3 h-3 text-rose-500" />
-                <span>Integrity Rule Flag</span>
-              </div>
-              <h3 className="text-sm sm:text-base font-black text-stone-900 leading-tight">
-                Flag Entry & Abort Scoring
+              <h3 className="text-base font-black text-stone-900 tracking-tight leading-tight">
+                Report Entry
               </h3>
+              <p className="text-[11px] text-stone-500 font-medium">
+                Submit rule flag for producer review
+              </p>
             </div>
           </div>
 
           <button
+            type="button"
             onClick={onClose}
             disabled={isSubmitting}
-            className="text-stone-400 hover:text-stone-600 p-1 rounded-lg hover:bg-white/60 transition-colors cursor-pointer"
-            title="Cancel"
+            className="w-8 h-8 rounded-xl bg-white/80 hover:bg-white border border-stone-200/80 text-stone-400 hover:text-stone-700 flex items-center justify-center transition-all cursor-pointer shadow-2xs"
+            title="Close"
           >
             <X className="w-4 h-4" />
           </button>
@@ -207,7 +206,7 @@ export const FlagSongModal: React.FC<FlagSongModalProps> = ({
               className="px-4 py-2 aero-btn-rose text-white text-xs font-bold rounded-xl flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
             >
               <Flag className="w-3.5 h-3.5" />
-              <span>{isSubmitting ? 'Flagging...' : 'Confirm Flag & Abort'}</span>
+              <span>{isSubmitting ? 'Confirming...' : 'Confirm'}</span>
             </button>
           </div>
         </form>

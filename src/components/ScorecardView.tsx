@@ -969,10 +969,10 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
                       type="button"
                       onClick={() => setIsFlagModalOpen(true)}
                       className="px-3 py-2 rounded-xl aero-btn-rose text-white text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer"
-                      title="Flag / Abort entry for rule violations"
+                      title="Report rule violation or AI generation"
                     >
                       <Flag className="w-3.5 h-3.5" />
-                      <span className="hidden sm:inline">Flag / Abort</span>
+                      <span>Report Entry</span>
                     </button>
                   )}
 
