@@ -649,7 +649,7 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
               }}
               onMouseMove={handleScoreAquaMouseMove}
               onClick={handleScoreAquaClick}
-              className="lg:col-span-5 relative overflow-hidden rounded-3xl p-5 sm:p-6 shrink-0 border-2 border-cyan-200/90 shadow-[0_20px_48px_-6px_rgba(2,132,199,0.28),inset_0_2px_4px_rgba(255,255,255,1),inset_0_-4px_10px_rgba(6,182,212,0.25)] flex flex-col justify-between cursor-pointer select-none transition-all duration-300"
+              className="lg:col-span-5 relative overflow-hidden rounded-3xl p-5 sm:p-6 shrink-0 border-2 border-cyan-200/90 shadow-[0_20px_48px_-6px_rgba(2,132,199,0.28),inset_0_2px_4px_rgba(255,255,255,1),inset_0_-4px_10px_rgba(6,182,212,0.25)] flex flex-col justify-center cursor-pointer select-none transition-all duration-300"
               style={{
                 background:
                   'linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(240, 249, 255, 0.88) 42%, rgba(186, 230, 253, 0.92) 100%)',
@@ -658,7 +658,6 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
                   : 'perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0px)',
                 transition: scoreAquaHover ? 'transform 0.1s ease-out' : 'transform 0.4s ease-out',
               }}
-              title="Click anywhere to splash and create water ripples!"
             >
               {/* Top Curved Glass Specular Highlight (Signature Apple Aqua / Aero Gloss) */}
               <div
@@ -690,9 +689,9 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
                 />
               ))}
 
-              {/* Animated Aqua Waves Water Reservoir (Fills lower 50% of the box, reacts to mouse hover) */}
+              {/* Animated Aqua Waves Water Reservoir (Fills lower 52% of the box, reacts to mouse hover) */}
               <div
-                className="pointer-events-none absolute bottom-0 left-0 right-0 h-[50%] overflow-hidden transition-all duration-300"
+                className="pointer-events-none absolute bottom-0 left-0 right-0 h-[52%] overflow-hidden transition-all duration-300"
                 style={{
                   zIndex: 5,
                   transform: `translateY(${scoreAquaHover ? -scoreAquaMousePos.normY * 6 : 0}px)`,
@@ -776,11 +775,14 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
                 </div>
               </div>
 
-              {/* Foreground Content: Circular Gauge Dial and Badges (Z-Index 20) */}
-              <div className="relative z-20 flex flex-col sm:flex-row items-center gap-4">
-                {/* 3D Glass Circular Gauge Dial */}
-                <div className="relative w-28 h-28 flex items-center justify-center shrink-0">
-                  <svg className="w-28 h-28 -rotate-90 transform drop-shadow-[0_4px_10px_rgba(2,132,199,0.25)]" viewBox="0 0 100 100">
+              {/* Foreground Content: Circular Gauge Dial and Badges Centered Vertically (Z-Index 20) */}
+              <div className="relative z-20 flex flex-col sm:flex-row items-center justify-center gap-5 my-auto w-full">
+                {/* 3D Glass Circular Gauge Dial - Centered Vertically */}
+                <div className="relative w-32 h-32 flex items-center justify-center shrink-0">
+                  {/* Outer Radiant Aura Glow to make circle pop */}
+                  <div className="absolute -inset-2 rounded-full bg-gradient-to-tr from-cyan-400/40 via-sky-300/35 to-white/90 blur-md pointer-events-none opacity-85" />
+
+                  <svg className="w-32 h-32 -rotate-90 transform drop-shadow-[0_4px_16px_rgba(2,132,199,0.38)] relative z-10" viewBox="0 0 100 100">
                     <defs>
                       <linearGradient id="scoreCardAeroGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stopColor="#38bdf8" />
@@ -792,8 +794,9 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
                         <stop offset="0%" stopColor="#e0f2fe" />
                         <stop offset="100%" stopColor="#bae6fd" />
                       </linearGradient>
-                      <filter id="scoreCardProgressGlow" x="-20%" y="-20%" width="140%" height="140%">
-                        <feDropShadow dx="0" dy="1.5" stdDeviation="2" floodColor="#0284c7" floodOpacity="0.45" />
+                      <filter id="scoreCardProgressGlow" x="-30%" y="-30%" width="160%" height="160%">
+                        <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#38bdf8" floodOpacity="0.8" />
+                        <feDropShadow dx="0" dy="2" stdDeviation="4" floodColor="#0284c7" floodOpacity="0.5" />
                       </filter>
                     </defs>
                     {/* Background circle track */}
@@ -821,14 +824,19 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
                       fill="transparent"
                     />
                   </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
-                    <div className="w-[72px] h-[72px] rounded-full bg-gradient-to-b from-white/95 via-sky-50/90 to-sky-100/70 shadow-[inset_0_2px_3px_rgba(255,255,255,1),inset_0_-2px_4px_rgba(2,132,199,0.2),0_2px_8px_rgba(2,132,199,0.12)] border border-white/90 flex flex-col items-center justify-center relative overflow-hidden">
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none z-20">
+                    <div className="w-[84px] h-[84px] rounded-full bg-gradient-to-b from-white/98 via-sky-50/90 to-sky-100/75 shadow-[inset_0_3px_5px_rgba(255,255,255,1),inset_0_-3px_5px_rgba(2,132,199,0.25),0_6px_18px_rgba(2,132,199,0.25)] border-2 border-white flex flex-col items-center justify-center relative overflow-hidden">
                       {/* Upper specular reflection gloss */}
-                      <div className="absolute top-0 left-1 right-1 h-[45%] rounded-t-full bg-gradient-to-b from-white/90 via-white/40 to-transparent pointer-events-none" />
-                      <span className="text-xl sm:text-2xl font-black bg-gradient-to-b from-[#0284c7] via-[#0369a1] to-[#0891b2] bg-clip-text text-transparent tracking-tight tabular-nums relative z-10 drop-shadow-xs">
+                      <div className="absolute top-0 left-0 right-0 h-[48%] rounded-t-full bg-gradient-to-b from-white via-white/75 to-transparent pointer-events-none z-10" />
+                      {/* Glass bead flare highlight on top-left for 3D orb pop */}
+                      <div className="absolute top-1.5 left-2.5 w-5 h-2.5 rounded-full bg-white blur-[0.5px] rotate-[-25deg] pointer-events-none z-20 shadow-[0_0_5px_#ffffff]" />
+                      {/* Caustic bounce reflection at bottom */}
+                      <div className="absolute bottom-0 left-2 right-2 h-3 rounded-b-full bg-gradient-to-t from-cyan-300/50 via-sky-200/30 to-transparent pointer-events-none z-10" />
+
+                      <span className="text-2xl sm:text-3xl font-black bg-gradient-to-b from-[#0284c7] via-[#0369a1] to-[#0891b2] bg-clip-text text-transparent tracking-tight tabular-nums relative z-20 drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)]">
                         {totalScore}
                       </span>
-                      <span className="text-[9px] font-extrabold text-sky-800 uppercase tracking-wider relative z-10 -mt-0.5">
+                      <span className="text-[10px] font-extrabold text-sky-800 uppercase tracking-wider relative z-20 -mt-0.5">
                         / 100
                       </span>
                     </div>
@@ -836,8 +844,8 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
                 </div>
 
                 {/* Score Details in High-Contrast Frosted White Aero Glass Capsules */}
-                <div className="text-center sm:text-left space-y-2 flex-1 min-w-0">
-                  <div className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-[#0284c7] bg-white/95 px-3 py-1 rounded-full border border-sky-200 shadow-2xs">
+                <div className="text-center sm:text-left space-y-2.5 flex-1 min-w-0">
+                  <div className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-[#0284c7] bg-white/95 px-3.5 py-1.5 rounded-full border border-sky-200 shadow-2xs">
                     <span className="w-2 h-2 rounded-full bg-cyan-500 shadow-[0_0_6px_#06b6d4] animate-pulse shrink-0" />
                     <span>Total Judge Score</span>
                   </div>
@@ -856,18 +864,6 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
                     </span>
                   </div>
                 </div>
-              </div>
-
-              {/* Interactive Hint Pill on Hover */}
-              <div
-                className={`absolute bottom-2 right-2 transition-all duration-300 pointer-events-none ${
-                  scoreAquaHover ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'
-                }`}
-                style={{ zIndex: 25 }}
-              >
-                <span className="text-[10px] font-bold text-cyan-900 bg-white/90 px-2 py-0.5 rounded-full border border-cyan-300/80 shadow-xs flex items-center gap-1">
-                  <span>💧</span> Click to splash
-                </span>
               </div>
             </div>
 

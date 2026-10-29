@@ -307,7 +307,6 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
               : 'perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0px)',
             transition: aquaHover ? 'transform 0.1s ease-out' : 'transform 0.4s ease-out',
           }}
-          title="Click anywhere to splash and create water ripples!"
         >
           {/* Top Curved Glass Specular Highlight (Signature Apple Aqua / Aero Gloss) */}
           <div
@@ -434,7 +433,10 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
           {/* Pristine Front Foreground Content (Z-Index 20 for High Contrast & Interactive Dials) */}
           <div className="relative z-20 flex flex-col sm:flex-row items-center gap-4">
             <div className="relative w-28 h-28 flex items-center justify-center shrink-0">
-              <svg className="w-28 h-28 -rotate-90 transform drop-shadow-[0_4px_10px_rgba(2,132,199,0.25)]" viewBox="0 0 100 100">
+              {/* Outer Radiant Aura Glow to make circle pop */}
+              <div className="absolute -inset-1.5 rounded-full bg-gradient-to-tr from-cyan-400/40 via-sky-300/35 to-white/90 blur-md pointer-events-none opacity-85" />
+
+              <svg className="w-28 h-28 -rotate-90 transform drop-shadow-[0_4px_14px_rgba(2,132,199,0.35)] relative z-10" viewBox="0 0 100 100">
                 <defs>
                   <linearGradient id="aeroProgressGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stopColor="#38bdf8" />
@@ -446,8 +448,9 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
                     <stop offset="0%" stopColor="#e0f2fe" />
                     <stop offset="100%" stopColor="#bae6fd" />
                   </linearGradient>
-                  <filter id="aeroProgressGlow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="1.5" stdDeviation="2" floodColor="#0284c7" floodOpacity="0.45" />
+                  <filter id="aeroProgressGlow" x="-30%" y="-30%" width="160%" height="160%">
+                    <feDropShadow dx="0" dy="0" stdDeviation="2.5" floodColor="#38bdf8" floodOpacity="0.8" />
+                    <feDropShadow dx="0" dy="1.5" stdDeviation="3" floodColor="#0284c7" floodOpacity="0.45" />
                   </filter>
                 </defs>
                 {/* Background circle track */}
@@ -475,14 +478,19 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
                   fill="transparent"
                 />
               </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
-                <div className="w-[72px] h-[72px] rounded-full bg-gradient-to-b from-white/95 via-sky-50/90 to-sky-100/70 shadow-[inset_0_2px_3px_rgba(255,255,255,1),inset_0_-2px_4px_rgba(2,132,199,0.2),0_2px_8px_rgba(2,132,199,0.12)] border border-white/90 flex flex-col items-center justify-center relative overflow-hidden">
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none z-20">
+                <div className="w-[72px] h-[72px] rounded-full bg-gradient-to-b from-white/98 via-sky-50/90 to-sky-100/75 shadow-[inset_0_3px_5px_rgba(255,255,255,1),inset_0_-3px_5px_rgba(2,132,199,0.25),0_6px_16px_rgba(2,132,199,0.25)] border-2 border-white flex flex-col items-center justify-center relative overflow-hidden">
                   {/* Upper specular reflection gloss */}
-                  <div className="absolute top-0 left-1 right-1 h-[45%] rounded-t-full bg-gradient-to-b from-white/90 via-white/40 to-transparent pointer-events-none" />
-                  <span className="text-xl sm:text-2xl font-black bg-gradient-to-b from-[#0284c7] via-[#0369a1] to-[#0891b2] bg-clip-text text-transparent tracking-tight tabular-nums relative z-10 drop-shadow-xs">
+                  <div className="absolute top-0 left-0 right-0 h-[48%] rounded-t-full bg-gradient-to-b from-white via-white/70 to-transparent pointer-events-none z-10" />
+                  {/* Glass bead flare highlight on top-left for 3D orb pop */}
+                  <div className="absolute top-1 left-2 w-4 h-2 rounded-full bg-white blur-[0.5px] rotate-[-25deg] pointer-events-none z-20 shadow-[0_0_4px_#ffffff]" />
+                  {/* Caustic bounce reflection at bottom */}
+                  <div className="absolute bottom-0 left-2 right-2 h-2.5 rounded-b-full bg-gradient-to-t from-cyan-300/50 via-sky-200/30 to-transparent pointer-events-none z-10" />
+
+                  <span className="text-xl sm:text-2xl font-black bg-gradient-to-b from-[#0284c7] via-[#0369a1] to-[#0891b2] bg-clip-text text-transparent tracking-tight tabular-nums relative z-20 drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)]">
                     {percentComplete}%
                   </span>
-                  <span className="text-[9px] font-extrabold text-sky-800 uppercase tracking-wider relative z-10 -mt-0.5">
+                  <span className="text-[9px] font-extrabold text-sky-800 uppercase tracking-wider relative z-20 -mt-0.5">
                     Progress
                   </span>
                 </div>
@@ -495,15 +503,7 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
                 <span>Grading Status</span>
               </div>
 
-              {/* Selector 1: Graded Count - Crystal-Clear Frosted White Glass Capsule */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-white/95 backdrop-blur-md rounded-xl border border-white shadow-[0_4px_16px_rgba(2,132,199,0.18),inset_0_1.5px_1px_#ffffff] text-slate-950 font-black text-base sm:text-lg tracking-tight drop-shadow-2xs">
-                <span className="text-[#0284c7] font-black text-lg sm:text-xl tabular-nums">{gradedSongsCount}</span>
-                <span className="text-slate-400 font-bold text-xs uppercase tracking-wider">of</span>
-                <span className="text-slate-950 font-black text-lg sm:text-xl tabular-nums">{totalSongs}</span>
-                <span className="text-slate-800 font-extrabold text-sm ml-0.5">Graded</span>
-              </div>
-
-              {/* Selector 2: Remaining songs / Completion Status Badge */}
+              {/* Remaining songs / Completion Status Badge */}
               <p className="mt-1 flex items-center justify-center sm:justify-start">
                 {totalSongs === 0 ? (
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 backdrop-blur-md border border-slate-200 text-xs font-bold text-slate-700 shadow-2xs">
@@ -525,18 +525,6 @@ export const SongEntriesView: React.FC<SongEntriesViewProps> = ({
                 )}
               </p>
             </div>
-          </div>
-
-          {/* Interactive Hint Pill on Hover */}
-          <div
-            className={`absolute bottom-2 right-2 transition-all duration-300 pointer-events-none ${
-              aquaHover ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'
-            }`}
-            style={{ zIndex: 25 }}
-          >
-            <span className="text-[10px] font-bold text-cyan-900 bg-white/90 px-2 py-0.5 rounded-full border border-cyan-300/80 shadow-xs flex items-center gap-1">
-              <span>💧</span> Click to splash
-            </span>
           </div>
         </div>
       </div>
