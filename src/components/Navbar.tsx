@@ -46,18 +46,21 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Top Banner with Studio Brand & Actions */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-pink-50 to-pink-100/90 border border-pink-200/90 flex items-center justify-center p-1 shadow-[0_4px_12px_rgba(255,20,147,0.18)] shrink-0">
-              <SummertideFlowerLogo size="lg" glow />
+          <div className="flex items-center gap-3 sm:gap-3.5">
+            <SummertideFlowerLogo
+              size="lg"
+              glow={false}
+              frutigerPattern={true}
+              className="w-9 h-9 sm:w-10 sm:h-10 hover:scale-105 transition-transform shrink-0"
+            />
+            <div>
+              <span className="text-[11px] sm:text-xs font-extrabold uppercase tracking-wider text-pink-600 block leading-tight">
+                Summertide Studio
+              </span>
+              <h1 className="text-base sm:text-lg font-black text-stone-900 tracking-tight leading-tight mt-0.5">
+                Lyric Contest Judging Portal
+              </h1>
             </div>
-              <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-pink-600 block">
-                  Summertide Studio
-                </span>
-                <h1 className="text-base sm:text-lg font-bold text-stone-900 tracking-tight leading-none mt-1">
-                  Lyric Contest Judging Portal
-                </h1>
-              </div>
           </div>
 
           {/* Right Action Area */}

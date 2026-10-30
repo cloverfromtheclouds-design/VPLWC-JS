@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   Send,
   RotateCcw,
-  Download,
-  Printer,
   CheckCircle2,
   AlertCircle,
   FileSpreadsheet,
@@ -380,47 +378,7 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
     }
   };
 
-  const handleExportText = () => {
-    const lines = [
-      '==================================================',
-      'SUMMERTIDE STUDIO — LYRIC CONTEST JUDGE SCORECARD',
-      `Date & Time: ${new Date().toLocaleString()}`,
-      `Judge / Producer: ${judgeName.trim() || 'Not provided'}`,
-      `Entrant / Submission: ${entrantName.trim() || 'Not provided'}`,
-      parsedSubmission.alias ? `Artist / Alias: ${parsedSubmission.alias}` : '',
-      parsedSubmission.discordUsername ? `Discord: @${parsedSubmission.discordUsername}` : '',
-      parsedSubmission.storyConcept ? `Story / Concept: ${parsedSubmission.storyConcept}` : '',
-      '',
-      `1. Writing Quality: ${scores.writing}/25 (${getTier(scores.writing).label})`,
-      `2. Originality & Creativity: ${scores.originality}/25 (${getTier(scores.originality).label})`,
-      `3. Emotional Impact & Storytelling: ${scores.emotion}/25 (${getTier(scores.emotion).label})`,
-      `4. Structure & Cohesion: ${scores.structure}/25 (${getTier(scores.structure).label})`,
-      '',
-      `TOTAL JUDGE SCORE: ${totalScore}/100`,
-      `AVERAGE PER CRITERION: ${averageScore.toFixed(2)}/25`,
-      `EVALUATION: ${summaryNarration}`,
-      '',
-      "Personal Opinion / Judge's Comments:",
-      comments.trim() || 'None provided',
-      '',
-      parsedSubmission.lyrics ? '--- LYRICS ---\n' + parsedSubmission.lyrics : '',
-    ].filter(Boolean);
 
-    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `summertide-scorecard-${(entrantName || 'submission')
-      .replace(/[^a-zA-Z0-9]/g, '-')
-      .toLowerCase()}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
-    setStatusMessage({ type: 'info', text: 'Scorecard text file exported.' });
-  };
-
-  const handlePrint = () => {
-    window.print();
-  };
 
   return (
     <div className="max-w-7xl mx-auto py-2 sm:py-6 animate-in fade-in duration-200">
@@ -936,25 +894,26 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
                 </div>
               )}
 
-              {/* Submission & Action Buttons */}
-              <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+              {/* Submission & Action Buttons - Uniform Height & Stretched to Right Edge */}
+              <div className="w-full flex flex-wrap sm:flex-nowrap items-center gap-2.5 pt-2.5 border-t border-stone-200/70">
+                {/* 1. Primary Record CTA (On left side as usual) */}
                 {isFlagged ? (
-                  <div className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl aero-btn-rose text-white font-bold text-sm shadow-md cursor-default">
-                    <ShieldAlert className="w-5 h-5 text-rose-100" />
-                    <span>Scoring Aborted · {activeFlag?.reasonLabel}</span>
+                  <div className="h-11 flex-1 inline-flex items-center justify-center gap-2 px-5 rounded-xl aero-btn-rose text-white font-bold text-xs sm:text-sm shadow-md cursor-default min-w-0">
+                    <ShieldAlert className="w-4 h-4 text-rose-100 shrink-0" />
+                    <span className="truncate">Scoring Aborted · {activeFlag?.reasonLabel}</span>
                   </div>
                 ) : isAlreadySubmitted ? (
-                  <div className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl aero-btn-emerald text-white font-bold text-sm shadow-md cursor-default">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-100" />
-                    <span>Score Has Been Submitted ({totalScore}/100)</span>
+                  <div className="h-11 flex-1 inline-flex items-center justify-center gap-2 px-5 rounded-xl aero-btn-emerald text-white font-bold text-xs sm:text-sm shadow-md cursor-default min-w-0">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-100 shrink-0" />
+                    <span className="truncate">Score Has Been Submitted ({totalScore}/100)</span>
                   </div>
                 ) : (
                   <button
                     type="submit"
                     disabled={isSubmitting || (!parsedSubmission.songTitle && !entrantName)}
-                    className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl aero-btn-primary text-white font-bold text-sm shadow-md transition-all hover:shadow-lg disabled:opacity-60 cursor-pointer"
+                    className="h-11 w-full sm:flex-[1.4] inline-flex items-center justify-center gap-2 px-5 rounded-xl aero-btn-primary text-white font-bold text-xs sm:text-sm shadow-md transition-all hover:shadow-lg disabled:opacity-60 cursor-pointer whitespace-nowrap min-w-0"
                   >
-                    <Send className="w-4 h-4" />
+                    <Send className="w-4 h-4 shrink-0" />
                     <span>
                       {isSubmitting
                         ? 'Saving Scorecard...'
@@ -963,62 +922,43 @@ export const ScorecardView: React.FC<ScorecardViewProps> = ({
                   </button>
                 )}
 
-                <div className="flex items-center gap-2">
-                  {onFlagSong && !activeFlag && !isAlreadySubmitted && (
-                    <button
-                      type="button"
-                      onClick={() => setIsFlagModalOpen(true)}
-                      className="px-3 py-2 rounded-xl aero-btn-rose text-white text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer"
-                      title="Report rule violation or AI generation"
-                    >
-                      <Flag className="w-3.5 h-3.5" />
-                      <span>Report Entry</span>
-                    </button>
-                  )}
-
-                  {onGoToSongEntries && (
-                    <button
-                      type="button"
-                      onClick={onGoToSongEntries}
-                      className="px-3 py-2 rounded-xl aero-btn-secondary text-[#0284c7] text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer"
-                    >
-                      <Music className="w-3.5 h-3.5" />
-                      <span>Other Songs</span>
-                    </button>
-                  )}
-
+                {/* 2. Report Entry (Next to Record) */}
+                {onFlagSong && !activeFlag && !isAlreadySubmitted && (
                   <button
                     type="button"
-                    onClick={handleExportText}
-                    className="px-3 py-2 rounded-xl aero-btn-secondary text-stone-700 text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer"
-                    title="Export scorecard (.txt)"
+                    onClick={() => setIsFlagModalOpen(true)}
+                    className="h-11 flex-1 px-3 sm:px-4 rounded-xl aero-btn-rose text-white text-xs font-bold inline-flex items-center justify-center gap-1.5 cursor-pointer transition-all shadow-2xs hover:shadow-xs whitespace-nowrap min-w-0"
+                    title="Report rule violation or AI generation"
                   >
-                    <Download className="w-4 h-4 text-stone-500" />
-                    <span className="hidden sm:inline">Export .txt</span>
+                    <Flag className="w-3.5 h-3.5 shrink-0" />
+                    <span className="truncate">Report Entry</span>
                   </button>
+                )}
 
+                {/* 3. Other Songs Navigation */}
+                {onGoToSongEntries && (
                   <button
                     type="button"
-                    onClick={handlePrint}
-                    className="px-3 py-2 rounded-xl aero-btn-secondary text-stone-700 text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer"
-                    title="Print Scorecard"
+                    onClick={onGoToSongEntries}
+                    className="h-11 flex-1 px-3 sm:px-4 rounded-xl aero-btn-secondary text-[#0284c7] hover:text-[#0369a1] text-xs font-bold inline-flex items-center justify-center gap-1.5 cursor-pointer transition-all shadow-2xs whitespace-nowrap min-w-0"
                   >
-                    <Printer className="w-4 h-4 text-stone-500" />
-                    <span className="hidden sm:inline">Print</span>
+                    <Music className="w-3.5 h-3.5 shrink-0" />
+                    <span className="truncate">Other Songs</span>
                   </button>
+                )}
 
-                  {!isAlreadySubmitted && !isFlagged && (
-                    <button
-                      type="button"
-                      onClick={handleReset}
-                      className="px-3 py-2 rounded-xl aero-btn-secondary text-stone-600 text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer"
-                      title="Reset scores to default 18"
-                    >
-                      <RotateCcw className="w-4 h-4 text-stone-400" />
-                      <span className="hidden sm:inline">Reset</span>
-                    </button>
-                  )}
-                </div>
+                {/* 4. Reset Button */}
+                {!isAlreadySubmitted && !isFlagged && (
+                  <button
+                    type="button"
+                    onClick={handleReset}
+                    className="h-11 flex-1 px-3 sm:px-3.5 rounded-xl aero-btn-secondary text-stone-600 hover:text-stone-800 text-xs font-bold inline-flex items-center justify-center gap-1.5 cursor-pointer transition-all shadow-2xs whitespace-nowrap min-w-0"
+                    title="Reset scores to default 18"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5 text-stone-400 shrink-0" />
+                    <span className="truncate">Reset</span>
+                  </button>
+                )}
               </div>
             </div>
           </div>
